@@ -131,12 +131,6 @@ class Match:
             return None
 
 
-class PreliminaryGroup:
-    def __init__(self, groupnumber:int) -> None:
-        self.groupnumber = groupnumber
-        pass
-
-
 
 # MISC FUNCTIONS
 def read_fencer_csv_file(file_path: str) -> list:
@@ -185,6 +179,7 @@ def assign_fencers() -> list:
         fencers[i].start_number = i + 1
 
     # Print all participanting fencers
+    print("")
     print("The following fencers are participating:")
     for fencer in fencers:
         print(fencer)
@@ -200,6 +195,8 @@ def create_prelimenary_tableau():
 
 
     # Ask for turnament configuration
+    print("")
+    print("Please enter the turnament configuration: ")
     # Number of fencing pistes
     fencing_pistes = int(input("How many fencing pistes are there? (1-4): "))
     if fencing_pistes < 1 or fencing_pistes > 4:
@@ -221,12 +218,6 @@ def create_prelimenary_tableau():
         raise ValueError("Number of points for a win in a direct elimination round must be between 1 and 15")
 
 
-    # Create the preliminary groups
-    preliminary_groups = [
-        PreliminaryGroup(0),
-        PreliminaryGroup(1),
-        PreliminaryGroup(2)
-    ]
 
 
 
@@ -250,7 +241,7 @@ if __name__ == "__main__":
     print("The program will also generate a statistics sheet for you to use to keep track of your fencers' statistics.\n")
     print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
     
-    # Create the tableau
+    # Create the prelimenary tableau
     create_prelimenary_tableau()
 
     # Wait for user to press enter
