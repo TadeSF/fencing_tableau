@@ -1,7 +1,6 @@
-
-
 import json
 import random
+import time
 
 
 # Global variables
@@ -51,6 +50,8 @@ class Fencer:
             string_to_return = f"{self.start_number} {self.name} / {self.club}"
         elif self.club and self.nationality:
             string_to_return = f"{self.start_number} {self.name} ({self.nationality}) / {self.club}"
+        else:
+            string_to_return = f"{self.start_number} {self.name}"
         return string_to_return
 
     def short_str(self) -> str:
@@ -132,7 +133,7 @@ class Match:
 
 
 
-# MISC FUNCTIONS
+# MISC Functions
 def read_fencer_csv_file(file_path: str) -> list:
     with open(file_path, "r") as f:
         csv_file = f.readlines()
@@ -181,8 +182,15 @@ def assign_fencers() -> list:
     # Print all participanting fencers
     print("")
     print("The following fencers are participating:")
+    print("Start Number | Name (Nationality) | Club")
+    print("")
     for fencer in fencers:
         print(fencer)
+        time.sleep(0.1)
+
+    print("")
+    print("------------------------------------")
+    print("")
 
     # Return the fencers
     return fencers
@@ -203,17 +211,17 @@ def create_prelimenary_tableau():
         raise ValueError("Number of fencing pistes must be between 1 and 4")
 
     # Number of separate groups of preliminary rounds
-    preliminary_rounds = int(input("How many groups of preliminary rounds are there? (1-3): "))
-    if preliminary_rounds < 1 or preliminary_rounds > 3:
-        raise ValueError("Number of preliminary rounds must be between 1 and 3")
+    preliminary_rounds = int(input("How many groups of preliminary rounds are there? (1-4): "))
+    if preliminary_rounds < 1 or preliminary_rounds > 4:
+        raise ValueError("Number of preliminary rounds must be between 1 and 4")
 
     # Number of points for a win in a preliminary round
-    points_for_win_in_preliminary_round = int(input("How many points are needed for a win in the preliminary round? (1-15): "))
+    points_for_win_in_preliminary_round = int(input("How many points are needed for a win in the preliminary round? (1-15 | standard: 5): "))
     if points_for_win_in_preliminary_round < 1 or points_for_win_in_preliminary_round > 15:
         raise ValueError("Number of points for a win in a preliminary round must be between 1 and 15")
     
     # Number of points for a win in a direct elimination round
-    points_for_win_in_direct_elimination_round = int(input("How many points are needed for a win in the direct elimination round? (1-15): "))
+    points_for_win_in_direct_elimination_round = int(input("How many points are needed for a win in the direct elimination round? (1-15 | standard: 10): "))
     if points_for_win_in_direct_elimination_round < 1 or points_for_win_in_direct_elimination_round > 15:
         raise ValueError("Number of points for a win in a direct elimination round must be between 1 and 15")
 
