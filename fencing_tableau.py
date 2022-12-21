@@ -3,6 +3,7 @@
 import json
 
 
+# Main Class for every individual fencer
 class Fencer:
     def __init__(self, name: str, club: str = None, nationailty: str = None):
         self.name = name
@@ -66,22 +67,72 @@ class Fencer:
 
 
 
+# MISC FUNCTIONS
+def read_fencer_csv_file(file_path: str) -> dict:
+    with open(file_path, "r") as f:
+        csv_file = f.readlines()
+
+    # Remove the first line (headers) if it exists
+    if csv_file[0].startswith("Name"):
+        csv_file.pop(0)
+    
+    # Create a dictionary of fencers
+    fencers = []
+    for line in csv_file:
+        line = line.split(",")
+        fencer_name = line[0].strip()
+        fencer_club = line[1].strip()
+        fencer_nationality = line[2].strip()
+        fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality))
 
 
+def assign_fencers() -> list:
+    # ask for CSV file or manual input
+    if input("Do you want to import a CSV file? (y/n): ").lower() == "y":
+        csv_file = input("Please enter the full path to the CSV file: \n")
+        fencers = read_fencer_csv_file(csv_file)
+    else:
+        fencers = []
+
+    return fencers
 
 
-def assign_fencers():
-    pass
 
 def create_tableau():
     # Players
-    # fencers = assign_fencers()
-    pass
+    fencers = assign_fencers()
+
+    for fencer in fencers:
+        print(fencer)
+    
+    return None
 
 
 # Run the program
 if __name__ == "__main__":
+    #clear the console
+    print("\n" * 100)
+    
+    # Welcome message
+    print("Welcome to the Fencing Tableau Generator!\n----------------------------------------\n")
+    print("This program will generate a tableau for you to use in your fencing competitions.\n")
+    print("The program will generate a tableau for a preliminary round, a direct elimination round, and finals.\n")
+    print("The program will also generate a statistics sheet for you to use to keep track of your fencers' statistics.\n")
+    print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
+    
+    # Create the tableau
     create_tableau()
 
-    fencer = Fencer("John", nationailty="Germany")
-    print(fencer)
+    # Wait for user to press enter
+    input("Press enter to continue...", end="\r")
+
+    # Clear the console
+    print("\n" * 100)
+
+    # Preliminary Round
+
+    while True:
+        #Print next matches
+        break
+
+
