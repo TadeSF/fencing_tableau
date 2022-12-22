@@ -1,8 +1,9 @@
 from fencer import Fencer
 
+
 class Match:
     id = 1
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int = None, elimination: bool = False):
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, prelim_group = None, fencing_piste: int = None, elimination: bool = False):
         # ID
         self.id = Match.id
         Match.id += 1
@@ -12,6 +13,7 @@ class Match:
         self.elimination = elimination
         self.piste = fencing_piste
         self.match_completed = False
+        self.prelim_group = prelim_group
 
         # Fencer Information
         self.green = fencer_green
@@ -26,14 +28,19 @@ class Match:
         if self.match_completed:
             return_str = self.score
         else:
-            return_str = f"Match {self.id}:   {self.green.short_str()} vs. {self.red.short_str()}   (Piste {self.piste})"
+            return_str = f"Match {self.id}:   {self.green.short_str()} vs. {self.red.short_str()}   Piste {self.piste}"
+            if not self.elimination:
+                return_str += f"   Group {self.prelim_group.group_letter}"
         return return_str
 
 
     # Statistics
     @property
     def score(self) -> str:
-        return f"Match {self.id} Result:   {self.green.short_str().upper() if self.green == self.winner else self.green.short_str()}   {self.green_score}:{self.red_score}   {self.red.short_str().upper() if self.red == self.winner else self.red.short_str()}   (Piste {self.piste})"
+        return_str = f"Match {self.id} Result:   {self.green.short_str().upper() if self.green == self.winner else self.green.short_str()}   {self.green_score}:{self.red_score}   {self.red.short_str().upper() if self.red == self.winner else self.red.short_str()}   Piste {self.piste}"
+        if not self.elimination:
+            return_str += f"   Group {self.prelim_group.group_letter}"
+        return return_str
 
     @property
     def winner(self) -> Fencer:

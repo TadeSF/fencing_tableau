@@ -7,6 +7,7 @@ import time
 from csv_util import export_preliminary_matches, read_fencer_csv_file
 from fencer import Fencer
 from match import Match
+from prelim_groups import PreliminaryGroup
 
 
 
@@ -43,22 +44,29 @@ clear_console()
 
 # ----- Functions -----
 
-def calculate_standings(matches_group: list) -> list:
-    fencers = []
-    for matches in matches_group:
-        for match in matches:
-            if match.green not in fencers:
-                fencers.append(match.green)
-            if match.red not in fencers:
-                fencers.append(match.red)
-
+def calculate_standings(fencers: list) -> list:
     # Sort fencers by wins, then points difference, then points for, then points against
     fencers.sort(key=lambda fencer: (fencer.win_percentage, fencer.points_difference, fencer.points_for, fencer.points_against), reverse=True)
     return fencers
-    # TODO – Has to be updated once more than one preliminary group is implemented
+
+def print_standings(standings: list) -> None:
+    for fencer in standings:
+
+        # get index of fencer in the list
+        index = standings.index(fencer) + 1
+        string_to_print = f"{index}.   {fencer}"
+
+        # Fill the string with spaces to make it look nice
+        string_to_print += " " * (50 - len(string_to_print))
+
+        # Add the fencer's stats (wins – losses, points difference, points for / points against)
+        string_to_print += f"{fencer.wins} – {fencer.losses}   {fencer.points_difference}   {fencer.points_for} / {fencer.points_against}"
+
+        print(string_to_print)
+        print("")
 
 
-def enter_live_mode(matches: list):
+def enter_live_mode(matches: list, groups: list):
     # Wait for user to press enter
     input("Press enter to continue into live mode...")
 
@@ -149,45 +157,59 @@ def enter_live_mode(matches: list):
         print("-----------------------------------------")
         print("")
 
-    # Show final results
     print("Done with all rounds")
     print("")
 
-    print("Final Results")
+    # Clear the console after hitting enter
+    print("\n\n")
+    input("Press enter to continue...")
+    clear_console()
+
+    # Show final results
+    print("Final Results of Groups")
     print("-------------")
     print("")
-    for group in matches:
-        for match in group:
+    for group in groups:
+        print("Group " + group.group_letter)
+        print("-------")
+        print("")
+        for match in group.matches:
             print(match)
             print("")
             time.sleep(0.01)
-    print("-------------\n")
+        print("\n")
 
     # Clear the console on enter
     print("\n\n")
     input("Press enter to continue...")
+    print("\n\n")
     clear_console()
+    print("\n\n")
 
     # Show Standings
     print("Standings")
     print("---------")
     print("")
-    print("#    Name" + " " * 40 + "W - L   PD   P+ / P-")
+    print("#    Name " + " " * 40 + "W - L   PD   P+ / P-")
+    print("\n")
 
-    standings = calculate_standings(matches)
+    # Calculate standings for each group
+    if len(groups) > 1:
+        for group in groups:
+            print("Group " + group.group_letter)
+            print("-------\n")
+            group.calculate_standings()
+            print_standings(group.standings)
+            print("\n\n")
     
-    for fencer in standings:
-        # get index of fencer in the list
-        index = standings.index(fencer) + 1
-        string_to_print = f"{index}.   {fencer}"
-
-        # Fill the string with spaces to make it look nice
-        string_to_print += " " * (50 - len(string_to_print))
-        # Add the fencer's stats (wins – losses, points difference, points for / points against)
-        string_to_print += f"{fencer.wins} – {fencer.losses}   {fencer.points_difference}   {fencer.points_for} / {fencer.points_against}"
-
-        print(string_to_print)
-        print("")
+    # Calculate overall standings
+    print("Overall Standings")
+    print("-----------------\n")
+    fencers = [] # list of all fencers
+    for group in groups:
+        fencers.extend(group.fencers)
+    calculate_standings(fencers)
+    print_standings(fencers)
 
 
 
@@ -252,7 +274,7 @@ def assign_fencers() -> list:
 
 
 def create_prelimenary_tableau():
-    global fencing_pistes
+    global fencing_pistes, preliminary_groups
 
     # Assign fencers to the tableau
     fencers = assign_fencers()
@@ -266,21 +288,43 @@ def create_prelimenary_tableau():
     if fencing_pistes < 1 or fencing_pistes > 4:
         raise ValueError("Number of fencing pistes must be between 1 and 4")
 
-    # TODO – Add support for more than 1 group in preliminary round
-    # # Number of separate groups of preliminary rounds
-    # preliminary_groups = int(input("How many groups in the preliminary round are there? (1-4): "))
-    # if preliminary_groups < 1 or preliminary_groups > 4:
-    #     raise ValueError("Number of preliminary rounds must be between 1 and 4")
+    preliminary_groups = int(input("How many preliminary groups are there? (1-8): "))
 
-    # create the preliminary matches where every fencer fights every other fencer
+    # Randomize fencers before grouping
+    random.shuffle(fencers)
+
+    # Split fencers into groups
+    for fencer in fencers:
+        fencer.prelim_group = fencers.index(fencer) % preliminary_groups + 1
+
+    # Create group objects with the according fencers
+    groups = []
+    for i in range(preliminary_groups):
+        groups.append(PreliminaryGroup([fencer for fencer in fencers if fencer.prelim_group == i + 1], i + 1))
+
+    # Print Grouping
+    print("")
+    print("The fencers have been grouped as follows: ")
+    print("")
+    for group in groups:
+        print("Group " + group.group_letter)
+        print("-------")
+        for fencer in group.fencers:
+            print(fencer)
+            time.sleep(0.01)
+        print("")
+    print("")
+
+    time.sleep(1)
+
+
     preliminary_matches = []
 
-    # Create all possible combinations of fencers
-    combinations = list(itertools.combinations(fencers, 2))
+    combinations = [] # List of all possible combinations of fencers
 
-    # Shuffle the combinations
-    random.shuffle(combinations)
-
+    # Get all possible combinations of matches
+    for group in groups:
+        combinations.extend(group.combinations)
 
     used_fencers = [] # List of fencers that have already been used in a match, used to prevent fencers from fighting multiple times at the same time
 
@@ -293,8 +337,17 @@ def create_prelimenary_tableau():
             # Check if the fencers have already been used
             if fencer_1 not in used_fencers and fencer_2 not in used_fencers:
 
-                # Create the match
-                preliminary_matches.append(Match(fencer_1, fencer_2))
+                # Check if the fencers are in the same group
+                if fencer_1.prelim_group == fencer_2.prelim_group:
+                    for group in groups:
+                        if group.group_number == fencer_1.prelim_group:
+                            # Create the match
+                            preliminary_matches.append(Match(fencer_1, fencer_2, group))
+                            # Add the match to the group
+                            group.matches.append(preliminary_matches[-1])
+                            break
+                else:
+                    raise ValueError("Fencers are not in the same group")
 
                 # Add the fencers to the list of used fencers
                 used_fencers.append(fencer_1)
@@ -327,6 +380,8 @@ def create_prelimenary_tableau():
         for j in range(len(preliminary_matches[i])):
             preliminary_matches[i][j].piste = piste_assignmet()
 
+    
+ 
 
     # Print the preliminary matches
     print("")
@@ -345,7 +400,7 @@ def create_prelimenary_tableau():
             time.sleep(0.01)
         time.sleep(0.05)
 
-    return preliminary_matches
+    return preliminary_matches, groups
 
 
 
@@ -366,7 +421,7 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
     
     # Create the prelimenary tableau
-    preliminary_matches = create_prelimenary_tableau()
+    preliminary_matches, groups = create_prelimenary_tableau()
 
     # Ask if the user wants to run the program in live mode or generate a csv file for the preliminary round
     # Live Mode – The program will wait for the user to input all results of a round and to continue to the next round
@@ -377,12 +432,12 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
 
     # CSV Mode
     if live_mode == "csv":
-        export_preliminary_matches(preliminary_matches)
+        export_preliminary_matches(preliminary_matches, groups)
         #TODO – Add mechanism to continue the turnament after the CSV file has been imported
 
     # Live Mode
     elif live_mode == "live":
-        enter_live_mode(preliminary_matches)
+        enter_live_mode(preliminary_matches, groups)
 
     
 

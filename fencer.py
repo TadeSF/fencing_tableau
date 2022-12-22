@@ -26,6 +26,8 @@ class Fencer:
 
         self.nationality = nationailty
 
+        self.prelim_group = None
+
         # Statistics
         self.wins = 0
         self.losses = 0
@@ -63,8 +65,9 @@ class Fencer:
         return self.wins / (self.wins + self.losses)
     
     @property
-    def points_difference(self) -> int:
-        return self.points_for - self.points_against
+    def points_difference(self) -> str:
+        difference = self.points_for - self.points_against
+        return str("+" + str(difference) if difference > 0 else str(difference))
 
     @property
     def points_per_game(self) -> float:
