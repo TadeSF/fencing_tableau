@@ -1,197 +1,27 @@
 import itertools
-import json
+import os
+import platform
 import random
 import time
 
+from csv_util import export_preliminary_matches, read_fencer_csv_file
+from fencer import Fencer
+from match import Match
 
-# Global variables
-fencing_pistes = 0
-preliminary_rounds = 0
-
-piste_counter = 1
-
-
-# Main Class for every individual fencer
-class Fencer:
-
-    def __init__(self, name: str, club: str = None, nationailty: str = None):
-        # Start number
-        self.start_number = None
-
-        # Fencer information
-        self.name = name
-        self.club = club
-
-        if nationailty is not None:
-            # Get 3 character nationality code if not already
-            if len(nationailty) != 3:
-                with open("countries.json", "r") as f:
-                    countries = json.load(f)
-                    for country in countries:
-                        if nationailty == country["name"]:
-                            nationailty = country["alpha-3"]
-                            break
-                    else:
-                        raise ValueError("No valid (english) country input / Nationailty must be 3 characters long")
-
-        self.nationality = nationailty
-
-        # Statistics
-        self.wins = 0
-        self.losses = 0
-        self.points_for = 0
-        self.points_against = 0
+# ----- Global variables -----
+fencing_pistes = 0          # Number of pistes
+preliminary_groups = 0      # Number of groups in the preliminary round
+piste_counter = 1           # Counter for piste assignment
 
 
-    def __str__(self) -> str:
-        if self.club is None and self.nationality:
-            string_to_return = f"{self.start_number} {self.name} ({self.nationality})"
-        elif self.club and self.nationality is None:
-            string_to_return = f"{self.start_number} {self.name} / {self.club}"
-        elif self.club and self.nationality:
-            string_to_return = f"{self.start_number} {self.name} ({self.nationality}) / {self.club}"
-        else:
-            string_to_return = f"{self.start_number} {self.name}"
-        return string_to_return
+# ----- Functions -----
 
-    def short_str(self) -> str:
-        return f"{self.start_number} {self.name}"
-
-
-    # statistics
-    def update_statistics(self, win: bool, points_for: int, points_against: int):
-        if win:
-            self.wins += 1
-        else:
-            self.losses += 1
-
-        self.points_for += points_for
-        self.points_against += points_against
-
-    @property
-    def win_percentage(self) -> float:
-        return self.wins / (self.wins + self.losses)
-    
-    @property
-    def points_difference(self) -> int:
-        return self.points_for - self.points_against
-
-    @property
-    def points_per_game(self) -> float:
-        return self.points_for / (self.wins + self.losses)
-
-    @property
-    def points_against_per_game(self) -> float:
-        return self.points_against / (self.wins + self.losses)
-
-
-class Match:
-    id = 1
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int = None, elimination: bool = False):
-        # ID
-        self.id = Match.id
-        Match.id += 1
-
-        # Match information
-        self.match_number = None
-        self.elimination = elimination
-        self.piste = fencing_piste
-        self.match_completed = False
-
-        # Fencer Information
-        self.green = fencer_green
-        self.red = fencer_red
-
-        # Score
-        self.green_score = 0
-        self.red_score = 0
-
-    
-    def __str__(self) -> str:
-        if self.match_completed:
-            return_str = self.score
-        else:
-            return_str = f"Match {self.id}:   {self.green.short_str()} vs. {self.red.short_str()}   (Piste {self.piste})"
-        return return_str
-
-
-    # Statistics
-    @property
-    def score(self) -> str:
-        return f"Match {self.id} Result:   {self.green.short_str().upper() if self.green == self.winner else self.green.short_str()}   {self.green_score}:{self.red_score}   {self.red.short_str().upper() if self.red == self.winner else self.red.short_str()}   (Piste {self.piste})"
-
-    @property
-    def winner(self) -> Fencer:
-        if self.green_score > self.red_score:
-            return self.green
-        elif self.red_score > self.green_score:
-            return self.red
-        else:
-            return None
-    
-    @property
-    def loser(self) -> Fencer:
-        if self.green_score < self.red_score:
-            return self.red
-        elif self.red_score > self.green_score:
-            return self.green
-        else:
-            return None
-
-    # Input Results
-    def input_results(self, green_score: int, red_score: int):
-        # Check for invalid score
-        if green_score < 0 or red_score < 0:
-            raise ValueError("Score must be a positive integer")
-        elif green_score == red_score:
-            raise ValueError("Score must be different")
-
-        # Valid score
-        else:
-            self.green_score = green_score
-            self.red_score = red_score
-            self.match_completed = True
-        
-            # Update statistics
-            self.green.update_statistics(True if self.winner == self.green else False, self.green_score, self.red_score)
-            self.red.update_statistics(False if self.winner == self.green else True, self.red_score, self.green_score)
-
-
-
-
-
-
-
-
-# MISC Functions
-def read_fencer_csv_file(file_path: str) -> list:
-    with open(file_path, "r") as f:
-        csv_file = f.readlines()
-
-    # Remove the first line (headers) if it exists
-    if csv_file[0].startswith("Name"):
-        csv_file.pop(0)
-    
-    # Create a dictionary of fencers
-    fencers = []
-    for line in csv_file:
-        line = line.split(",")
-        fencer_name = line[0].strip()
-        fencer_club = line[1].strip()
-        fencer_nationality = line[2].strip()
-        fencers.append(Fencer(fencer_name, fencer_club if fencer_club != "" else None, fencer_nationality if fencer_nationality != "" else None))
-    
-    return fencers
-
-
-def export_preliminary_matches(matches: list, file_path: str = None):
-    if file_path is None:
-        file_path = input("Please enter the full path to the file you want to export to: \n")
-
-    with open(file_path, "w") as f:
-        for match in matches:
-            # TODO – Continue here
-            f.write(f"{match.green.name},{match.red.name},{match.piste}\n")
+# Clear the console
+def clear_console():
+    if platform.system() == "Windows":
+        os.system("cls")
+    else:
+        os.system("clear")
 
 
 def calculate_standings(matches_group: list) -> list:
@@ -214,7 +44,7 @@ def enter_live_mode(matches: list):
     input("Press enter to continue into live mode...")
 
     # Clear the console
-    print("\n" * 100)
+    clear_console()
 
     print("Live Mode")
     print("---------\n")
@@ -275,7 +105,7 @@ def enter_live_mode(matches: list):
                         time.sleep(1)
 
                         # Clear the console
-                        print("\n" * 100)
+                        clear_console()
 
                         break
 
@@ -309,7 +139,7 @@ def enter_live_mode(matches: list):
     # Clear the console on enter
     print("\n\n")
     input("Press enter to continue...")
-    print("\n" * 100)
+    clear_console()
 
     # Show Standings
     print("Standings")
@@ -372,10 +202,6 @@ def assign_fencers() -> list:
             print("------")
             fencers.append(Fencer(fencer_name, fencer_club if fencer_club != "" else None, fencer_nationality if fencer_nationality != "" else None))
 
-
-    # Shuffle the fencers
-    random.shuffle(fencers)
-
     # Assign start numbers
     for i in range(len(fencers)):
         fencers[i].start_number = i + 1
@@ -415,8 +241,8 @@ def create_prelimenary_tableau():
 
     # TODO – Add support for more than 1 group in preliminary round
     # # Number of separate groups of preliminary rounds
-    # preliminary_rounds = int(input("How many groups in the preliminary round are there? (1-4): "))
-    # if preliminary_rounds < 1 or preliminary_rounds > 4:
+    # preliminary_groups = int(input("How many groups in the preliminary round are there? (1-4): "))
+    # if preliminary_groups < 1 or preliminary_groups > 4:
     #     raise ValueError("Number of preliminary rounds must be between 1 and 4")
 
     # create the preliminary matches where every fencer fights every other fencer
@@ -495,18 +321,21 @@ def create_prelimenary_tableau():
     return preliminary_matches
 
 
-# ------------------------------------ #
 
-# Run the program
-if __name__ == "__main__":
+
+
+# ----- Run the program -----
+
+if __name__ == "__main__": # Only run the program if it is run directly, not if it is imported
+
     #clear the console
-    print("\n" * 100)
+    clear_console()
     
     # Welcome message
     print("Welcome to the Fencing Tableau Generator!\n----------------------------------------\n")
     print("This program will generate a tableau for you to use in your fencing competitions.\n")
-    print("The program will generate a tableau for a preliminary round, a direct elimination round, and finals.\n")
-    print("The program will also generate a statistics sheet for you to use to keep track of your fencers' statistics.\n")
+    print("The program will generate a tableau for a preliminary round, a direct elimination round, and finals.")
+    print("The program will also generate a statistics sheet for you to use to keep track of your fencers' statistics.")
     print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
     
     # Create the prelimenary tableau
