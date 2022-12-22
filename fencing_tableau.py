@@ -8,21 +8,40 @@ from csv_util import export_preliminary_matches, read_fencer_csv_file
 from fencer import Fencer
 from match import Match
 
+
+
 # ----- Global variables -----
 fencing_pistes = 0          # Number of pistes
 preliminary_groups = 0      # Number of groups in the preliminary round
 piste_counter = 1           # Counter for piste assignment
 
 
-# ----- Functions -----
 
-# Clear the console
+# ----- MISC -----
 def clear_console():
     if platform.system() == "Windows":
         os.system("cls")
     else:
         os.system("clear")
 
+
+
+# ----- Run on startup -----
+clear_console()
+
+# ask if user wants to simulate results
+if input("Do you want to simulate the results? (y/n) ").lower() == "y":
+    simulate_results = True
+else:
+    simulate_results = False
+# ask how high the win score should be
+simulation_win_points = int(input("How many points should the winner have? "))
+
+clear_console()
+
+
+
+# ----- Functions -----
 
 def calculate_standings(matches_group: list) -> list:
     fencers = []
@@ -56,13 +75,11 @@ def enter_live_mode(matches: list):
         while True:
             # Print matches of the round
             print("Round " + str(matches.index(round) + 1))
-            time.sleep(0.5)
             print("-------")
             print("")
             for match in round:
                 print(match)
                 print("")
-                time.sleep(0.1)
             
             # Show fencers of the next round to get ready
             if matches.index(round) + 1 < len(matches):
@@ -80,8 +97,12 @@ def enter_live_mode(matches: list):
                     break
 
                 # Ask user for match ID
-                match_id = int(input("Please enter the ID of the match you want to input the results for: "))
-                print("")
+                # If simulation is enabled, pick a random match
+                if simulate_results:
+                    match_id = random.choice([match.id for match in round if not match.match_completed])
+                else:
+                    match_id = int(input("Please enter the ID of the match you want to input the results for: "))
+                    print("")
 
                 # Check if match ID is valid
                 if match_id not in [match.id for match in round]:
@@ -91,9 +112,18 @@ def enter_live_mode(matches: list):
                 for match in round:
                     if match.id == match_id:
                         # Ask user for match results
-                        green_score = int(input(f"Please enter the score for the green fencer {match.green.short_str()}: "))
-                        red_score = int(input(f"Please enter the score for the red fencer {match.red.short_str()}: "))
-                        print("")
+                        # if simulation is enabled, pick random scores
+                        if simulate_results:
+                            # randomly pick a winner
+                            winner = random.choice([match.green, match.red])
+                            # randomly pick a score against the winner
+                            loser_score = random.randint(0, simulation_win_points - 1)
+                            green_score = 5 if winner == match.green else loser_score
+                            red_score = 5 if winner == match.red else loser_score
+                        else:
+                            green_score = int(input(f"Please enter the score for the green fencer {match.green.short_str()}: "))
+                            red_score = int(input(f"Please enter the score for the red fencer {match.red.short_str()}: "))
+                            print("")
 
                         # Save results
                         match.input_results(green_score, red_score)
@@ -101,8 +131,6 @@ def enter_live_mode(matches: list):
                         # Print the results
                         print(match.score)
                         print("")
-
-                        time.sleep(1)
 
                         # Clear the console
                         clear_console()
@@ -120,7 +148,6 @@ def enter_live_mode(matches: list):
         print("")
         print("-----------------------------------------")
         print("")
-        time.sleep(0.5)
 
     # Show final results
     print("Done with all rounds")
@@ -133,7 +160,7 @@ def enter_live_mode(matches: list):
         for match in group:
             print(match)
             print("")
-            time.sleep(0.1)
+            time.sleep(0.01)
     print("-------------\n")
 
     # Clear the console on enter
@@ -213,7 +240,7 @@ def assign_fencers() -> list:
     print("")
     for fencer in fencers:
         print(fencer)
-        time.sleep(0.1)
+        time.sleep(0.01)
 
     print("")
     print("------------------------------------")
@@ -315,8 +342,8 @@ def create_prelimenary_tableau():
         print(" ")
         for match in group:
             print(match)
-            time.sleep(0.1)
-        time.sleep(0.2)
+            time.sleep(0.01)
+        time.sleep(0.05)
 
     return preliminary_matches
 
