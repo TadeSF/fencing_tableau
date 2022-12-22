@@ -1,3 +1,4 @@
+import itertools
 import json
 import random
 import time
@@ -7,8 +8,7 @@ import time
 fencing_pistes = 0
 preliminary_rounds = 0
 
-points_for_win_in_preliminary_round = 5
-points_for_win_in_direct_elimination_round = 10
+piste_counter = 1
 
 
 # Main Class for every individual fencer
@@ -87,17 +87,16 @@ class Fencer:
 
 class Match:
     id = 1
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int, elimination: bool = False):
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int = None, elimination: bool = False):
         # ID
         self.id = Match.id
         Match.id += 1
 
         # Match information
+        self.match_number = None
         self.elimination = elimination
-        if self.piste > fencing_pistes or self.piste < 1:
-            raise ValueError("Piste number must be between 1 and the number of fencing pistes")
-        else:
-            self.piste = fencing_piste
+        self.piste = fencing_piste
+        self.match_completed = False
 
         # Fencer Information
         self.green = fencer_green
@@ -109,27 +108,54 @@ class Match:
 
     
     def __str__(self) -> str:
-        return f"Match {self.id}: {self.green.short_str} vs. {self.red.short_str} on piste {self.piste}"
+        return f"Match {self.id}: {self.green.short_str()} vs. {self.red.short_str()} on piste {self.piste}"
 
 
     # Statistics
     @property
+    def score(self) -> str:
+        return f"Match {self.id} Result:\n{self.green.short_str()} {self.green_score} - {self.red_score} {self.red.short_str()} on piste {self.piste}"
+
+    @property
     def winner(self) -> Fencer:
-        if self.green_score == (points_for_win_in_direct_elimination_round if self.elimination else points_for_win_in_preliminary_round):
+        if self.green_score > self.red_score:
             return self.green
-        elif self.red_score == (points_for_win_in_direct_elimination_round if self.elimination else points_for_win_in_preliminary_round):
+        elif self.red_score > self.green_score:
             return self.red
         else:
             return None
     
     @property
     def loser(self) -> Fencer:
-        if self.green_score == (points_for_win_in_direct_elimination_round if self.elimination else points_for_win_in_preliminary_round):
+        if self.green_score < self.red_score:
             return self.red
-        elif self.red_score == (points_for_win_in_direct_elimination_round if self.elimination else points_for_win_in_preliminary_round):
+        elif self.red_score > self.green_score:
             return self.green
         else:
             return None
+
+    # Input Results
+    def input_results(self, green_score: int, red_score: int):
+        # Check for invalid score
+        if green_score < 0 or red_score < 0:
+            raise ValueError("Score must be a positive integer")
+        elif green_score == red_score:
+            raise ValueError("Score must be different")
+
+        # Valid score
+        else:
+            self.green_score = green_score
+            self.red_score = red_score
+            self.match_completed = True
+        
+            # Update statistics
+            self.green.update_statistics(True if self.winner == self.green else False, self.green_score, self.red_score)
+            self.red.update_statistics(False if self.winner == self.green else True, self.red_score, self.green_score)
+
+
+
+
+
 
 
 
@@ -152,6 +178,25 @@ def read_fencer_csv_file(file_path: str) -> list:
         fencers.append(Fencer(fencer_name, fencer_club if fencer_club != "" else None, fencer_nationality if fencer_nationality != "" else None))
     
     return fencers
+
+
+def piste_assignmet() -> int:
+    global piste_counter, fencing_pistes
+
+    if fencing_pistes == 1:
+        # Only one piste
+        return 1
+    else:
+        # Assign piste if more than two pistes
+        piste = piste_counter
+        if piste_counter == fencing_pistes:
+            # Reset piste counter if it reaches the maximum number of pistes
+            piste_counter = 1
+        else:
+            # Increment piste counter for next match
+            piste_counter += 1
+        
+        return piste
 
 
 def assign_fencers() -> list:
@@ -198,6 +243,8 @@ def assign_fencers() -> list:
 
 
 def create_prelimenary_tableau():
+    global fencing_pistes
+
     # Assign fencers to the tableau
     fencers = assign_fencers()
 
@@ -210,31 +257,86 @@ def create_prelimenary_tableau():
     if fencing_pistes < 1 or fencing_pistes > 4:
         raise ValueError("Number of fencing pistes must be between 1 and 4")
 
-    # Number of separate groups of preliminary rounds
-    preliminary_rounds = int(input("How many groups of preliminary rounds are there? (1-4): "))
-    if preliminary_rounds < 1 or preliminary_rounds > 4:
-        raise ValueError("Number of preliminary rounds must be between 1 and 4")
+    # TODO – Add support for more than 1 group in preliminary round
+    # # Number of separate groups of preliminary rounds
+    # preliminary_rounds = int(input("How many groups in the preliminary round are there? (1-4): "))
+    # if preliminary_rounds < 1 or preliminary_rounds > 4:
+    #     raise ValueError("Number of preliminary rounds must be between 1 and 4")
 
-    # Number of points for a win in a preliminary round
-    points_for_win_in_preliminary_round = int(input("How many points are needed for a win in the preliminary round? (1-15 | standard: 5): "))
-    if points_for_win_in_preliminary_round < 1 or points_for_win_in_preliminary_round > 15:
-        raise ValueError("Number of points for a win in a preliminary round must be between 1 and 15")
+    # create the preliminary matches where every fencer fights every other fencer
+    preliminary_matches = []
+
+    # Create all possible combinations of fencers
+    combinations = list(itertools.combinations(fencers, 2))
+
+    # Shuffle the combinations
+    random.shuffle(combinations)
+
+
+    used_fencers = [] # List of fencers that have already been used in a match, used to prevent fencers from fighting multiple times at the same time
+
+    timeout_counter = 0 # Counter to prevent infinite loop if there are not enough fencers to fill all pistes
+    double_warning = False # Boolean to enable a warning from being printed if there are not enough fencers to fill all pistes
+
+    # Create the matches
+    while len(combinations) > 0:
+        for fencer_1, fencer_2 in combinations:
+            # Check if the fencers have already been used
+            if fencer_1 not in used_fencers and fencer_2 not in used_fencers:
+
+                # Create the match
+                preliminary_matches.append(Match(fencer_1, fencer_2))
+
+                # Add the fencers to the list of used fencers
+                used_fencers.append(fencer_1)
+                used_fencers.append(fencer_2)
+
+                # Remove the combination from the list of combinations
+                combinations.remove((fencer_1, fencer_2))
+
+                # Reset the timeout counter
+                timeout_counter = 0
+            
+                # Check if all pistes are filled and reset the list of used fencers
+                if len(used_fencers) == fencing_pistes * 2:
+                    used_fencers = []
+            
+        # Timeout to prevent infinite loop if there are not enough fencers to fill all pistes
+        if timeout_counter > 100:
+            used_fencers = []
+            timeout_counter = 0
+            double_warning = True # Enable warning
+        else:
+            timeout_counter += 1
+
     
-    # Number of points for a win in a direct elimination round
-    points_for_win_in_direct_elimination_round = int(input("How many points are needed for a win in the direct elimination round? (1-15 | standard: 10): "))
-    if points_for_win_in_direct_elimination_round < 1 or points_for_win_in_direct_elimination_round > 15:
-        raise ValueError("Number of points for a win in a direct elimination round must be between 1 and 15")
+    # Group the matches into groups of number of pistes
+    preliminary_matches = [preliminary_matches[i:i + fencing_pistes] for i in range(0, len(preliminary_matches), fencing_pistes)]
+
+    # Assign pistes to the matches
+    for i in range(len(preliminary_matches)):
+        for j in range(len(preliminary_matches[i])):
+            preliminary_matches[i][j].piste = piste_assignmet()
 
 
+    # Print the preliminary matches
+    print("")
+    print("The following matches are in the preliminary round:")
 
+    if double_warning is True:
+        print("WARNING: At least one fencer will be fighting on at least two pistes at the same time!")
 
+    print("Match Number | Green Fencer | Red Fencer | Piste")
+    print("")
 
+    for group in preliminary_matches:
+        print(" ")
+        for match in group:
+            print(match)
+            time.sleep(0.1)
+        time.sleep(0.2)
 
-    
-
-
-
-    return None
+    return preliminary_matches
 
 
 # Run the program
@@ -250,7 +352,7 @@ if __name__ == "__main__":
     print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
     
     # Create the prelimenary tableau
-    create_prelimenary_tableau()
+    preliminary_matches = create_prelimenary_tableau()
 
     # Wait for user to press enter
     input("Press enter to continue...")
