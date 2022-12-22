@@ -108,13 +108,17 @@ class Match:
 
     
     def __str__(self) -> str:
-        return f"Match {self.id}: {self.green.short_str()} vs. {self.red.short_str()} on piste {self.piste}"
+        if self.match_completed:
+            return_str = self.score
+        else:
+            return_str = f"Match {self.id}:   {self.green.short_str()} vs. {self.red.short_str()}   (Piste {self.piste})"
+        return return_str
 
 
     # Statistics
     @property
     def score(self) -> str:
-        return f"Match {self.id} Result:\n{self.green.short_str()} {self.green_score} - {self.red_score} {self.red.short_str()} on piste {self.piste}"
+        return f"Match {self.id} Result:   {self.green.short_str().upper() if self.green == self.winner else self.green.short_str()}   {self.green_score}:{self.red_score}   {self.red.short_str().upper() if self.red == self.winner else self.red.short_str()}   (Piste {self.piste})"
 
     @property
     def winner(self) -> Fencer:
@@ -180,6 +184,158 @@ def read_fencer_csv_file(file_path: str) -> list:
     return fencers
 
 
+def export_preliminary_matches(matches: list, file_path: str = None):
+    if file_path is None:
+        file_path = input("Please enter the full path to the file you want to export to: \n")
+
+    with open(file_path, "w") as f:
+        for match in matches:
+            # TODO – Continue here
+            f.write(f"{match.green.name},{match.red.name},{match.piste}\n")
+
+
+def calculate_standings(matches_group: list) -> list:
+    fencers = []
+    for matches in matches_group:
+        for match in matches:
+            if match.green not in fencers:
+                fencers.append(match.green)
+            if match.red not in fencers:
+                fencers.append(match.red)
+
+    # Sort fencers by wins, then points difference, then points for, then points against
+    fencers.sort(key=lambda fencer: (fencer.win_percentage, fencer.points_difference, fencer.points_for, fencer.points_against), reverse=True)
+    return fencers
+    # TODO – Has to be updated once more than one preliminary group is implemented
+
+
+def enter_live_mode(matches: list):
+    # Wait for user to press enter
+    input("Press enter to continue into live mode...")
+
+    # Clear the console
+    print("\n" * 100)
+
+    print("Live Mode")
+    print("---------\n")
+    print("The program will wait for you to input the results of the matches.\n\n")
+
+    # Loop through each round
+    for round in matches:
+        # While the round is not completed
+        while True:
+            # Print matches of the round
+            print("Round " + str(matches.index(round) + 1))
+            time.sleep(0.5)
+            print("-------")
+            print("")
+            for match in round:
+                print(match)
+                print("")
+                time.sleep(0.1)
+            
+            # Show fencers of the next round to get ready
+            if matches.index(round) + 1 < len(matches):
+                print("Fencers of the next round:")
+                print_string = ""
+                for match in matches[matches.index(round) + 1]:
+                    print_string += f"   {match.green.short_str()} vs. {match.red.short_str()}\n"
+                print(print_string[:-1])
+                print("")
+            print("-------\n")
+
+            try:
+                # If all matches have been completed, break out of the loop
+                if all([match.match_completed for match in round]):
+                    break
+
+                # Ask user for match ID
+                match_id = int(input("Please enter the ID of the match you want to input the results for: "))
+                print("")
+
+                # Check if match ID is valid
+                if match_id not in [match.id for match in round]:
+                    raise ValueError("Invalid match ID\n")
+
+                # Search for match
+                for match in round:
+                    if match.id == match_id:
+                        # Ask user for match results
+                        green_score = int(input(f"Please enter the score for the green fencer {match.green.short_str()}: "))
+                        red_score = int(input(f"Please enter the score for the red fencer {match.red.short_str()}: "))
+                        print("")
+
+                        # Save results
+                        match.input_results(green_score, red_score)
+
+                        # Print the results
+                        print(match.score)
+                        print("")
+
+                        time.sleep(1)
+
+                        # Clear the console
+                        print("\n" * 100)
+
+                        break
+
+            # Catch input errors
+            except ValueError as e:
+                print(e)
+                continue
+
+        
+        # End Round
+        print("Done with round " + str(matches.index(round) + 1))
+        print("")
+        print("-----------------------------------------")
+        print("")
+        time.sleep(0.5)
+
+    # Show final results
+    print("Done with all rounds")
+    print("")
+
+    print("Final Results")
+    print("-------------")
+    print("")
+    for group in matches:
+        for match in group:
+            print(match)
+            print("")
+            time.sleep(0.1)
+    print("-------------\n")
+
+    # Clear the console on enter
+    print("\n\n")
+    input("Press enter to continue...")
+    print("\n" * 100)
+
+    # Show Standings
+    print("Standings")
+    print("---------")
+    print("")
+    print("#    Name" + " " * 40 + "W - L   PD   P+ / P-")
+
+    standings = calculate_standings(matches)
+    
+    for fencer in standings:
+        # get index of fencer in the list
+        index = standings.index(fencer) + 1
+        string_to_print = f"{index}.   {fencer}"
+
+        # Fill the string with spaces to make it look nice
+        string_to_print += " " * (50 - len(string_to_print))
+        # Add the fencer's stats (wins – losses, points difference, points for / points against)
+        string_to_print += f"{fencer.wins} – {fencer.losses}   {fencer.points_difference}   {fencer.points_for} / {fencer.points_against}"
+
+        print(string_to_print)
+        print("")
+
+
+
+
+
 def piste_assignmet() -> int:
     global piste_counter, fencing_pistes
 
@@ -201,7 +357,7 @@ def piste_assignmet() -> int:
 
 def assign_fencers() -> list:
     # ask for CSV file or manual input
-    if input("Do you want to import a CSV file? (y/n): ").lower() == "y":
+    if input("\nDo you want to import a CSV file? (y/n): ").lower() == "y":
         csv_file = input("Please enter the full path to the CSV file: \n")
         fencers = read_fencer_csv_file(csv_file)
     else:
@@ -339,6 +495,8 @@ def create_prelimenary_tableau():
     return preliminary_matches
 
 
+# ------------------------------------ #
+
 # Run the program
 if __name__ == "__main__":
     #clear the console
@@ -354,16 +512,21 @@ if __name__ == "__main__":
     # Create the prelimenary tableau
     preliminary_matches = create_prelimenary_tableau()
 
-    # Wait for user to press enter
-    input("Press enter to continue...")
+    # Ask if the user wants to run the program in live mode or generate a csv file for the preliminary round
+    # Live Mode – The program will wait for the user to input all results of a round and to continue to the next round
+    # CSV Mode – The program will generate a CSV file with all the matches and the user will have to input the results in a spreadsheet program. Afterwards the CSV can be imported into the program to continue the turnament
+    live_mode = input("Do you want to run the program in live mode or generate a csv? (live/csv): ")
 
-    # Clear the console
-    print("\n" * 100)
+    #TODO – Add support for more than 1 group in preliminary round
 
-    # Preliminary Round
+    # CSV Mode
+    if live_mode == "csv":
+        export_preliminary_matches(preliminary_matches)
+        #TODO – Add mechanism to continue the turnament after the CSV file has been imported
 
-    while True:
-        #Print next matches
-        break
+    # Live Mode
+    elif live_mode == "live":
+        enter_live_mode(preliminary_matches)
 
+    
 
