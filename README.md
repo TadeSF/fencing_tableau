@@ -3,3 +3,6 @@ Fencing Tableau is a Python-based application used to manage fencing competition
 
 # Goal
 The goal is to host a web server to display a Tableau visualization, with all calculations happening in Python in the background. This web server can be hosted by a Raspberry Pi or similar device (I will likely use a Flask server).
+
+# Code Review
+https://docs.google.com/document/d/1b4299rKZCYoXm3hv2jcLPVngLIwLEXHDu-y-l4ajAx0/edit?usp=sharing
