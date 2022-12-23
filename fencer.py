@@ -62,7 +62,7 @@ class Fencer:
 
     @property
     def win_percentage(self) -> float:
-        return self.wins / (self.wins + self.losses)
+        return round(self.wins / (self.wins + self.losses), 2)
     
     @property
     def points_difference(self) -> str:
@@ -71,8 +71,8 @@ class Fencer:
 
     @property
     def points_per_game(self) -> float:
-        return self.points_for / (self.wins + self.losses)
+        return round(self.points_for / (self.wins + self.losses), 2)
 
     @property
     def points_against_per_game(self) -> float:
-        return self.points_against / (self.wins + self.losses)
+        return round(self.points_against / (self.wins + self.losses), 2)
