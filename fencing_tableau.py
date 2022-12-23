@@ -33,11 +33,10 @@ clear_console()
 # ask if user wants to simulate results
 if input("Do you want to simulate the results? (y/n) ").lower() == "y":
     simulate_results = True
+    # ask how high the win score should be  
+    simulation_win_points = int(input("How many points should the winner have? "))
 else:
     simulate_results = False
-# ask how high the win score should be
-simulation_win_points = int(input("How many points should the winner have? "))
-
 clear_console()
 
 
@@ -288,7 +287,21 @@ def create_prelimenary_tableau():
     if fencing_pistes < 1 or fencing_pistes > 4:
         raise ValueError("Number of fencing pistes must be between 1 and 4")
 
-    preliminary_groups = int(input("How many preliminary groups are there? (1-8): "))
+    # Ask if the number of preliminary groups should be calculated automatically
+    if input("Do you want to calculate the number of preliminary groups automatically? (y/n): ").lower() == "y":
+        # Calculate the number of preliminary groups
+        # All Groups should have the same number of fencers
+        # In the best case, there should be between 5 and 8 fencers per group.
+        # The number of groups should be as low as possible
+        preliminary_groups = len(fencers) // 6
+        if preliminary_groups % 6 > 0:
+            preliminary_groups += 1
+
+        # Calculate the number of groups
+        preliminary_groups = len(fencers) // 5
+
+    else:
+        preliminary_groups = int(input("How many preliminary groups are there? (1-8): "))
 
     # Randomize fencers before grouping
     random.shuffle(fencers)
@@ -330,6 +343,17 @@ def create_prelimenary_tableau():
 
     timeout_counter = 0 # Counter to prevent infinite loop if there are not enough fencers to fill all pistes
     double_warning = False # Boolean to enable a warning from being printed if there are not enough fencers to fill all pistes
+
+    # TODO – Implement the following rules of the Deutscher Fechter-Bund for the preliminary tableau:
+    ''' Eine aktuelle Landesrangliste oder deutsche Rangliste hilft uns,
+    die Turnierfavoriten gleichmäßig auf die Gruppen zu verteilen.
+    Außerdem sollte nie mehr als ein Fechter vom selben Verein
+    (bei internationalen Turnieren aus demselben Land) in einer Gruppe sein.
+    Das geht natürlich nicht immer. Wenn wir zehn Gruppen haben,
+    aber einen Verein mit zwölf Teilnehmern, dann wird es eben zwei Gruppen geben,
+    wo je zwei Vereinskollegen zusammen fechten.
+    Die müssen dann aber das allererste Gefecht gegeneinander machen.'''
+
 
     # Create the matches
     while len(combinations) > 0:
