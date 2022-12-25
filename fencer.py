@@ -76,3 +76,10 @@ class Fencer:
     @property
     def points_against_per_game(self) -> float:
         return round(self.points_against / (self.wins + self.losses), 2)
+
+
+class Wildcard(Fencer):
+    def __init__(self, wildcard_number: int):
+        super().__init__("Wildcard")
+        self.wildcard_number = wildcard_number
+        self.start_number = 0
