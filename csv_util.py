@@ -29,3 +29,13 @@ def export_preliminary_matches(matches: list, file_path: str = None):
         for match in matches:
             # TODO – Continue here
             f.write(f"{match.green.name},{match.red.name},{match.piste}\n")
+
+
+def export_intermediate_matches(matches: list, file_path: str = None):
+    if file_path is None:
+        file_path = input("Please enter the full path to the file you want to export to: \n")
+
+    with open(file_path, "w") as f:
+        for match in matches:
+            # TODO – Continue here
+            f.write(f"{match.green.name},{match.red.name},{match.piste}\n")
