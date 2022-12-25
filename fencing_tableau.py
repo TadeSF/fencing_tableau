@@ -4,9 +4,10 @@ import platform
 import random
 import time
 
-from csv_util import export_preliminary_matches, read_fencer_csv_file
-from fencer import Fencer
-from match import Match
+import csv_util
+from fencer import *
+from match import *
+from elimination_tree import *
 from prelim_groups import PreliminaryGroup
 
 
@@ -65,7 +66,7 @@ def print_standings(standings: list) -> None:
         print("")
 
 
-def enter_live_mode(matches: list, groups: list):
+def enter_prelim_live(matches: list, groups: list):
     # Wait for user to press enter
     input("Press enter to continue into live mode...")
 
@@ -210,6 +211,15 @@ def enter_live_mode(matches: list, groups: list):
     calculate_standings(fencers)
     print_standings(fencers)
 
+    # wait for enter
+    print("\n\n")
+    input("Press enter to continue...")
+
+
+def enter_intermediate_live(matches: list, groups: list):
+    pass
+    # TODO – implement intermediate live mode
+
 
 
 
@@ -237,7 +247,7 @@ def assign_fencers() -> list:
     # ask for CSV file or manual input
     if input("\nDo you want to import a CSV file? (y/n): ").lower() == "y":
         csv_file = input("Please enter the full path to the CSV file: \n")
-        fencers = read_fencer_csv_file(csv_file)
+        fencers = csv_util.read_fencer_csv_file(csv_file)
     else:
         fencers = []
         print("Please enter the fencers manually (press enter to stop): ")
@@ -283,8 +293,8 @@ def create_prelimenary_tableau():
     print("")
     print("Please enter the turnament configuration: ")
     # Number of fencing pistes
-    fencing_pistes = int(input("How many fencing pistes are there? (1-4): "))
-    if fencing_pistes < 1 or fencing_pistes > 4:
+    fencing_pistes = int(input("How many fencing pistes are there? (1-12): "))
+    if fencing_pistes < 1 or fencing_pistes > 12:
         raise ValueError("Number of fencing pistes must be between 1 and 4")
 
     # Ask if the number of preliminary groups should be calculated automatically
@@ -301,7 +311,7 @@ def create_prelimenary_tableau():
         preliminary_groups = len(fencers) // 5
 
     else:
-        preliminary_groups = int(input("How many preliminary groups are there? (1-8): "))
+        preliminary_groups = int(input("How many preliminary groups are there? (1-16): "))
 
     # Randomize fencers before grouping
     random.shuffle(fencers)
@@ -424,7 +434,25 @@ def create_prelimenary_tableau():
             time.sleep(0.01)
         time.sleep(0.05)
 
-    return preliminary_matches, groups
+    return preliminary_matches, groups, fencers
+
+
+
+def create_intermediate_tableau(fencers: list):
+    pass
+    # TODO – Implement intermediate tableau
+
+
+
+def create_first_elimination_round(fencers: list):
+
+    # Sort the fencers by their current standings
+    current_standings = calculate_standings(fencers)
+
+    # Create the direct elimination tableau
+    direct_elimination_matches = []
+
+
 
 
 
@@ -443,25 +471,285 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     print("The program will generate a tableau for a preliminary round, a direct elimination round, and finals.")
     print("The program will also generate a statistics sheet for you to use to keep track of your fencers' statistics.")
     print("You can also import a CSV file with your fencers' information to save time. Just make sure the CSV file is formatted correctly: \n Name, Club, Nationality\n")
-    
+
+
+    # --- Preliminary Round ---
+
     # Create the prelimenary tableau
-    preliminary_matches, groups = create_prelimenary_tableau()
+    list_of_preliminary_matches, list_of_preliminary_groups, list_of_all_fencers = create_prelimenary_tableau()
 
     # Ask if the user wants to run the program in live mode or generate a csv file for the preliminary round
     # Live Mode – The program will wait for the user to input all results of a round and to continue to the next round
     # CSV Mode – The program will generate a CSV file with all the matches and the user will have to input the results in a spreadsheet program. Afterwards the CSV can be imported into the program to continue the turnament
     live_mode = input("Do you want to run the program in live mode or generate a csv? (live/csv): ")
 
-    #TODO – Add support for more than 1 group in preliminary round
 
     # CSV Mode
     if live_mode == "csv":
-        export_preliminary_matches(preliminary_matches, groups)
+        csv_util.export_preliminary_matches(list_of_preliminary_matches, list_of_preliminary_groups)
         #TODO – Add mechanism to continue the turnament after the CSV file has been imported
 
     # Live Mode
     elif live_mode == "live":
-        enter_live_mode(preliminary_matches, groups)
+        enter_prelim_live(list_of_preliminary_matches, list_of_preliminary_groups)
+
+
+
+    # --- Intermediate Round ---
+
+    # Only a third of all fencers can be eliminated in the preliminary round, so there will be an intermediate round
+    #TODO – Add intermediate round
+
+    # First, calculate if a intermediate round is needed
+    # If a round of "only" 32 fencers doesn't eliminate a third of all fencers, then the intermediate round will be skipped
+    if len(list_of_all_fencers) <= 32 or len(list_of_all_fencers) - 32 < len(list_of_all_fencers) / 3:
+        intermediate_round_needed = False
+
+        # Shorten the list to only 32 fencers+
+        fencers_to_advance = calculate_standings(list_of_all_fencers)[:32]
+
+    # If the intermediate round is needed, create the intermediate tableau
+    else:
+        intermediate_round_needed = True
+        # Create the intermediate tableau
+        list_of_intermediate_matches, list_of_intermediate_groups, list_of_intermediate_fencers = create_intermediate_tableau(list_of_all_fencers)
+
+        # CSV Mode
+        if live_mode == "csv":
+            csv_util.export_intermediate_matches(list_of_intermediate_matches, list_of_intermediate_groups)
+            #TODO – Add mechanism to continue the turnament after the CSV file has been imported
+
+        # Live Mode
+        elif live_mode == "live":
+            enter_intermediate_live(list_of_intermediate_matches, list_of_intermediate_groups)
+
+
+
+    # --- Direct Elimination Round ---
+
+    # The direct elimination round is the final of the turnament and is held by a maximum of 32 fencers
+
+    # Create the direct elimination tree
+    Tree = EliminationTree(fencers_to_advance)
+
+    print("Direct Elimination Round")
+    print("------------------------")
+
+    while Tree.round_counter != 1:
+        # Create Matches
+        Tree.create_matches()
+
+
+        # Group the matches into groups of number of pistes
+        Tree.matches[Tree.round_counter] = [Tree.matches[Tree.round_counter][i:i + fencing_pistes] for i in range(0, len(Tree.matches[Tree.round_counter]), fencing_pistes)]
+
+        # Assign pistes to the matches
+        piste_counter = 1
+        for i in range(len(Tree.matches[Tree.round_counter])):
+            for j in range(len(Tree.matches[Tree.round_counter][i])):
+                if Tree.matches[Tree.round_counter][i][j].wildcard == False:
+                    Tree.matches[Tree.round_counter][i][j].piste = piste_assignmet()
+                else:
+                    Tree.matches[Tree.round_counter][i][j].piste = 0
+
+        # Print the matches
+        for match in Tree.matches:
+            print(match)
+
+        # Clear the console
+        clear_console()
+
+
+
+        # Loop through each round
+        for round in Tree.matches[Tree.round_counter]:
+            # While the round is not completed
+            while True:
+                print("Direct Elimination Round")
+                print("------------------------\n")
+
+                print(f"Currently: {Tree.round()}\n\n")
+
+
+                # Print matches of the round
+                print("Round " + str(Tree.matches[Tree.round_counter].index(round) + 1))
+                print("-------")
+                print("")
+                for match in round:
+                    print(match)
+                    print("")
+                
+                # Show fencers of the next round to get ready
+                if Tree.matches[Tree.round_counter].index(round) + 1 < len(Tree.matches[Tree.round_counter]):
+                    print("Fencers of the next round:")
+                    print_string = ""
+                    for match in Tree.matches[Tree.round_counter][Tree.matches[Tree.round_counter].index(round) + 1]:
+                        print_string += f"   {match.green.short_str()} vs. {match.red.short_str()}\n"
+                    print(print_string[:-1])
+                    print("")
+                print("-------\n")
+
+                try:
+                    # If all matches have been completed, break out of the loop
+                    if all([match.match_completed for match in round]):
+                        break
+
+                    # Ask user for match ID
+                    # If simulation is enabled, pick a random match
+                    if simulate_results:
+                        match_id = random.choice([match.id for match in round if not match.match_completed])
+                    else:
+                        match_id = int(input("Please enter the ID of the match you want to input the results for: "))
+                        print("")
+
+                    # Check if match ID is valid
+                    if match_id not in [match.id for match in round]:
+                        raise ValueError("Invalid match ID\n")
+
+                    # Search for match
+                    for match in round:
+                        if match.id == match_id:
+                            # Ask user for match results
+                            # if simulation is enabled, pick random scores
+                            if simulate_results:
+                                # randomly pick a winner
+                                winner = random.choice([match.green, match.red])
+                                # randomly pick a score against the winner
+                                loser_score = random.randint(0, simulation_win_points - 1)
+                                green_score = simulation_win_points if winner == match.green else loser_score
+                                red_score = simulation_win_points if winner == match.red else loser_score
+                            else:
+                                green_score = int(input(f"Please enter the score for the green fencer {match.green.short_str()}: "))
+                                red_score = int(input(f"Please enter the score for the red fencer {match.red.short_str()}: "))
+                                print("")
+
+                            # Save results
+                            match.input_results(green_score, red_score)
+
+                            # Print the results
+                            print(match.score)
+                            print("")
+
+                            # wait for enter
+                            input("Press enter to continue...")
+
+                            # Clear the console
+                            clear_console()
+
+                            break
+                
+                # Catch input errors
+                except ValueError as e:
+                    print(e)
+                    continue
+
+            
+            # End Round
+            print("Done with round " + str(Tree.matches[Tree.round_counter].index(round) + 1))
+
+            # wait for enter
+            input("Press enter to continue...")
+
+            # Clear the console
+            clear_console()
+
+        # Done with round
+        print("Done with round " + Tree.round())
+        print("")
+        Tree.round_counter -= 1
+
+        # wait for enter
+        input("Press enter to continue...")
+
+    # Final and Bronze Medal Match
+
+    # Create Matches
+    Tree.create_matches()
+
+    while True:
+
+        # Print the matches
+        print("Final")
+        print("-----")
+        print("")
+        print(Tree.matches[1][0])
+        print("")
+        print("Bronze Medal Match")
+        print("------------------")
+        print("")
+        print(Tree.matches[0][0])
+        print("\n\n")
+
+        try:
+            # If all matches have been completed, break out of the loop
+            if Tree.matches[1][0].match_completed and Tree.matches[1][0].match_completed:
+                break
+
+            round = [Tree.matches[1][0], Tree.matches[0][0]]
+
+            # Ask user for match ID
+            # If simulation is enabled, pick a random match
+            if simulate_results:
+                match_id = random.choice([match.id for match in round if not match.match_completed])
+            else:
+                match_id = int(input("Please enter the ID of the match you want to input the results for: "))
+                print("")
+
+            # Check if match ID is valid
+            if match_id not in [match.id for match in round]:
+                raise ValueError("Invalid match ID\n")
+
+            # Search for match
+            for match in round:
+                if match.id == match_id:
+                    # Ask user for match results
+                    # if simulation is enabled, pick random scores
+                    if simulate_results:
+                        # randomly pick a winner
+                        winner = random.choice([match.green, match.red])
+                        # randomly pick a score against the winner
+                        loser_score = random.randint(0, simulation_win_points - 1)
+                        green_score = simulation_win_points if winner == match.green else loser_score
+                        red_score = simulation_win_points if winner == match.red else loser_score
+                    else:
+                        green_score = int(input(f"Please enter the score for the green fencer {match.green.short_str()}: "))
+                        red_score = int(input(f"Please enter the score for the red fencer {match.red.short_str()}: "))
+                        print("")
+
+                    # Save results
+                    match.input_results(green_score, red_score)
+
+                    # Print the results
+                    print(match.score)
+                    print("")
+
+                    # wait for enter
+                    input("Press enter to continue...")
+
+                    # Clear the console
+                    clear_console()
+
+                    break
+        
+        # Catch input errors
+        except ValueError as e:
+            print(e)
+            continue
+
+    # clear the console
+    clear_console()
+
+    # Print the results
+    print("Final Results")
+    print("-------------")
+    print("")
+    print("The winner is " + str(Tree.matches[1][0].winner))
+    print("Silver Medalist: " + str(Tree.matches[1][0].loser))
+    print("Bronze Medalist: " + str(Tree.matches[0][0].winner))
+
+
+
+
 
     
 
