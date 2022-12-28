@@ -2,6 +2,12 @@ from fencer import Fencer
 from match import Match
 
 def read_fencer_csv_file(file_path: str) -> list:
+    if file_path is None:
+        file_path = input("Please enter the full path to the file you want to import from: \n")
+
+    if not file_path.endswith(".csv"):
+        file_path += ".csv"
+
     with open(file_path, "r") as f:
         csv_file = f.readlines()
 

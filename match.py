@@ -122,3 +122,16 @@ class EliminationMatch(Match):
         return_str = f"{self.elimination_round}: "
         return_str += super().score
         return return_str
+
+
+
+
+
+class Group:
+        pass
+
+    class Preliminary(Group):
+        pass
+
+    class Intermediate(Group):
+        pass

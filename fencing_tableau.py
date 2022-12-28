@@ -8,6 +8,7 @@ import csv_util
 from fencer import *
 from match import *
 from elimination_tree import *
+from standing import *
 from prelim_groups import PreliminaryGroup
 
 
@@ -44,29 +45,8 @@ clear_console()
 
 # ----- Functions -----
 
-def calculate_standings(fencers: list) -> list:
-    # Sort fencers by wins, then points difference, then points for, then points against
-    fencers.sort(key=lambda fencer: (fencer.win_percentage, fencer.points_difference, fencer.points_for, fencer.points_against), reverse=True)
-    return fencers
 
-def print_standings(standings: list) -> None:
-    for fencer in standings:
-
-        # get index of fencer in the list
-        index = standings.index(fencer) + 1
-        string_to_print = f"{index}.   {fencer}"
-
-        # Fill the string with spaces to make it look nice
-        string_to_print += " " * (50 - len(string_to_print))
-
-        # Add the fencer's stats (wins – losses, points difference, points for / points against)
-        string_to_print += f"{fencer.wins} – {fencer.losses}   {fencer.points_difference}   {fencer.points_for} / {fencer.points_against}"
-
-        print(string_to_print)
-        print("")
-
-
-def enter_prelim_live(matches: list, groups: list):
+def enter_prelim_live(matches: list, groups: list, fencers: list) -> Standings:
     # Wait for user to press enter
     input("Press enter to continue into live mode...")
 
@@ -187,33 +167,16 @@ def enter_prelim_live(matches: list, groups: list):
     print("\n\n")
 
     # Show Standings
-    print("Standings")
-    print("---------")
-    print("")
-    print("#    Name " + " " * 40 + "W - L   PD   P+ / P-")
-    print("\n")
+    current_standings = Standings(fencers, copy_fencers=False)
 
-    # Calculate standings for each group
-    if len(groups) > 1:
-        for group in groups:
-            print("Group " + group.group_letter)
-            print("-------\n")
-            group.calculate_standings()
-            print_standings(group.standings)
-            print("\n\n")
-    
-    # Calculate overall standings
-    print("Overall Standings")
-    print("-----------------\n")
-    fencers = [] # list of all fencers
-    for group in groups:
-        fencers.extend(group.fencers)
-    calculate_standings(fencers)
-    print_standings(fencers)
+    print(current_standings.print_standings("preliminary", groups=True))
+    print(current_standings.print_standings("preliminary", groups=False))
 
     # wait for enter
     print("\n\n")
     input("Press enter to continue...")
+
+    return current_standings
 
 
 def enter_intermediate_live(matches: list, groups: list):
@@ -444,17 +407,6 @@ def create_intermediate_tableau(fencers: list):
 
 
 
-def create_first_elimination_round(fencers: list):
-
-    # Sort the fencers by their current standings
-    current_standings = calculate_standings(fencers)
-
-    # Create the direct elimination tableau
-    direct_elimination_matches = []
-
-
-
-
 
 
 
@@ -490,8 +442,8 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
         #TODO – Add mechanism to continue the turnament after the CSV file has been imported
 
     # Live Mode
-    elif live_mode == "live":
-        enter_prelim_live(list_of_preliminary_matches, list_of_preliminary_groups)
+    else:
+        prelim_standings = enter_prelim_live(list_of_preliminary_matches, list_of_preliminary_groups, list_of_all_fencers)
 
 
 
@@ -505,14 +457,12 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     if len(list_of_all_fencers) <= 32 or len(list_of_all_fencers) - 32 < len(list_of_all_fencers) / 3:
         intermediate_round_needed = False
 
-        # Shorten the list to only 32 fencers+
-        fencers_to_advance = calculate_standings(list_of_all_fencers)[:32]
-
     # If the intermediate round is needed, create the intermediate tableau
     else:
         intermediate_round_needed = True
         # Create the intermediate tableau
         list_of_intermediate_matches, list_of_intermediate_groups, list_of_intermediate_fencers = create_intermediate_tableau(list_of_all_fencers)
+
 
         # CSV Mode
         if live_mode == "csv":
@@ -530,7 +480,7 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     # The direct elimination round is the final of the turnament and is held by a maximum of 32 fencers
 
     # Create the direct elimination tree
-    Tree = EliminationTree(fencers_to_advance)
+    Tree = EliminationTree(list_of_all_fencers)
 
     print("Direct Elimination Round")
     print("------------------------")
@@ -670,10 +620,10 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
 
         # Print the matches
         print("Final")
-        print("-----")
+        print("-----\n")
         print("")
         print(Tree.matches[1][0])
-        print("")
+        print("\n\n")
         print("Bronze Medal Match")
         print("------------------")
         print("")
@@ -740,12 +690,8 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     clear_console()
 
     # Print the results
-    print("Final Results")
-    print("-------------")
-    print("")
-    print("The winner is " + str(Tree.matches[1][0].winner))
-    print("Silver Medalist: " + str(Tree.matches[1][0].loser))
-    print("Bronze Medalist: " + str(Tree.matches[0][0].winner))
+    final_standings = Standings(list_of_all_fencers)
+    print(final_standings.print_standings("combined"))
 
 
 

@@ -7,11 +7,11 @@ class EliminationTree():
     def __init__(self, fencers: list) -> None:
 
         # Fencer information
-        self.fencers = fencers            
-        if len(fencers) > 32:
-            # Check if there are too many fencers
-            raise ValueError("Too many fencers for elimination tree")
+        self.fencers = []
+        self.fencers_not_qualified = []
         self.eliminated_fencers = []
+
+        self.sort_qualification()
 
         # Match information
         self.matches = {}
