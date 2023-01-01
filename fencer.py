@@ -1,6 +1,21 @@
 import json
 from typing import Literal
 
+from enum import Enum
+
+# Enum for the different advancement stages of a fencer
+class Stage(Enum):
+    PRELIMINARY = 0
+    INTERMEDIATE = 1
+    TOP_32 = 2
+    TOP_16 = 3
+    TOP_8 = 4
+    QUARTER_FINALS = 5
+    SEMI_FINALS = 6
+    THIRD_PLACE_FINAL = 7
+    GRAND_FINAL = 8
+
+
 
 # Main Class for every individual fencer
 class Fencer:
@@ -31,11 +46,12 @@ class Fencer:
         self.prelim_group = None
         self.intermediate_group = None
 
+        # Past opponents (for repechage)
+        self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
+
         # Stage information
-        self.stage: Literal["preliminary", "intermediate", "elimination"] = "preliminary"
+        self.stage: Stage = Stage.PRELIMINARY # Tracks the advancement of the fencer (to determine standings)
         
-        # Final Placement information
-        self.podium = None # This is needed for calculating the final ranking. First place = 1, second place = 2, third place = 3, fourth pace = 4, rest = None
 
         # Statistics
         self.statistics = {
@@ -69,13 +85,6 @@ class Fencer:
             }
         }
 
-        self.rank = {
-            "preliminary": None,
-            "intermediate": None,
-            "elimination": None,
-            "overall": None,
-            "combined": None
-        }
 
 
     def __str__(self) -> str:
@@ -94,7 +103,7 @@ class Fencer:
 
 
     # statistics
-    def update_statistics(self, win: bool, points_for: int, points_against: int):
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int):
         if win:
             self.statistics["overall"]["wins"] += 1
             self.statistics[self.stage]["wins"] += 1
@@ -109,6 +118,8 @@ class Fencer:
         self.statistics[self.stage]["matches"] += 1
         self.statistics[self.stage]["points_for"] += points_for
         self.statistics[self.stage]["points_against"] += points_against
+
+        self.group_opponents.append(opponent)
 
 
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:

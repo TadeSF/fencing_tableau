@@ -4,6 +4,120 @@ from match import *
 from typing import Literal
 
 
+# ------- Groups -------
+
+def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer]]:
+
+    # TODO – Implement the following rules of the Deutscher Fechter-Bund for the preliminary tableau:
+    ''' Eine aktuelle Landesrangliste oder deutsche Rangliste hilft uns,
+    die Turnierfavoriten gleichmäßig auf die Gruppen zu verteilen.
+    Außerdem sollte nie mehr als ein Fechter vom selben Verein
+    (bei internationalen Turnieren aus demselben Land) in einer Gruppe sein.
+    Das geht natürlich nicht immer. Wenn wir zehn Gruppen haben,
+    aber einen Verein mit zwölf Teilnehmern, dann wird es eben zwei Gruppen geben,
+    wo je zwei Vereinskollegen zusammen fechten.
+    Die müssen dann aber das allererste Gefecht gegeneinander machen.'''
+
+    # if groups is None, calculate the optimal number of groups
+    if groups is None:
+        # Calculate the number of preliminary groups
+        # All Groups should have the same number of fencers
+        # In the best case, there should be a maximum of 8 fencers per group.
+        # The number of groups should be as low as possible
+        if len(fencers) < 8:
+            num_of_groups = 1
+        else:
+            num_of_groups = len(fencers) // 8
+            if len(fencers) % 8 > 0:
+                num_of_groups += 1
+
+    # Assign groups to fencers (randomly, but (hopefully) evenly distributed)
+    # TODO – In the best case, there should be no fencers from the same club in the same group
+
+    grouping = [[] for _ in range(0, num_of_groups)]
+
+    # Assign groups to fencers
+    counter = 1
+    for i in range(0, len(fencers)):
+        if fencers[i].stage == 0:
+            fencers[i].prelim_group = counter
+            grouping[counter - 1].append(fencers[i])
+        elif fencers[i].stage == 1:
+            fencers[i].intermediate_group = counter
+            grouping[counter - 1].append(fencers[i])
+        counter += 1
+        if counter > num_of_groups:
+            counter = 1
+    
+    return grouping
+
+
+
+
+# ------- Matchmaking Logic -------
+
+def matchmaker_groups(fencers: list[Fencer]) -> list[Match]:
+    # Create matchups
+    matches = []
+
+    # Every fencer fences against every other fencer
+    for i in range(0, len(fencers)):
+        for j in range(i + 1, len(fencers)):
+            matches.append(Match(fencers[i], fencers[j]))
+
+    return matches
+
+
+def matchmaker_elimination(fencers: list[Fencer], mode: Literal["ko", "repechage", "placement"]) -> list[Match]:
+    # Create matchups
+    matches = []
+    if mode == "ko":
+        for i in range(0, len(fencers) / 2):
+            # Create match
+            # The first fencer fences against the last fencer, the second fencer fences against the second last fencer, etc.
+            matches.append(Match(fencers[i], fencers[-i]))
+
+    elif mode == "repechage":
+        raise NotImplementedError("Repechage mode not implemented yet") # TODO implement repechage mode
+    elif mode == "placement":
+        raise NotImplementedError("Placement mode not implemented yet") # TODO implement placement mode
+    
+    return matches
+
+
+# ------- Tournament Logic -------
+
+# Creating matches in group stages (preliminary and intermediate)
+def create_group_matches(fencers: list[Fencer], groups: int = None) -> list[Match]:
+    # Create groups
+    groups = assign_groups(fencers, groups)
+
+    # Create matches
+    matches = []
+    for group in groups:
+        matches += matchmaker_groups(group)
+    
+    return matches
+
+
+# ------- Sorting Algorithms -------
+
+# Sorting for Standings and Advanced to next round
+def sorting_fencers(fencers: list[Fencer]) -> list[Fencer]:
+    # Sort fencers by overall score
+    # sort by stage, win percentage, points difference, points for, points against
+    fencers = sorted(fencers, key=lambda fencer: (fencer.stage, fencer.win_percentage(), fencer.points_difference(), fencer.points_for, fencer.points_against), reverse=True)
+
+    return fencers
+
+    
+
+
+
+
+
+# ------- Tournament Class -------
+
 class Tournament:
 
     def __init__(
@@ -38,12 +152,27 @@ class Tournament:
 
         # List of fencers in the preliminary round
         self.preliminary_fencers = []
+        self.preliminary_matches = []
         
         # List of fencers in the intermediate round
         self.intermediate_fencers = []
+        self.intermediate_matches = []
 
         # List of fencers in the elimination round
         self.elimination_fencers = []
+        self.elimination_matches = []
+
+
+    def create_preliminary_round(self) -> None:
+        # Create preliminary round
+        self.preliminary_fencers = self.fencers
+        self.preliminary_matches = create_group_matches(self.preliminary_fencers)
+
+    def create_intermediate_round(self) -> None:
+        # Create intermediate round
+        self.intermediate_fencers = self.fencers[:48]
+        self.intermediate_matches = create_group_matches(self.intermediate_fencers)
+
 
 
 

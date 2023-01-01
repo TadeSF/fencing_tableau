@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DuellingDynasty</title>
+    <link rel="stylesheet" href="static/css/start_form.css">
+  </head>
+  <body>
+    <h1>Setup</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <br>
+        <label for="fencers">Fencers:</label><br>
+        <input type="file" id="fencers" name="fencers" accept=".csv"><br>
+        <br>
+        <label for="location">Location:</label><br>
+        <input type="text" id="location" name="location"><br>
+        <br>
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date"><br>
+        <br>
+        <label for="first_elimination_round">First Elimination Round:</label><br>
+        <select id="first_elimination_round" name="first_elimination_round">
+          <option value="32th">32th</option>
+          <option value="16th">16th</option>
+          <option value="QF">QF</option>
+          <option value="SF">SF</option>
+          <option value="Final">Final</option>
+        </select><br>
+        <br>
+        <label for="elimination_mode">Elimination Mode:</label><br>
+        <select id="elimination_mode" name="elimination_mode">
+          <option value="KO">KO</option>
+          <option value="Repechage">Repechage</option>
+          <option value="Placement">Placement</option>
+        </select><br>
+        <br>
+        <input type="checkbox" id="only_elimination" name="only_elimination">
+        <label for="only_elimination">Only Elimination</label><br>
+        <br>
+        <input type="checkbox" id="no_intermediate" name="no_intermediate">
+        <label for="no_intermediate">No Intermediate</label><br>
+        <br>
+        <input type="submit" value="Submit">
+      </form>
+    <script src="static/js/start_form.js"></script>
+  </body>
+</html>
