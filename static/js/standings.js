@@ -1,66 +1,103 @@
-window.location = "standings.html"
+function get_standings() {
+    fetch('/dashboard/standings/update')
+    .then(response => response.json())
+    .then(response => {
+        let stage = response["stage"]
+        let standings = response["standings"]
+        update_standings(standings, stage)
+    })
+}
 
-// Get the width and height of the screen
-const screenWidth = window.screen.width;
-const screenHeight = window.screen.height;
+function get_flag(country) {
+    return new Promise((resolve, reject) => {
+      // Check if the file is already in cache
+      if (flagCache[country]) {
+        resolve(flagCache[country]);
+        return;
+      }
+  
+      fetch('/static/flags/' + country.toLowerCase() + '.svg')
+        .then(response => response.text())
+        .then(response => {
+          // Add the flag to the cache
+          flagCache[country] = response;
+          resolve(response);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
 
-// Calculate the width and height of the window
-const windowWidth = Math.round(screenWidth * 0.4);
-const windowHeight = screenHeight;
+const flagCache = {};
 
-// Calculate the top and left position of the window
-const windowTop = 0;
-const windowLeft = screenWidth - windowWidth;
+function clearTable(table) {
+    // Get the first row (the row that contains the headers)
+    var firstRow = table.rows[0];
 
-// Resize and move the window
-window.resizeTo(windowWidth, windowHeight);
-window.moveTo(windowLeft, windowTop);
+    // Clear the table, starting from the second row (the first row is the row that contains the headers)
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+}
 
 
-
-function update_standings(rankings, stage) {
-    var standings = document.getElementById('standings_table')
+async function update_standings(rankings, stage) {
+    let standings = document.getElementById('standings_table')
 
     // Change stage headline
-    var stage_item = document.getElementById('stage')
+    let stage_item = document.getElementById('stage')
     stage_item.innerHTML = stage
 
     // Remove all rows from the table
-    //$("#standings_table tr").remove();
+    clearTable(standings);
 
     // Add the new, updated rows
-    for (var i = 0; i < rankings.length; i++) {
-        var row = document.createElement('tr')
-        var rank = document.createElement('td')
-        var nationality = document.createElement('td')
-        var name = document.createElement('td')
-        var club = document.createElement('td')
-        var win_percentage = document.createElement('td')
-        var win_lose = document.createElement('td')
-        var point_difference = document.createElement('td')
-        var points_for = document.createElement('td')
-        var points_against = document.createElement('td')
+    for (const element of rankings) {
+        let row = document.createElement('tr')
+        let rank = document.createElement('td')
+        let nationality = document.createElement('td')
+        let name = document.createElement('td')
+        let club = document.createElement('td')
+        let win_percentage = document.createElement('td')
+        let win_lose = document.createElement('td')
+        let point_difference = document.createElement('td')
+        let points_for = document.createElement('td')
+        let points_against = document.createElement('td')
 
-        var rank_text = document.createTextNode(rankings[i]["rank"])
-        var name_text = document.createTextNode(rankings[i]["name"])
-        var club_text = document.createTextNode(rankings[i]["club"])
+        let rank_text = document.createTextNode(element["rank"])
+        let name_text = document.createTextNode(element["name"])
+        let club_text = document.createTextNode(element["club"])
 
-        if (rankings[i]["flag"] != null) {
-            var flag = document.createElement('div')
+        if (element["nationality"].length == 3) {
+            let flag = document.createElement('div')
             flag.className = "flag"
-            flag.innerHTML = rankings[i]["flag"]
-            flag.querySelector("svg").style.width = "30px"
+            // Load the SVG string from the server
+            let svgString = await get_flag(element["nationality"]);
+
+            // Parse the SVG string into a DocumentFragment
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(svgString, 'image/svg+xml');
+            let svg = doc.querySelector('svg');
+
+            // Append the DocumentFragment to the flag element
+            flag.appendChild(svg);
+
+            // Set the width of the SVG
+            svg.style.width = '30px';
             nationality.appendChild(flag)
         } else {
-            var nationality_text = document.createTextNode(rankings[i]["nationality"])
+            let nationality_text = document.createTextNode(element["nationality"])
             nationality.appendChild(nationality_text)
         }
 
-        var win_percentage_text = document.createTextNode((rankings[i]["win_percentage"] * 100))
-        var win_lose_text = document.createTextNode(rankings[i]["win_lose"])
-        var point_difference_text = document.createTextNode(rankings[i]["point_difference"])
-        var points_for_text = document.createTextNode(rankings[i]["points_for"])
-        var points_against_text = document.createTextNode(rankings[i]["points_against"])
+        let win_percentage_text = document.createTextNode((element["win_percentage"] * 100))
+        if (element["win_lose"] == undefined) {element["win_lose"] = "0-0"}
+        let win_lose_text = document.createTextNode(element["win_lose"])
+        if (element["points_difference"] == undefined || element["points_difference"] == "0") {element["points_difference"] = "±0"}
+        let point_difference_text = document.createTextNode(element["points_difference"])
+        let points_for_text = document.createTextNode(element["points_for"])
+        let points_against_text = document.createTextNode(element["points_against"])
 
 
         rank.appendChild(rank_text)
@@ -90,4 +127,20 @@ function update_standings(rankings, stage) {
     }
 }
 
-eel.expose(update_standings)
+window.onload = function() {
+    get_standings()
+  };
+
+// loop to update the standings every 90 seconds
+setInterval(get_standings, 90000)
+
+window.addEventListener("should_update_standings", receiveMessage, false); // TODO Debug this. The sent message is not received.
+
+function receiveMessage(event) { // TODO Debug this
+    if (event.origin !== window.location.origin) {
+        console.log("Received message from " + event.origin + " but ignored it")
+        return;
+    }
+    get_standings()
+    console.log("Received message from " + event.origin + " to update standings")
+}

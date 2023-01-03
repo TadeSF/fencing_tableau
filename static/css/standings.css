@@ -31,6 +31,21 @@ thead {
     color: rgb(255, 255, 255);
 }
 
+.section_headline_reload {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.section_headline_reload:hover {
+    cursor: pointer;
+    color: blue;
+    transition: 0.3s;
+}
+
+.section_headline_reload:active {
+    color: grey;
+}
+
 .cell-rank {
     text-align: right;
 }

@@ -2,10 +2,10 @@
 <html>
   <head>
     <title>Fencing Tournament Standings</title>
-    <link rel="stylesheet" href="standings.css">
+    <link rel="stylesheet" href="/static/css/standings.css">
   </head>
   <body>
-    <h1>Standings</h1>
+    <h1 onclick="get_standings()" class="section_headline_reload">Standings</h1>
     <h2 id="stage"></h2>
     
     <table id="standings_table">
@@ -27,7 +27,6 @@
       <tfoot>
       </tfoot>
     </table>
-    <script src="eel.js"></script>
-    <script src="standings.js"></script>
+    <script src="/static/js/standings.js"></script>
   </body>
   </html>

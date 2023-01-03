@@ -5,15 +5,14 @@ from enum import Enum
 
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):
-    PRELIMINARY = 0
-    INTERMEDIATE = 1
-    TOP_32 = 2
-    TOP_16 = 3
-    TOP_8 = 4
-    QUARTER_FINALS = 5
-    SEMI_FINALS = 6
-    THIRD_PLACE_FINAL = 7
-    GRAND_FINAL = 8
+    PRELIMINARY = 7
+    INTERMEDIATE = 6
+    TOP_32 = 5
+    TOP_16 = 4
+    QUARTER_FINALS = 3
+    SEMI_FINALS = 2
+    THIRD_PLACE_FINAL = -1
+    GRAND_FINAL = 1
 
 
 
@@ -104,36 +103,41 @@ class Fencer:
 
     # statistics
     def update_statistics(self, win: bool, opponent, points_for: int, points_against: int):
+        if self.stage == Stage.PRELIMINARY or self.stage == Stage.INTERMEDIATE:
+            stage = self.stage.name.lower()
+        else:
+            stage = "elimination"
+
         if win:
             self.statistics["overall"]["wins"] += 1
-            self.statistics[self.stage]["wins"] += 1
+            self.statistics[stage]["wins"] += 1
         else:
             self.statistics["overall"]["losses"] += 1
-            self.statistics[self.stage]["losses"] += 1
+            self.statistics[stage]["losses"] += 1
 
         self.statistics["overall"]["matches"] += 1
         self.statistics["overall"]["points_for"] += points_for
         self.statistics["overall"]["points_against"] += points_against
 
-        self.statistics[self.stage]["matches"] += 1
-        self.statistics[self.stage]["points_for"] += points_for
-        self.statistics[self.stage]["points_against"] += points_against
+        self.statistics[stage]["matches"] += 1
+        self.statistics[stage]["points_for"] += points_for
+        self.statistics[stage]["points_against"] += points_against
 
         self.group_opponents.append(opponent)
 
 
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
-        return round(self.statistics[stage]["wins"] / self.statistics[stage]["matches"], 2)
+        return (round(self.statistics[stage]["wins"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
     def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> str:
         difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
         return str("+" + str(difference) if difference > 0 else str(difference))
 
     def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
-        return round(self.statistics[stage]["points_for"] / self.statistics[stage]["matches"], 2)
+        return (round(self.statistics[stage]["points_for"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
     def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
-        return round(self.statistics[stage]["points_against"] / self.statistics[stage]["matches"], 2)
+        return (round(self.statistics[stage]["points_against"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
 
 

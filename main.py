@@ -3,10 +3,10 @@ from match import *
 from tournament import *
 from fencer import *
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 
 # ------- Global Variables -------
-tournament = None
+tournament: Tournament = None
 
 
 
@@ -41,8 +41,8 @@ def process_form():
     csv_contents = fencers_csv.read().decode('utf-8')
     reader = csv.reader(csv_contents.splitlines())
     for row in reader:
-        print(row)
-        fencers.append(Fencer(row[0], row[1], row[2]))
+        if row[0] != 'Name':
+            fencers.append(Fencer(row[0], row[1], row[2]))
 
     if first_elimination_round_raw == '32th':
         first_elimination_round = 5
@@ -57,14 +57,74 @@ def process_form():
     
     tournament = Tournament(name, fencers, location, date, first_elimination_round, elimination_mode.lower(), only_elimination, no_intermediate)
 
-    print(tournament.name)
-    print(tournament.fencers)
-    print(tournament)
-
-    return redirect(url_for('index'))
+    return redirect(url_for('dashboard'))
 
 
-app.run(debug=True, port=5000)
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@app.route('/dashboard/matches')
+def matches():
+    return render_template('/dashboard/matches.html')
+
+@app.route('/dashboard/matches/update', methods=['GET'])
+def get_matches():
+    global tournament
+    if tournament is None:
+        return jsonify([])
+    return jsonify(tournament.get_matches())
+
+@app.route('/dashboard/matches/generate')
+def generate_matches():
+    global tournament
+    tournament.generate_matches()
+    # Return a 304 to prevent the page from reloading
+    return '', 304
+
+@app.route('/dashboard/matches/set_active', methods=['POST'])
+def set_active():
+    global tournament
+    # Get the match id from application/json response
+    match_id = request.json['id']
+    tournament.set_active(match_id)
+    # Return a 304 to prevent the page from reloading
+    return '', 304
+
+@app.route('/dashboard/matches/push_score', methods=['POST'])
+def push_score():
+    global tournament
+    match_id = request.form['id']
+    green_score = int(request.form['green_score'])
+    red_score = int(request.form['red_score'])
+    tournament.push_score(match_id, green_score, red_score)
+    # Return a 304 to prevent the page from reloading
+    return '', 304
+
+@app.route('/dashboard/standings')
+def standings():
+    return render_template('/dashboard/standings.html')
+
+@app.route('/dashboard/options')
+def options():
+    return render_template('/dashboard/options.html')
+
+@app.route('/dashboard/standings/update', methods=['GET'])
+def get_standings():
+    global tournament
+    if tournament is None:
+        return jsonify([])
+    return jsonify(tournament.get_standings())
+
+
+
+
+
+
+
+
+
+app.run(debug=True, port=8080)
 
 
 

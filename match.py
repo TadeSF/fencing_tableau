@@ -1,6 +1,6 @@
 import random
 from typing import Literal
-from fencer import Fencer, Wildcard
+from fencer import Fencer, Wildcard, Stage
 
 
 class Match:
@@ -12,6 +12,7 @@ class Match:
 
         # Match information
         self.piste = fencing_piste
+        self.match_ongoing = False
         self.match_completed = False
 
         # Fencer Information
@@ -55,11 +56,15 @@ class Match:
         else:
             self.green_score = green_score
             self.red_score = red_score
+            self.match_ongoing = False
             self.match_completed = True
         
             # Update statistics
             self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
             self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
+
+    def set_active(self):
+        self.match_ongoing = True
 
 
 class GroupMatch(Match):

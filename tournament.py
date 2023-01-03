@@ -31,6 +31,7 @@ def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer
             if len(fencers) % 8 > 0:
                 num_of_groups += 1
 
+
     # Assign groups to fencers (randomly, but (hopefully) evenly distributed)
     # TODO – In the best case, there should be no fencers from the same club in the same group
 
@@ -39,10 +40,10 @@ def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer
     # Assign groups to fencers
     counter = 1
     for i in range(0, len(fencers)):
-        if fencers[i].stage == 0:
+        if fencers[i].stage == Stage.PRELIMINARY:
             fencers[i].prelim_group = counter
             grouping[counter - 1].append(fencers[i])
-        elif fencers[i].stage == 1:
+        elif fencers[i].stage == Stage.INTERMEDIATE:
             fencers[i].intermediate_group = counter
             grouping[counter - 1].append(fencers[i])
         counter += 1
@@ -95,7 +96,7 @@ def create_group_matches(fencers: list[Fencer], groups: int = None) -> list[Matc
     # Create matches
     matches = []
     for group in groups:
-        matches += matchmaker_groups(group)
+        matches.append(matchmaker_groups(group))
     
     return matches
 
@@ -106,7 +107,7 @@ def create_group_matches(fencers: list[Fencer], groups: int = None) -> list[Matc
 def sorting_fencers(fencers: list[Fencer]) -> list[Fencer]:
     # Sort fencers by overall score
     # sort by stage, win percentage, points difference, points for, points against
-    fencers = sorted(fencers, key=lambda fencer: (fencer.stage, fencer.win_percentage(), fencer.points_difference(), fencer.points_for, fencer.points_against), reverse=True)
+    fencers = sorted(fencers, key=lambda fencer: (fencer.stage, fencer.win_percentage(), fencer.points_difference(), fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"]), reverse=True)
 
     return fencers
 
@@ -162,6 +163,9 @@ class Tournament:
         self.elimination_fencers = []
         self.elimination_matches = []
 
+        # Stage of the tournament
+        self.stage: Stage = Stage.PRELIMINARY if not only_elimination else Stage(self.elemination_rounds)
+
 
     def create_preliminary_round(self) -> None:
         # Create preliminary round
@@ -172,6 +176,133 @@ class Tournament:
         # Create intermediate round
         self.intermediate_fencers = self.fencers[:48]
         self.intermediate_matches = create_group_matches(self.intermediate_fencers)
+
+
+
+
+    def get_standings(self) -> dict:
+        # Get current standings and return them as a dictionary for the GUI
+        standings = {
+            "stage": self.stage.name,
+            "standings": [],
+        }
+
+        # Sort fencers by overall score
+        fencers = sorting_fencers(self.fencers)
+
+        for fencer in fencers:
+            standings["standings"].append({
+                "rank": fencers.index(fencer) + 1,
+                "name": fencer.name,
+                "club": fencer.club,
+                "nationality": fencer.nationality,
+                "win_percentage": fencer.win_percentage(),
+                "win_lose": f"{fencer.statistics['overall']['wins']} - {fencer.statistics['overall']['losses']}",
+                "points_difference": fencer.points_difference(),
+                "points_for": fencer.statistics["overall"]["points_for"],
+                "points_against": fencer.statistics["overall"]["points_against"],
+            })
+
+        return standings
+
+    def get_matches(self) -> dict:
+        if self.stage == Stage.PRELIMINARY:
+            dictionary = {
+                "stage": self.stage.name,
+                "matches": [],
+            }
+            for group in self.preliminary_matches:
+                for match in group:
+                    dictionary["matches"].append({
+                        "id": match.id,
+                        # Calculate "group" by getting the index of the group in the list of groups and adding 1
+                        "group": self.preliminary_matches.index(group) + 1,
+                        "piste": match.piste,
+                        "green": match.green.name,
+                        "green_nationality": match.green.nationality,
+                        "green_score": match.green_score,
+                        "red": match.red.name,
+                        "red_nationality": match.red.nationality,
+                        "red_score": match.red_score,
+                        "ongoing": match.match_ongoing,
+                        "complete": match.match_completed
+                    })
+            return dictionary
+
+        elif self.stage == Stage.INTERMEDIATE:
+            dictionary = {
+                "stage": self.stage.name,
+                "matches": [],
+            }
+            for match in self.preliminary_matches:
+                dictionary["matches"].append({
+                    "id": match.id,
+                    "group": match.green.intermediate_group,
+                    "piste": match.piste,
+                    "green": match.green,
+                    "green_nationality": match.green.nationality,
+                    "green_score": match.green_score,
+                    "red": match.red,
+                    "red_nationality": match.green.nationality,
+                    "red_score": match.red_score,
+                    "complete": match.match_completed
+                })
+            return dictionary
+        else:
+            dictionary = {
+                "stage": self.stage.name,
+                "matches": [],
+            }
+            for match in self.preliminary_matches:
+                dictionary["matches"].append({
+                    "id": match.id,
+                    "piste": match.piste,
+                    "green": match.green,
+                    "green_nationality": match.green.nationality,
+                    "green_score": match.green_score,
+                    "red": match.red,
+                    "red_nationality": match.green.nationality,
+                    "red_score": match.red_score,
+                    "complete": match.match_completed
+                })
+            return dictionary
+
+
+    def generate_matches(self) -> None:
+        if self.stage == Stage.PRELIMINARY:
+            self.create_preliminary_round()
+
+        elif self.stage == Stage.INTERMEDIATE:
+            self.create_intermediate_round()
+
+        else:
+            raise NotImplementedError # TODO: Implement elimination round
+
+
+    def push_score(self, match_id: int, green_score: int, red_score: int) -> None:
+        if self.stage == Stage.PRELIMINARY or self.stage == Stage.INTERMEDIATE:
+            for group in (self.preliminary_matches + self.intermediate_matches):
+                for match in group:
+                    if match.id == match_id:
+                        match.input_results(green_score, red_score)
+
+        else:
+            for match in self.elimination_matches:
+                if match.id == match_id:
+                    match.input_results(green_score, red_score)
+
+
+    def set_active(self, match_id: int) -> None:
+        if self.stage == Stage.PRELIMINARY or self.stage == Stage.INTERMEDIATE:
+            for group in (self.preliminary_matches + self.intermediate_matches):
+                for match in group:
+                    if match.id == match_id:
+                        match.set_active()
+
+        else:
+            for match in self.elimination_matches:
+                if match.id == match_id:
+                    match.set_active()
 
 
 

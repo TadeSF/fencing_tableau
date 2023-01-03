@@ -35,8 +35,102 @@ thead {
     color: #ffffff;
 }
 
-.cell-button {
-    background-color: rgb(174, 174, 174);
+#prompt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 30px;
+    box-shadow: 5px 5px 0px grey;
+}
+
+
+#form_greenScore {
+    background-color: green;
+    color: white;
+    text-align: center;
+    border-radius: 30px;
+    outline: none;
+    border: 1px solid #000000;
+}
+
+#form_greenScore::placeholder {
+    color: lightgreen;
+}
+
+#form_redScore {
+    background-color: red;
+    color: white;
+    text-align: center;
+    border-radius: 30px;
+    outline: none;
+    border: 1px solid #000000;
+}
+
+#form_redScore::placeholder {
+    color: rgb(255, 193, 193);
+}
+
+#submit_score {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+    border-radius: 30px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#submit_score:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+#submit_score:active {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#closePrompt {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid red;
+    border-radius: 30px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#closePrompt:hover {
+    background-color: red;
+    color: #ffffff;
+}
+
+#closePrompt:active {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+
+.section_headline_reload {
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.section_headline_reload:hover {
+    cursor: pointer;
+    color: blue;
+    transition: 0.3s;
+}
+
+.section_headline_reload:active {
+    color: grey;
+}
+
+.cell_button {
     color: rgb(255, 255, 255);
     border: none;
     padding: 5px 10px;
@@ -49,10 +143,22 @@ thead {
     transition: 0.3s;
 }
 
-.cell-button:hover {
-    background-color: rgb(255, 255, 255);
+.cell_button:hover {
+    background-color: rgb(214, 214, 214);
     color: rgb(0, 0, 0);
     transition: 0.3s;
+}
+
+.cell_button-start {
+    background-color: rgb(0, 0, 255);
+}
+
+.cell_button-ongoing {
+    background-color: rgb(255, 165, 0);
+}
+
+.cell_button-finished {
+    background-color: rgb(0, 126, 0);
 }
 
 .cell-id {
