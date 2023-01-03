@@ -7,9 +7,9 @@ import time
 import csv_util
 from fencer import *
 from match import *
-from elimination_tree import *
-from standing import *
-from prelim_groups import PreliminaryGroup
+from deprecated.elimination_tree import *
+from deprecated.standing import *
+from deprecated.prelim_groups import PreliminaryGroup
 
 
 
