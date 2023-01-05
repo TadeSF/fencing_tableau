@@ -144,3 +144,7 @@ function receiveMessage(event) { // TODO Debug this
     get_standings()
     console.log("Received message from " + event.origin + " to update standings")
 }
+
+window.onerror = function(error, url, line) {
+  alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
+};

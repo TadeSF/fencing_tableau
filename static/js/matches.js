@@ -271,3 +271,7 @@ function match_set_active(id) {
         console.log(error)
     })
 }
+
+window.onerror = function(error, url, line) {
+    alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
+  };
