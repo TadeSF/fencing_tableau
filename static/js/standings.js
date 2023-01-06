@@ -9,25 +9,25 @@ function get_standings() {
 }
 
 function get_flag(country) {
-    return new Promise((resolve, reject) => {
-      // Check if the file is already in cache
-      if (flagCache[country]) {
-        resolve(flagCache[country]);
-        return;
-      }
-  
-      fetch('/static/flags/' + country.toLowerCase() + '.svg')
-        .then(response => response.text())
-        .then(response => {
-          // Add the flag to the cache
-          flagCache[country] = response;
-          resolve(response);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
+  return new Promise((resolve, reject) => {
+    // Check if the file is already in cache
+    if (flagCache[country]) {
+      resolve(flagCache[country]);
+      return;
+    }
+
+    fetch('/static/flags/' + country.toLowerCase() + '.svg')
+      .then(response => response.text())
+      .then(response => {
+        // Add the flag to the cache
+        flagCache[country] = response;
+        resolve(response);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
 
 const flagCache = {};
 

@@ -5,23 +5,91 @@
     <link rel="stylesheet" href="static/css/index.css">
   </head>
   <body>
-    <div class="container">
-      <div class="card">
-        <div class="card-header">
-          <h1>Fencing Tournament App</h1>
-        </div>
-        <div class="card-body">
-          <p>Welcome to the DuellingDynasty App, the ultimate tool for managing small and informal fencing tournaments at a club level!</p>
-          <ul>
-            <li>Support for preliminary and intermediate rounds with individual groups</li>
-            <li>Direct elimination</li>
-            <li>Placement matches and repechage options</li>
-            <li>Seeded and random seeding options</li>
-          </ul>
-          <button class="button" id="start_tournament" onclick="window.location.href='/start_form'">Start Tournament</button>
-          <script src="static/js/index.js"></script>
-        </div>
+    <header>
+      <img src="static/img/landing_hero.jpg" alt="Fencer">
+      <div class="copyright_text">Foto von <a href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a> auf <a href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></div>
+      <div class="hero_text">
+        <h1>Focus on FENCING,<br>not on organizing</h1>
+        <p class="header-text">DuellingDynasty helps you create and manage the fencing tournament of your dreams.</p>
+        <button class="cta-button" id="start_tournament" onclick="new_tournament()">Start Tournament</button>
+      </div>
+    </header>
+    <main>
+        <h1>Easily organize and manage FENCING TOURNAMENTS</h1>
+        <p>DuellingDynasty makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, repechage and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
+        
+        <h1>How it works</h1>
+        <p>DuellingDynasty is a Python-based application that hosts a webserver in a local (wifi) network. This way, it is possible for everyone to see current standings and matches from their mobile devices. It just needs one person as a host with a computer.</p>
+        <a href="https://github.com/TadeSF/fencing_tableau" class="cta-button">View Project on Github</a>
+
+    </main>
+    <section>
+        <h2>What people are saying</h2>
+        <blockquote>
+            <p>"This web app has revolutionized the way we run our tournaments. It's user-friendly, reliable, and has saved us countless hours of work."</p>
+            <cite>- John Doe, Tournament Director</cite>
+        </blockquote>
+        <blockquote>
+            <p>"As a fencer, I love the real-time score updates and being able to see my results immediately after my match. This web app has definitely improved the tournament experience for all of us."</p>
+            <cite>- Jane Doe, Competitive Fencer</cite>
+        </blockquote>
+    </section>
+    <footer>
+        <ul>
+            <li>Contact: info@fencingtournamentwebapp.com</li>
+            <li>Follow us on:
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></li>
+        </ul>
+    </footer>
+    <div id="new_tournament_form">
+      <div id="form_container">
+        <form method="POST" enctype="multipart/form-data" id="start_form">
+          <input type="text" id="name" name="name" placeholder="Tournament Name"><br>
+          <input type="text" id="location" name="location" placeholder="Location"><br>
+          <br>
+          <label for="fencers">Fencers:</label>
+          <input type="file" id="fencers" name="fencers" accept=".csv"><br>
+          <br>
+          <label for="first_elimination_round">First Elimination Round:</label>
+          <select id="first_elimination_round" name="first_elimination_round">
+            <option value="default">Calculate automaticly</option>
+            <option value="128th">128th</option>
+            <option value="64th">64th</option>
+            <option value="32th">32th</option>
+            <option value="16th">16th</option>
+            <option value="QF">QF</option>
+            <option value="SF">SF</option>
+            <option value="Final">Final</option>
+          </select><br>
+          <br>
+          <label for="elimination_mode">Elimination Mode:</label>
+          <select id="elimination_mode" name="elimination_mode">
+            <option value="KO">KO</option>
+            <option value="Repechage">Repechage</option>
+            <option value="Placement">Placement</option>
+          </select><br>
+          <br>
+          <div class="checkbox_container">
+            <div class="form_flex">
+              <input type="checkbox" id="only_elimination" name="only_elimination">
+              <label for="only_elimination">Only Elimination</label><br>
+            </div>
+            <div class="form_flex">
+              <input type="checkbox" id="no_intermediate" name="no_intermediate">
+              <label for="no_intermediate">No Intermediate</label><br>
+            </div>
+          </div>
+          <br>
+          <button type="submit" value="submit">Create Tournament</button>
+        </form>
       </div>
     </div>
+    <script src="static/js/index.js"></script>
   </body>
 </html>
