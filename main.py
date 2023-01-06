@@ -1,4 +1,5 @@
 import csv
+import os
 from match import *
 from tournament import *
 from fencer import *
@@ -13,23 +14,27 @@ tournament: Tournament = None
 # ------- Flask -------
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/')
 def index():
     # render a template
     return render_template('index.html')
+    
+@app.route('/2')
+def index2():
+    # render a template
+    return render_template('index2.html')
 
-@app.route('/start_form')
-def start_form():
-    return render_template('start_form.html')
-
-@app.route('/start_form', methods=['POST'])
+@app.route('/', methods=['POST'])
 def process_form():
     global tournament
 
     name = request.form['name']
     fencers_csv = request.files['fencers']
     location = request.form['location']
-    date = request.form['date']
     first_elimination_round_raw = request.form['first_elimination_round']
     elimination_mode = request.form['elimination_mode']
     only_elimination = 'only_elimination' in request.form
@@ -55,7 +60,7 @@ def process_form():
     elif first_elimination_round_raw == 'Final':
         first_elimination_round = 1
     
-    tournament = Tournament(name, fencers, location, date, first_elimination_round, elimination_mode.lower(), only_elimination, no_intermediate)
+    tournament = Tournament(name, fencers, location, first_elimination_round, elimination_mode.lower(), only_elimination, no_intermediate)
 
     return redirect(url_for('dashboard'))
 

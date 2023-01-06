@@ -5,14 +5,18 @@ from enum import Enum
 
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):
-    PRELIMINARY = 7
-    INTERMEDIATE = 6
+    PRELIMINARY_ROUND = -1
+    TOP_256 = 8
+    TOP_128 = 7
+    TOP_64 = 6
     TOP_32 = 5
     TOP_16 = 4
     QUARTER_FINALS = 3
     SEMI_FINALS = 2
-    THIRD_PLACE_FINAL = -1
     GRAND_FINAL = 1
+
+    def __str__(self):
+        return self.name.replace("_", " ").title()
 
 
 
@@ -49,8 +53,8 @@ class Fencer:
         self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
 
         # Stage information
-        self.stage: Stage = Stage.PRELIMINARY # Tracks the advancement of the fencer (to determine standings)
-        
+        self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
+
 
         # Statistics
         self.statistics = {
@@ -61,13 +65,22 @@ class Fencer:
                 "points_for": 0,
                 "points_against": 0
             },
-            "preliminary": {
+            "preliminary": [
+                {
                 "matches": 0,
                 "wins": 0,
                 "losses": 0,
                 "points_for": 0,
                 "points_against": 0
-            },
+                },
+                {
+                "matches": 0,
+                "wins": 0,
+                "losses": 0,
+                "points_for": 0,
+                "points_against": 0
+                }
+            ],
             "intermediate": {
                 "matches": 0,
                 "wins": 0,
@@ -103,7 +116,7 @@ class Fencer:
 
     # statistics
     def update_statistics(self, win: bool, opponent, points_for: int, points_against: int):
-        if self.stage == Stage.PRELIMINARY or self.stage == Stage.INTERMEDIATE:
+        if self.stage == Stage.PRELIMINARY_ROUND or self.stage == Stage.INTERMEDIATE:
             stage = self.stage.name.lower()
         else:
             stage = "elimination"
