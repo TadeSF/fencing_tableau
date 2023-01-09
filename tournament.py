@@ -362,7 +362,7 @@ class Tournament:
             "num_prelim_groups": self.num_preliminary_groups if self.num_preliminary_groups != None else len(set([match.group for match in self.preliminary_matches[0]])),
             "num_prelim_rounds": self.num_preliminary_rounds,
             "elimination_mode": self.elimination_mode.upper(),
-            "first_elimination_round": self.first_elimination_round,
+            "first_elimination_round": self.elimination_first_stage.name.replace("_", " ").title(),
             "num_wildcards": 0, # TODO Implement when relevant
             "num_pistes": len(self.pistes),
             "num_matches": len(self.preliminary_matches[self.preliminary_stage - 1]) if self.stage == Stage.PRELIMINARY_ROUND else len(self.elimination_matches), # TODO Implement calculation for all matches
@@ -406,3 +406,20 @@ class Tournament:
             for match in self.elimination_matches:
                 if match.id == match_id:
                     match.set_active()
+
+    def get_matches_left(self) -> str:
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            return str(len([match for match in self.preliminary_matches[self.preliminary_stage - 1] if not match.match_completed]))
+        else:
+            return str(len([match for match in self.elimination_matches if not match.match_completed]))
+
+    def next_stage(self) -> None:
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            self.preliminary_stage += 1
+            if self.preliminary_stage > self.num_preliminary_rounds:
+                self.stage = self.elimination_first_stage
+                self.create_elimination_round()
+            else:
+                self.create_preliminary_round()
+        else:
+            raise NotImplementedError

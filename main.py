@@ -144,6 +144,22 @@ def get_standings(tournament_id):
         return jsonify([])
     return jsonify(tournament.get_standings())
 
+@app.route('/<tournament_id>/matches-left', methods=['GET'])
+def matches_left(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        return get_tournament(tournament_id).get_matches_left()
+
+@app.route('/<tournament_id>/next-stage')
+def next_stage(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        get_tournament(tournament_id).next_stage()
+        return '', 200
+
+
 
 
 

@@ -39,3 +39,20 @@ window.onload = function() {
     // Wait for 2 seconds
     setTimeout(function() {update()}, 1000);
 }
+
+function advance() {
+    fetch('matches-left')
+    .then(response => response.text())
+    .then(response => {
+        if (response === "0") {
+            fetch('next-stage')
+            .then(response => {
+                if (response.status === 200) {
+                    setTimeout(function() {update()}, 1000);
+                }
+            })
+        } else {
+            alert("There are still matches left to be completed!")
+        }
+    })
+}

@@ -202,3 +202,13 @@ td {
 .divider td {
     border-top: 1px solid #fff;
 }
+
+#Advance {
+    background-color: #00b900;
+    color: #ffffff;
+}
+
+#Advance:hover {
+    background-color: #007b00;
+    color: #ffffff;
+}
