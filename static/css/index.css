@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: margin-mvb, sans-serif;
     margin: 0;
 }
 
@@ -46,6 +46,7 @@ header img {
     width: 50%;
     height: 100%;
     object-fit: cover;
+    align-self: right;
 }
 
 header img::before {
@@ -107,6 +108,11 @@ main p {
     background-color: #444;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         transition: 0.3s;
+}
+
+.cta-button:nth-of-type(2),
+.cta-button:nth-of-type(3) {
+    margin-top: 0;
 }
 
 section {
@@ -181,7 +187,9 @@ footer ul ul li {
 }
 
 
-#new_tournament_form {
+#new_tournament_form,
+#login_manager_form,
+#login_fencer_form {
     transition: all 0.5s ease-in-out;
     display:none;
     position: fixed;
@@ -192,13 +200,21 @@ footer ul ul li {
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 99;
 }
-#form_container {
+.form_container {
     position:fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     height: 90%;
     z-index: 100;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    overflow: scroll;
+}
+
+div::-webkit-scrollbar {
+  width: 0;
+  background-color: transparent;
 }
 
 /* General form styles */
@@ -206,7 +222,7 @@ form {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    width: 400px;
+    width: 600px;
     margin: 0 auto;
     padding: 1em;
     text-align: center;
@@ -227,7 +243,8 @@ form {
   /* Form input styles */
   form input[type="text"],
   form input[type="email"],
-  form input[type="password"] {
+  form input[type="password"],
+  form input[type="number"] {
     width: 100%;
     padding: 0.8em;
     font-size: 1em;
@@ -240,7 +257,8 @@ form {
   }
   form input[type="text"]:focus,
   form input[type="email"]:focus,
-  form input[type="password"]:focus {
+  form input[type="password"]:focus,
+  form input[type="number"]:focus {
     border-color: #e71818;
     box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
     text-align: center;
@@ -379,4 +397,9 @@ form input[type="date"] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.number_container {
+  margin-left: 2em;
+  margin-right: 2em;
 }

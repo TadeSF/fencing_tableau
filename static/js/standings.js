@@ -1,5 +1,5 @@
 function get_standings() {
-    fetch('/dashboard/standings/update')
+    fetch('standings/update')
     .then(response => response.json())
     .then(response => {
         let stage = response["stage"]
@@ -132,7 +132,7 @@ window.onload = function() {
   };
 
 // loop to update the standings every 90 seconds
-setInterval(get_standings, 90000)
+setInterval(get_standings, 60000)
 
 window.addEventListener("should_update_standings", receiveMessage, false); // TODO Debug this. The sent message is not received.
 

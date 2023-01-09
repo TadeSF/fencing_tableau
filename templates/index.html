@@ -3,15 +3,18 @@
   <head>
     <title>DuellingDynasty</title>
     <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
   </head>
   <body>
     <header>
-      <img src="static/img/landing_hero.jpg" alt="Fencer">
+      <img src="/static/img/landing_hero.jpg" alt="Fencer">
       <div class="copyright_text">Foto von <a href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a> auf <a href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></div>
       <div class="hero_text">
         <h1>Focus on FENCING,<br>not on organizing</h1>
         <p class="header-text">DuellingDynasty helps you create and manage the fencing tournament of your dreams.</p>
-        <button class="cta-button" id="start_tournament" onclick="new_tournament()">Start Tournament</button>
+        <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">Start Tournament</button>
+        <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
+        <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
       </div>
     </header>
     <main>
@@ -48,25 +51,60 @@
         </ul>
     </footer>
     <div id="new_tournament_form">
-      <div id="form_container">
+      <div class="form_container">
         <form method="POST" enctype="multipart/form-data" id="start_form">
-          <input type="text" id="name" name="name" placeholder="Tournament Name"><br>
+          <input type="text" id="name" name="name" placeholder="Tournament Name" required><br>
           <input type="text" id="location" name="location" placeholder="Location"><br>
           <br>
           <label for="fencers">Fencers:</label>
-          <input type="file" id="fencers" name="fencers" accept=".csv"><br>
+          <input type="file" id="fencers" name="fencers" accept=".csv" required><br>
           <br>
-          <label for="first_elimination_round">First Elimination Round:</label>
-          <select id="first_elimination_round" name="first_elimination_round">
-            <option value="default">Calculate automaticly</option>
-            <option value="128th">128th</option>
-            <option value="64th">64th</option>
-            <option value="32th">32th</option>
-            <option value="16th">16th</option>
-            <option value="QF">QF</option>
-            <option value="SF">SF</option>
-            <option value="Final">Final</option>
-          </select><br>
+          <lable for="pistes">Number of Fencing Pistes:</lable>
+          <input type="number" id="pistes" name="pistes" min="1" max="20" required><br>
+          <br>
+          <div class="form_flex">
+            <div class="number_container">
+              <label for="number_of_preliminary_rounds">Preliminary Rounds:</label>
+              <select id="number_of_preliminary_rounds" name="number_of_preliminary_rounds">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="0">None</option>
+              </select>
+            </div>
+            <div class="number_container">
+              <label for="number_of_preliminary_groups">Preliminary Groups:</label>
+              <select id="number_of_preliminary_groups" name="number_of_preliminary_groups">
+                <option value="0">Auto</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </div>
+            <div class="number_container">
+              <label for="first_elimination_round">First Elimination Round:</label>
+              <select id="first_elimination_round" name="first_elimination_round">
+                <option value="0">Auto</option>
+                <option value="128">Round of 128</option>
+                <option value="64">Round of 64</option>
+                <option value="32">Round of 32</option>
+                <option value="16">Round of 16</option>
+                <option value="8">Quarter Finals</option>
+                <option value="4">Semi Finals</option>
+                <option value="2">Final</option>
+              </select>
+            </div>
+          </div>
           <br>
           <label for="elimination_mode">Elimination Mode:</label>
           <select id="elimination_mode" name="elimination_mode">
@@ -75,21 +113,52 @@
             <option value="Placement">Placement</option>
           </select><br>
           <br>
-          <div class="checkbox_container">
+          <!-- <div class="checkbox_container">
             <div class="form_flex">
               <input type="checkbox" id="only_elimination" name="only_elimination">
-              <label for="only_elimination">Only Elimination</label><br>
+              <label for="only_elimination">Dummy</label><br>
             </div>
             <div class="form_flex">
               <input type="checkbox" id="no_intermediate" name="no_intermediate">
-              <label for="no_intermediate">No Intermediate</label><br>
+              <label for="no_intermediate">Dummy2</label><br>
             </div>
           </div>
+          <br> -->
+          <label for="pw">Master Password</label>
+          <input type="password" id="pw" name="pw" placeholder="Password" required><br>
           <br>
           <button type="submit" value="submit">Create Tournament</button>
         </form>
       </div>
     </div>
-    <script src="static/js/index.js"></script>
+    <div id="login_manager_form">
+      <div class="form_container">
+        <form method="POST" enctype="multipart/form-data" id="master_login_form" action="/login-manager">
+          <label for="tournament_id">Login with Tournament ID</label>
+          <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
+          <br>
+          <input type="password" id="pw" name="pw" placeholder="Password" required><br>
+          <br>
+          <button type="submit" value="submit">Login</button>
+        </form>
+      </div>
+    </div>
+    <div id="login_fencer_form">
+      <div class="form_container">
+        <form method="POST" enctype="multipart/form-data" id="fencer_login_form" action="/login-fencer">
+          <label for="tournament_id">Login with Tournament ID</label>
+          <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
+          <br>
+          <label for="fencer_id">Input your Start Number</label>
+          <input type="number" id="fencer_id" name="fencer_id" placeholder="Starting Number" required><br>
+          <br>
+          <label for="fencer_name">Input your Name</label>
+          <input type="text" id="fencer_name" name="fencer_name" placeholder="Name" required><br>
+          <br>
+          <button type="submit" value="submit">Login</button>
+        </form>
+      </div>
+    </div>
+    <script src="/static/js/index.js"></script>
   </body>
 </html>

@@ -6,6 +6,8 @@ from enum import Enum
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):
     PRELIMINARY_ROUND = -1
+    TOP_1024 = 10
+    TOP_512 = 9
     TOP_256 = 8
     TOP_128 = 7
     TOP_64 = 6
@@ -23,7 +25,7 @@ class Stage(Enum):
 # Main Class for every individual fencer
 class Fencer:
 
-    def __init__(self, name: str, club: str = None, nationailty: str = None):
+    def __init__(self, name: str, club: str = None, nationailty: str = None, start_number: int = None, num_prelim_rounds: int = 1):
         # Start number
         self.start_number = None
 
@@ -65,37 +67,28 @@ class Fencer:
                 "points_for": 0,
                 "points_against": 0
             },
-            "preliminary": [
-                {
-                "matches": 0,
-                "wins": 0,
-                "losses": 0,
-                "points_for": 0,
-                "points_against": 0
-                },
-                {
-                "matches": 0,
-                "wins": 0,
-                "losses": 0,
-                "points_for": 0,
-                "points_against": 0
-                }
+            "preliminary_round": [
+
             ],
-            "intermediate": {
-                "matches": 0,
-                "wins": 0,
-                "losses": 0,
-                "points_for": 0,
-                "points_against": 0
-            },
-            "elimination": {
-                "matches": 0,
-                "wins": 0,
-                "losses": 0,
-                "points_for": 0,
-                "points_against": 0
-            }
+            "elimination": [
+                {
+                    "matches": 0,
+                    "wins": 0,
+                    "losses": 0,
+                    "points_for": 0,
+                    "points_against": 0
+                }
+            ]
         }
+
+        for _ in range(num_prelim_rounds):
+            self.statistics["preliminary_round"].append({
+                "matches": 0,
+                "wins": 0,
+                "losses": 0,
+                "points_for": 0,
+                "points_against": 0
+            })
 
 
 
@@ -115,26 +108,26 @@ class Fencer:
 
 
     # statistics
-    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int):
-        if self.stage == Stage.PRELIMINARY_ROUND or self.stage == Stage.INTERMEDIATE:
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
+        if self.stage == Stage.PRELIMINARY_ROUND:
             stage = self.stage.name.lower()
         else:
             stage = "elimination"
 
         if win:
             self.statistics["overall"]["wins"] += 1
-            self.statistics[stage]["wins"] += 1
+            self.statistics[stage][round]["wins"] += 1
         else:
             self.statistics["overall"]["losses"] += 1
-            self.statistics[stage]["losses"] += 1
+            self.statistics[stage][round]["losses"] += 1
 
         self.statistics["overall"]["matches"] += 1
         self.statistics["overall"]["points_for"] += points_for
         self.statistics["overall"]["points_against"] += points_against
 
-        self.statistics[stage]["matches"] += 1
-        self.statistics[stage]["points_for"] += points_for
-        self.statistics[stage]["points_against"] += points_against
+        self.statistics[stage][round]["matches"] += 1
+        self.statistics[stage][round]["points_for"] += points_for
+        self.statistics[stage][round]["points_against"] += points_against
 
         self.group_opponents.append(opponent)
 
@@ -173,5 +166,5 @@ class Wildcard(Fencer):
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
         raise(TypeError("Wildcard has no statistics like a normal fencer"))
 
-    def update_statistics(self, win: bool, points_for: int, points_against: int):
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
         raise(TypeError("Wildcard has no statistics like a normal fencer"))

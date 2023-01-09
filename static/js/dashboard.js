@@ -1,5 +1,8 @@
 function generate_matches() {
-    fetch('/dashboard/matches/generate')
+    url = window.location.href
+    id = url.split("/")[3]
+    console.log(id)
+    fetch('matches/generate')
 }
 
 window.onerror = function(error, url, line) {

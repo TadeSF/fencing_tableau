@@ -1,10 +1,9 @@
 function get_matches() {
-    fetch('/dashboard/matches/update')
+    fetch('matches/update')
     .then(response => response.json())
     .then(response => {
-        let stage = response["stage"]
         let matches = response["matches"]
-        update_matches(matches, stage)
+        update_matches(matches)
     })
 }
 
@@ -51,10 +50,6 @@ function parseSVG(svgString) {
 
 async function update_matches(matches, stage) {
     let matches_table = document.getElementById('matches_table')
-
-    // Change stage headline
-    let stage_item = document.getElementById('stage')
-    stage_item.innerHTML = stage
 
     // Remove all rows from the table
 
@@ -230,7 +225,7 @@ function push_score(id, green_score, red_score) {
     data.append('green_score', green_score);
     data.append('red_score', red_score);
 
-    fetch('/dashboard/matches/push_score', {
+    fetch('matches/push_score', {
         method: 'POST',
         body: data
     })
@@ -251,7 +246,7 @@ function match_set_active(id) {
     // send JSON to server (POST)
     let data = {}
     data["id"] = id
-    fetch('/dashboard/matches/set_active', { 
+    fetch('matches/set_active', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -259,12 +254,16 @@ function match_set_active(id) {
         body: JSON.stringify(data)
     })
     .then(response => {
-        let button = document.getElementById("button_" + id)
-        button.innerHTML = "Input Score"
-        button.classList.add("cell_button-ongoing")
-        button.classList.remove("cell_button-start")
-        button.onclick = function() {
-            openPromptWindow(this.parentNode.childNodes[0].innerHTML)
+        if (response.ok) {
+            let button = document.getElementById("button_" + id)
+            button.innerHTML = "Input Score"
+            button.classList.add("cell_button-ongoing")
+            button.classList.remove("cell_button-start")
+            button.onclick = function() {
+                openPromptWindow(this.parentNode.childNodes[0].innerHTML)
+            }
+        } else {
+            alert("A match on the same piste is already ongoing")
         }
     })
     .catch(error => {

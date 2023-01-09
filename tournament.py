@@ -1,6 +1,7 @@
 import math
 from fencer import *
 from match import *
+from piste import Piste
 
 from typing import Literal, List
 
@@ -41,12 +42,8 @@ def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer
     # Assign groups to fencers
     counter = 1
     for i in range(0, len(fencers)):
-        if fencers[i].stage == Stage.PRELIMINARY_ROUND:
-            fencers[i].prelim_group = counter
-            grouping[counter - 1].append(fencers[i])
-        elif fencers[i].stage == Stage.INTERMEDIATE:
-            fencers[i].intermediate_group = counter
-            grouping[counter - 1].append(fencers[i])
+        fencers[i].prelim_group = counter
+        grouping[counter - 1].append(fencers[i])
         counter += 1
         if counter > num_of_groups:
             counter = 1
@@ -56,14 +53,14 @@ def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer
 
 # ------- Matchmaking Logic -------
 
-def matchmaker_groups(fencers: list[Fencer]) -> list[Match]:
+def matchmaker_groups(fencers: list[Fencer], stage: Stage, prelim_round: int) -> list[Match]:
     # Create matchups
     matches = []
 
     # Every fencer fences against every other fencer
     for i in range(0, len(fencers)):
         for j in range(i + 1, len(fencers)):
-            matches.append(Match(fencers[i], fencers[j]))
+            matches.append(Match(fencers[i], fencers[j], stage, prelim_round=prelim_round))
 
     return matches
 
@@ -87,17 +84,23 @@ def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "plac
 
 # ------- Tournament Logic -------
 
-# Creating matches in group stages (preliminary and intermediate)
-def create_group_matches(fencers: List[List[Fencer]], groups: int = None) -> list[Match]:
+# Creating matches with groupings in preliminary round
+def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int = None, prelim_round: int = None) -> list[Match]:
     # Create groups
     groups = assign_groups(fencers, groups)
 
+    all_matches = []
+
     # Create matches
-    matches = []
     for group in groups:
-        matches.append(matchmaker_groups(group))
+        group_matches = matchmaker_groups(group, stage, prelim_round=prelim_round)
+
+        for match in group_matches:
+            match.group = group[0].prelim_group
+            all_matches.append(match)
     
-    return matches
+    return all_matches
+
 
 
 # ------- Sorting Algorithms -------
@@ -109,6 +112,42 @@ def sorting_fencers(fencers: list[Fencer]) -> list[Fencer]:
     fencers = sorted(fencers, key=lambda fencer: (fencer.stage, fencer.win_percentage(), fencer.points_difference(), fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"]), reverse=True)
 
     return fencers
+
+
+def sort_matchups_in_preliminary_round(fencers: list[Fencer], matches: list[Match]) -> list[Match]:
+    # The matches in the preliminary round are sorted in the most diverse way possible. Idealy, no fencer should have two matches back to back.
+    # Initialize the dictionary of wait times
+    wait_times = {}
+    for fencer in fencers:
+        if fencer.name not in wait_times:
+            wait_times[fencer.name] = 0
+
+    sorted_matches = []
+
+    while matches != []:
+        # Iterate over the matches
+        for match in matches:
+            # The match with the highest sum of wait time is chosen
+            if wait_times[match.green.name] + wait_times[match.red.name] >= max([wait_times[fencer.name] for fencer in match]) + 1:
+                # The match is removed from the list
+                matches.remove(match)
+
+                # The wait times of the fencers are reset
+                wait_times[match.green.name] = -10
+                wait_times[match.red.name] = -10
+
+                # The match is added to the list of sorted matches
+                sorted_matches.append(match)
+            
+            else:
+                # The wait times of the fencers are updated
+                wait_times[match.green.name] += 1
+                wait_times[match.red.name] += 1
+
+    for id in range(1, len(sorted_matches) + 1):
+        sorted_matches[id - 1].sorting_id = id
+
+    return sorted_matches
 
 
 # Algorithm to set up next tree node (for the elimination tree)
@@ -156,53 +195,61 @@ class Tournament:
 
     def __init__(
         self,
+        id: str,
         name: str,
         fencers: list[Fencer],
-        location: str = None,
-        date: str = None,
-        num_preliminary_rounds: int = 1,
-        num_preliminary_groups: int = None,
-        max_elimination_rounds: int = None,
-        elimination_mode: Literal["ko", "repechage", "placement"] = "ko",
-        only_elimination: bool = False,
+        location: str,
+        num_preliminary_rounds: str,
+        num_preliminary_groups: str,
+        first_elimination_round: str,
+        elimination_mode: Literal["ko", "repechage", "placement"],
+        number_of_pistes: str
         ):
 
-        # Name of the tournament
+        # Tournament information
+        self.id = id
         self.name = name
-        
-        # Location and date of the tournament
         self.location = location
-        self.date = date
 
         # List of fencers in the tournament
         self.fencers = fencers
 
         # Custumizable tournament procedures
-        self.num_preliminary_rounds = num_preliminary_rounds
-        self.num_preliminary_groups = num_preliminary_groups
-        self.max_elimination_rounds = max_elimination_rounds
+        self.num_preliminary_rounds = int(num_preliminary_rounds) if num_preliminary_rounds != "0" else None
+        self.num_preliminary_groups = int(num_preliminary_groups) if num_preliminary_groups != "0" else None
+        self.first_elimination_round = int(first_elimination_round) if first_elimination_round != "0" else None
         self.elimination_mode = elimination_mode
-        self.only_elimination = only_elimination
+        self.only_elimination = True if self.num_preliminary_rounds == 0 else False
+
+        # Pistes
+        self.num_pistes: int = int(number_of_pistes)
+        self.pistes: list[Piste] = []
+        for i in range(self.num_pistes):
+            self.pistes.append(Piste(i + 1))
 
         # --------------------
 
         # List of fencers in the preliminary round
         self.preliminary_fencers = []
-        self.preliminary_matches = []
+        self.preliminary_matches = [list() for _ in range(self.num_preliminary_rounds)] # 2D list of Preliminary Rounds -> Matches
 
         # List of fencers in the elimination round
-        self.elimination_fencers = [[]]
-        self.elimination_matches = []
+        self.elimination_fencers = [[]] # 2D list of Advanded Fencers / Eliminated Fencers for KO and Placement
+        self.elimination_matches = [] 
 
         # Stage of the tournament
-        self.elimination_first_stage = Stage(math.ceil(math.log2(len(fencers)))) if self.max_elimination_rounds == None else Stage(self.max_elimination_rounds)
+        self.elimination_first_stage = Stage(math.ceil(math.log2(len(fencers)))) if self.first_elimination_round == None else Stage(math.log2(self.first_elimination_round))
+        self.preliminary_stage = 1 if self.num_preliminary_rounds != None else None
         self.stage: Stage = Stage.PRELIMINARY_ROUND if not self.only_elimination else self.elimination_first_stage
 
 
     def create_preliminary_round(self) -> None:
         # Create preliminary round
         self.preliminary_fencers = self.fencers
-        self.preliminary_matches = create_group_matches(self.preliminary_fencers)
+        self.preliminary_matches[self.preliminary_stage - 1] = create_group_matches(self.preliminary_fencers, self.stage, prelim_round=self.preliminary_stage - 1)
+        self.preliminary_matches[self.preliminary_stage - 1] = sort_matchups_in_preliminary_round(self.preliminary_fencers ,self.preliminary_matches[self.preliminary_stage - 1])
+        self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
+
 
     def create_next_elimination_round(self) -> None:
         # Create next (or first) elimination round
@@ -210,18 +257,26 @@ class Tournament:
         # If it is the first elimination round, sort the fencers by overall score and append them to the elimination fencers list
         if self.elimination_matches == []:
             self.elimination_fencers = [sorting_fencers(self.fencers)]
-            if self.max_elimination_rounds != None:
-                self.elimination_fencers = self.elimination_fencers[(self.max_elimination_rounds ** 2):] # TODO Continue here
+            if self.first_elimination_round != None:
+                self.elimination_fencers = self.elimination_fencers[(self.first_elimination_round ** 2):] # TODO Continue here
         else:
             self.elimination_fencers = next_tree_node(self.elimination_fencers, self.elimination_mode)
 
         self.elimination_matches = matchmaker_elimination(self.elimination_fencers, self.elimination_mode)
 
+    def assign_pistes(self, matches: list[Match]):
+        for piste in self.pistes:
+            if not piste.staged:
+                for match in matches:
+                    if match.piste == None:
+                        match.assign_piste(piste)
+                        break
+
 
     def get_standings(self) -> dict:
         # Get current standings and return them as a dictionary for the GUI
         standings = {
-            "stage": self.stage.name,
+            "stage": self.stage.name.replace("_", " ") + f" {self.preliminary_stage}",
             "standings": [],
         }
 
@@ -246,46 +301,26 @@ class Tournament:
     def get_matches(self) -> dict:
         if self.stage == Stage.PRELIMINARY_ROUND:
             dictionary = {
-                "stage": self.stage.name,
+                "stage": self.stage.name.replace("_", " ") + f" {self.preliminary_stage}",
                 "matches": [],
             }
-            for group in self.preliminary_matches:
-                for match in group:
-                    dictionary["matches"].append({
-                        "id": match.id,
-                        # Calculate "group" by getting the index of the group in the list of groups and adding 1
-                        "group": self.preliminary_matches.index(group) + 1,
-                        "piste": match.piste,
-                        "green": match.green.name,
-                        "green_nationality": match.green.nationality,
-                        "green_score": match.green_score,
-                        "red": match.red.name,
-                        "red_nationality": match.red.nationality,
-                        "red_score": match.red_score,
-                        "ongoing": match.match_ongoing,
-                        "complete": match.match_completed
-                    })
-            return dictionary
-
-        elif self.stage == Stage.INTERMEDIATE:
-            dictionary = {
-                "stage": self.stage.name,
-                "matches": [],
-            }
-            for match in self.preliminary_matches:
+            for match in self.preliminary_matches[self.preliminary_stage - 1]:
                 dictionary["matches"].append({
                     "id": match.id,
-                    "group": match.green.intermediate_group,
-                    "piste": match.piste,
-                    "green": match.green,
+                    # Calculate "group" by getting the index of the group in the list of groups and adding 1
+                    "group": match.group,
+                    "piste": match.piste_str,
+                    "green": match.green.name,
                     "green_nationality": match.green.nationality,
                     "green_score": match.green_score,
-                    "red": match.red,
-                    "red_nationality": match.green.nationality,
+                    "red": match.red.name,
+                    "red_nationality": match.red.nationality,
                     "red_score": match.red_score,
+                    "ongoing": match.match_ongoing,
                     "complete": match.match_completed
                 })
             return dictionary
+
         else:
             dictionary = {
                 "stage": self.stage.name,
@@ -294,7 +329,7 @@ class Tournament:
             for match in self.preliminary_matches:
                 dictionary["matches"].append({
                     "id": match.id,
-                    "piste": match.piste,
+                    "piste": match.piste_str,
                     "green": match.green,
                     "green_nationality": match.green.nationality,
                     "green_score": match.green_score,
@@ -310,34 +345,35 @@ class Tournament:
         if self.stage == Stage.PRELIMINARY_ROUND:
             self.create_preliminary_round()
 
-        elif self.stage == Stage.INTERMEDIATE:
-            self.create_intermediate_round()
-
         else:
             raise NotImplementedError # TODO: Implement elimination round
 
 
     def push_score(self, match_id: int, green_score: int, red_score: int) -> None:
-        if self.stage == Stage.PRELIMINARY_ROUND or self.stage == Stage.INTERMEDIATE:
-            for group in (self.preliminary_matches + self.intermediate_matches):
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            for group in (self.preliminary_matches):
                 for match in group:
                     if match.id == match_id:
                         match.input_results(green_score, red_score)
+            self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
+                        
 
         else:
             for match in self.elimination_matches:
                 if match.id == match_id:
                     match.input_results(green_score, red_score)
+            self.assign_pistes(self.elimination_matches)
 
 
     def set_active(self, match_id: int) -> None:
-        if self.stage == Stage.PRELIMINARY_ROUND or self.stage == Stage.INTERMEDIATE:
-            for group in (self.preliminary_matches + self.intermediate_matches):
-                for match in group:
-                    if match.id == match_id:
-                        match.set_active()
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
+            for match in self.preliminary_matches[self.preliminary_stage - 1]:
+                if match.id == match_id:
+                    match.set_active()
 
         else:
+            self.assign_pistes(self.elimination_matches)
             for match in self.elimination_matches:
                 if match.id == match_id:
                     match.set_active()

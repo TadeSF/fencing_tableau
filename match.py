@@ -1,17 +1,24 @@
 import random
 from typing import Literal
-from fencer import Fencer, Wildcard, Stage
+
+from fencer import Fencer, Stage, Wildcard
+from piste import Piste
+import random_generator
 
 
 class Match:
 
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int = None):
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None, group: str = None, prelim_round: int=0):
 
         # ID
-        self.id = ''.join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", k=6))
+        self.id = random_generator.id(12)
+        self.sorting_id = self.id
+        
+        # Group
+        self.group = None
 
         # Match information
-        self.piste = fencing_piste
+        self.piste: Piste = None
         self.match_ongoing = False
         self.match_completed = False
 
@@ -19,10 +26,16 @@ class Match:
         self.green = fencer_green
         self.red = fencer_red
 
+        # Stage information
+        self.stage = stage
+        self.prelim_round = prelim_round
+
         # Score
         self.green_score = 0
         self.red_score = 0
 
+    def __iter__(self):
+        return iter([self.green, self.red])
 
     # Statistics
     @property
@@ -43,6 +56,10 @@ class Match:
         else:
             raise ValueError("No loser yet")
 
+    @property
+    def piste_str(self) -> str:
+        return str(self.piste.number) if self.piste != None else "TBA"
+
 
     # Input Results
     def input_results(self, green_score: int, red_score: int):
@@ -60,11 +77,21 @@ class Match:
             self.match_completed = True
         
             # Update statistics
-            self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
-            self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
+            self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
+            self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
+
+            # Free Piste
+            self.piste.match_finished()
+
 
     def set_active(self):
+        self.piste.match_started()
         self.match_ongoing = True
+
+    def assign_piste(self, piste: Piste):
+        self.piste = piste
+        self.piste.staged = True
+
 
 
 class GroupMatch(Match):
