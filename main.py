@@ -71,7 +71,7 @@ def login_manager():
     global tournament_cache
     tournament_id = request.form['tournament_id']
     if not check_tournament_exists(tournament_id):
-        return 404
+        return '', 404
     else:
         return redirect(url_for('dashboard', tournament_id=tournament_id))
 
@@ -80,14 +80,20 @@ def login_fencer():
     # TODO Implement
     return 404
 
-
-
 @app.route('/<tournament_id>/dashboard')
 def dashboard(tournament_id):
     if not check_tournament_exists(tournament_id):
         return redirect(url_for('index'))
     else:
         return render_template('dashboard.html', tournament_id=tournament_id)
+
+@app.route('/<tournament_id>/dashboard/update', methods=['GET'])
+def get_dashboard_infos(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        tournament = get_tournament(tournament_id)
+    return jsonify(tournament.get_dashboard_infos())
 
 @app.route('/<tournament_id>/matches')
 def matches(tournament_id):
@@ -102,13 +108,6 @@ def get_matches(tournament_id):
     if tournament is None:
         return jsonify([])
     return jsonify(tournament.get_matches())
-
-@app.route('/<tournament_id>/matches/generate')
-def generate_matches(tournament_id):
-    print("Generating Matches for: " + tournament_id)
-    tournament = get_tournament(tournament_id)
-    tournament.generate_matches()
-    return '', 200
 
 @app.route('/<tournament_id>/matches/set_active', methods=['POST'])
 def set_active(tournament_id):

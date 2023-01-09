@@ -232,16 +232,19 @@ thead {
 .fencer-div-green {
     /* Inherit from fencer-div */
     justify-content: flex-end;
-    padding-right: 10px;    
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 .fencer-div-red {
     /* Inherit from fencer-div */
     justify-content: flex-start;
     padding-left: 10px;
+    padding-right: 10px;
 }
 
 .flag {
     width: 20px;
-    margin-right: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
 }

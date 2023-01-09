@@ -242,6 +242,12 @@ class Tournament:
         self.preliminary_stage = 1 if self.num_preliminary_rounds != None else None
         self.stage: Stage = Stage.PRELIMINARY_ROUND if not self.only_elimination else self.elimination_first_stage
 
+        # Create preliminary round
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            self.create_preliminary_round()
+        else:
+            pass #TODO Create Elimination only
+
 
     def create_preliminary_round(self) -> None:
         # Create preliminary round
@@ -271,6 +277,10 @@ class Tournament:
                     if match.piste == None:
                         match.assign_piste(piste)
                         break
+        print("Piste 1:", self.pistes[0].staged)
+        print("Piste 2:", self.pistes[1].staged)
+        print("Piste 3:", self.pistes[2].staged)
+        print("Piste 4:", self.pistes[3].staged)
 
 
     def get_standings(self) -> dict:
@@ -339,6 +349,25 @@ class Tournament:
                     "complete": match.match_completed
                 })
             return dictionary
+
+    
+    def get_dashboard_infos(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "location": self.location,
+            "stage": self.stage.name.replace("_", " ").title() + (f" {self.preliminary_stage}" if self.stage == Stage.PRELIMINARY_ROUND else ""),
+            "num_fencers": len(self.fencers),
+            "num_clubs": len(set([fencer.club for fencer in self.fencers])),
+            "num_prelim_groups": self.num_preliminary_groups if self.num_preliminary_groups != None else len(set([match.group for match in self.preliminary_matches[0]])),
+            "num_prelim_rounds": self.num_preliminary_rounds,
+            "elimination_mode": self.elimination_mode.upper(),
+            "first_elimination_round": self.first_elimination_round,
+            "num_wildcards": 0, # TODO Implement when relevant
+            "num_pistes": len(self.pistes),
+            "num_matches": len(self.preliminary_matches[self.preliminary_stage - 1]) if self.stage == Stage.PRELIMINARY_ROUND else len(self.elimination_matches), # TODO Implement calculation for all matches
+            "num_matches_completed": len([match for match in self.preliminary_matches[self.preliminary_stage - 1] if match.match_completed]) if self.stage == Stage.PRELIMINARY_ROUND else len([match for match in self.elimination_matches if match.match_completed]), # TODO Implement calculation for all matches
+        }
 
 
     def generate_matches(self) -> None:

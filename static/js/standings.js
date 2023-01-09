@@ -2,9 +2,8 @@ function get_standings() {
     fetch('standings/update')
     .then(response => response.json())
     .then(response => {
-        let stage = response["stage"]
         let standings = response["standings"]
-        update_standings(standings, stage)
+        update_standings(standings)
     })
 }
 
@@ -42,12 +41,8 @@ function clearTable(table) {
 }
 
 
-async function update_standings(rankings, stage) {
+async function update_standings(rankings) {
     let standings = document.getElementById('standings_table')
-
-    // Change stage headline
-    let stage_item = document.getElementById('stage')
-    stage_item.innerHTML = stage
 
     // Remove all rows from the table
     clearTable(standings);
@@ -134,16 +129,15 @@ window.onload = function() {
 // loop to update the standings every 90 seconds
 setInterval(get_standings, 60000)
 
-window.addEventListener("should_update_standings", receiveMessage, false); // TODO Debug this. The sent message is not received.
-
-function receiveMessage(event) { // TODO Debug this
-    if (event.origin !== window.location.origin) {
-        console.log("Received message from " + event.origin + " but ignored it")
-        return;
-    }
-    get_standings()
-    console.log("Received message from " + event.origin + " to update standings")
-}
+// Listen for messages from the parent window
+window.addEventListener('message', function(event) {
+  // Check if the message is 'callFunction'
+  if (event.data === 'update') {
+    // Call the function
+    get_standings();
+    console.log("Updating standings")
+  }
+});
 
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);

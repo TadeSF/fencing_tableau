@@ -48,7 +48,7 @@ function parseSVG(svgString) {
     return svg;
 }
 
-async function update_matches(matches, stage) {
+async function update_matches(matches) {
     let matches_table = document.getElementById('matches_table')
 
     // Remove all rows from the table
@@ -123,8 +123,8 @@ async function update_matches(matches, stage) {
         green_flag.appendChild(green_svg); // Add the green_svg element to green_flag
         green_fencer_div.classList.add("fencer-div-green")
         green_fencer_div.classList.add("fencer-div")
-        green_fencer_div.appendChild(green_flag)
         green_fencer_div.appendChild(green_fencer_text)
+        green_fencer_div.appendChild(green_flag)
         green_fencer.appendChild(green_fencer_div)
         
         let red_fencer_text = document.createTextNode(element["red"])
@@ -162,10 +162,6 @@ async function update_matches(matches, stage) {
         matches_table.appendChild(row)
     }
 }
-
-window.onload = function() {
-    get_matches()
-};
 
 
 function openPromptWindow(id) {
@@ -270,6 +266,16 @@ function match_set_active(id) {
         console.log(error)
     })
 }
+
+// Listen for messages from the parent window
+window.addEventListener('message', function(event) {
+    // Check if the message is 'callFunction'
+    if (event.data === 'update') {
+      // Call the function
+      get_matches();
+    }
+  });
+
 
 window.onerror = function(error, url, line) {
     alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);

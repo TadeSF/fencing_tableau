@@ -11,18 +11,19 @@
                 <div id="options_frame" class="flex-item-options" width="100%" height="100%">
                     <div>
                         <div id="main_id_container">
-                            <div id="main_id_text">JPE60C</div>
+                            <div id="main_id_text">!XXXXXX!</div>
                             <div id="main_id_description">Tournament ID</div>
                         </div>
                         <div class="button-column">
-                            <button id="generate_matches" onclick="generate_matches()">Generate Matches</button>
                             <button id="Advance">Advance to next Stage</button>
+                            <button id="Update" onclick="update()">Update everything</button>
                         </div>
                     </div>
                     <div class="options_column">
-                        <div id="Tournament_Name">Tournament</div>
-                        <div id="Tournament_Location">Location</div>
-                        <div id="Tournament_Stage">PRELIMINARY ROUND 1 / 2</div>
+                        <div id="Tournament_Name">!Tournament!</div>
+                        <div id="Tournament_Location">!Location!</div>
+                        <div id="Tournament_Stage">!Round!</div>
+                        <div id="elimination_mode">Elimination Mode:<br></div>
                     </div>
                     <div id="statistics_table_container">
                         <table>
@@ -33,51 +34,48 @@
                             </thead>
                             <tr>
                                 <td>Fencers</td>
-                                <td>0</td>
+                                <td id="num_fencers">0</td>
                             </tr>
                             <tr>
                                 <td>Clubs</td>
-                                <td>0</td>
+                                <td id="num_clubs">0</td>
                             </tr>
                             <tr class="divider">
                                 <td>Preliminary Groups</td>
-                                <td>0</td>
+                                <td id="num_prelim_groups">0</td>
                             </tr>
                             <tr>
                                 <td>Preliminary Rounds</td>
-                                <td>0</td>
+                                <td id="num_prelim_rounds">0</td>
                             </tr>
-                            <tr class="divider">
-                                <td>Elimination Mode</td>
-                                <td>Placements</td>
-                            </tr>
-                            <tr>
+                            <tr class="devider">
                                 <td>First Elimination Round</td>
-                                <td>0</td>
+                                <td id="first_elimination_round">0</td>
                             </tr> 
                             <tr>
                                 <td>Wildcards</td>
-                                <td>0</td>
+                                <td id="num_wildcards">0</td>
                             </tr>
                             <tr class="divider">
                                 <td>Pistes</td>
-                                <td>0</td>
+                                <td id="num_pistes">0</td>
                             </tr>
                             <tr class="divider">
                                 <td>Matches</td>
-                                <td>0</td>
+                                <td id="num_matches">0</td>
                             </tr>
                             <tr>
                                 <td>Matches Completed</td>
-                                <td>0</td>
+                                <td id="num_matches_completed">0</td>
                             </tr>
                         </table>
                     </div>
                 </div>
-                <iframe src="matches" id="matches_frame" class="flex-item-matches" width="100%" height="100%"></iframe>
+                <iframe src="matches" id="matches_frame" class="flex-item-matches" width="100%"></iframe>
             </div>
             <div class="flex-column-2">
-                <iframe src="standings" id="standings_frame" class="flex-item-standings" width="100%" height="100%"></iframe>
+                <iframe src="standings" id="standings_frame" class="flex-item-standings" width="100%"></iframe>
+                <div style="height: 10px;"></div>
             </div>
         </div>
     <script src="/static/js/dashboard.js"></script>
