@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fencing Tournament Standings</title>
+    <link rel="stylesheet" href="/static/css/standings.css">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+  </head>
+  <body>
+    <div id="header">
+      <h1 onclick="get_standings()" class="section_headline_reload">Standings</h1>
+      <h2 id="stage"></h2>
+    </div>
+    
+    <table id="standings_table">
+      <thead>
+        <tr>
+          <th width="30px" style="text-align: right;">#</th>
+          <th width="20px"></th>
+          <th style="text-align: left;">Name</th>
+          <th>Club</th>
+          <th>W%</th>
+          <th>W - L</th>
+          <th>PD</th>
+          <th>P+</th>
+          <th>P-</th>
+        </tr>
+      </thead>
+      <tbody id="main_standings">
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+    <script src="/static/js/standings.js"></script>
+  </body>
+  </html>

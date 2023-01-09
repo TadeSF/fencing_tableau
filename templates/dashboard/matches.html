@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fencing Tournament Matches</title>
+    <link rel="stylesheet" href="/static/css/matches.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+  </head>
+  <body>
+    <div id="header">
+      <h1 onclick="get_matches()" class="section_headline_reload">Current Matches</h1>
+    </div>
+    <div style="height: 70px;"></div>
+    
+    <table id="matches_table">
+      <thead>
+        <tr>
+          <th style="display: none;">#</th>
+          <th>Group</th>
+          <th>Piste</th>
+          <th style="text-align: right; background-color: #008000; padding-right: 10px;">Green</th>
+          <th width="40px" style="background: rgb(0,128,0); background: linear-gradient(90deg, rgba(0,128,0,1) 10%, rgba(255,0,0,1) 90%);"></th>
+          <th style="text-align: left; background-color: #ff0000; padding-left: 10px;">Red</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="matches">
+      </tbody>
+      <tfoot>
+      </tfoot>
+    </table>
+    <div id="prompt">
+      <form id="form" style="display: flex; flex-direction: row;">
+        <input type="text" id="form_id" name="form_id"  style="display: none;">
+        <input type="text" id="form_greenScore" name="form_greenScore" placeholder="Green Fencer Score" pattern="^(0|[1-9]|[1-2][0-9])$">
+        <p>   :   </p>
+        <input type="text" id="form_redScore" name="form_redScore" placeholder="Red Fencer Score">
+        <button type="submit" id="submit_score">Submit</button>
+        <button type="button" id="closePrompt" onclick="closePromptWindow()"><i class="fa-solid fa-xmark"></i></button>
+      </form>
+    </div>
+    <script src="/static/js/matches.js"></script>
+  </body>
+  </html>

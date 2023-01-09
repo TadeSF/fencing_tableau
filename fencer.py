@@ -1,10 +1,31 @@
 import json
+from typing import Literal
+
+from enum import Enum
+
+# Enum for the different advancement stages of a fencer
+class Stage(Enum):
+    PRELIMINARY_ROUND = -1
+    TOP_1024 = 10
+    TOP_512 = 9
+    TOP_256 = 8
+    TOP_128 = 7
+    TOP_64 = 6
+    TOP_32 = 5
+    TOP_16 = 4
+    QUARTER_FINALS = 3
+    SEMI_FINALS = 2
+    GRAND_FINAL = 1
+
+    def __str__(self):
+        return self.name.replace("_", " ").title()
+
 
 
 # Main Class for every individual fencer
 class Fencer:
 
-    def __init__(self, name: str, club: str = None, nationailty: str = None):
+    def __init__(self, name: str, club: str = None, nationailty: str = None, start_number: int = None, num_prelim_rounds: int = 1):
         # Start number
         self.start_number = None
 
@@ -26,13 +47,49 @@ class Fencer:
 
         self.nationality = nationailty
 
+        # Grouping information
         self.prelim_group = None
+        self.intermediate_group = None
+
+        # Past opponents (for repechage)
+        self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
+
+        # Stage information
+        self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
+
 
         # Statistics
-        self.wins = 0
-        self.losses = 0
-        self.points_for = 0
-        self.points_against = 0
+        self.statistics = {
+            "overall": {
+                "matches": 0,
+                "wins": 0,
+                "losses": 0,
+                "points_for": 0,
+                "points_against": 0
+            },
+            "preliminary_round": [
+
+            ],
+            "elimination": [
+                {
+                    "matches": 0,
+                    "wins": 0,
+                    "losses": 0,
+                    "points_for": 0,
+                    "points_against": 0
+                }
+            ]
+        }
+
+        for _ in range(num_prelim_rounds):
+            self.statistics["preliminary_round"].append({
+                "matches": 0,
+                "wins": 0,
+                "losses": 0,
+                "points_for": 0,
+                "points_against": 0
+            })
+
 
 
     def __str__(self) -> str:
@@ -51,31 +108,44 @@ class Fencer:
 
 
     # statistics
-    def update_statistics(self, win: bool, points_for: int, points_against: int):
-        if win:
-            self.wins += 1
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            stage = self.stage.name.lower()
         else:
-            self.losses += 1
+            stage = "elimination"
 
-        self.points_for += points_for
-        self.points_against += points_against
+        if win:
+            self.statistics["overall"]["wins"] += 1
+            self.statistics[stage][round]["wins"] += 1
+        else:
+            self.statistics["overall"]["losses"] += 1
+            self.statistics[stage][round]["losses"] += 1
 
-    @property
-    def win_percentage(self) -> float:
-        return round(self.wins / (self.wins + self.losses), 2)
-    
-    @property
-    def points_difference(self) -> str:
-        difference = self.points_for - self.points_against
+        self.statistics["overall"]["matches"] += 1
+        self.statistics["overall"]["points_for"] += points_for
+        self.statistics["overall"]["points_against"] += points_against
+
+        self.statistics[stage][round]["matches"] += 1
+        self.statistics[stage][round]["points_for"] += points_for
+        self.statistics[stage][round]["points_against"] += points_against
+
+        self.group_opponents.append(opponent)
+
+
+    def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
+        return (round(self.statistics[stage]["wins"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
+
+    def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> str:
+        difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
         return str("+" + str(difference) if difference > 0 else str(difference))
 
-    @property
-    def points_per_game(self) -> float:
-        return round(self.points_for / (self.wins + self.losses), 2)
+    def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
+        return (round(self.statistics[stage]["points_for"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
-    @property
-    def points_against_per_game(self) -> float:
-        return round(self.points_against / (self.wins + self.losses), 2)
+    def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
+        return (round(self.statistics[stage]["points_against"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
+
+
 
 
 class Wildcard(Fencer):
@@ -83,3 +153,18 @@ class Wildcard(Fencer):
         super().__init__("Wildcard")
         self.wildcard_number = wildcard_number
         self.start_number = 0
+
+    def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        raise(TypeError("Wildcard has no statistics like a normal fencer"))
+
+    def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        raise(TypeError("Wildcard has no statistics like a normal fencer"))
+
+    def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        raise(TypeError("Wildcard has no statistics like a normal fencer"))
+
+    def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        raise(TypeError("Wildcard has no statistics like a normal fencer"))
+
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
+        raise(TypeError("Wildcard has no statistics like a normal fencer"))

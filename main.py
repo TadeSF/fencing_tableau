@@ -1,0 +1,156 @@
+import csv
+import os
+from match import *
+from tournament import *
+from fencer import *
+from piste import PisteError, Piste
+
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+
+# ------- Tournament Cache -------
+tournament_cache: list[Tournament] = []
+
+def get_tournament(tournament_id) -> Tournament:
+    global tournament_cache
+    for tournament in tournament_cache:
+        if tournament.id == tournament_id:
+            return tournament
+    return None
+
+def check_tournament_exists(tournament_id) -> bool:
+    global tournament_cache
+    for tournament in tournament_cache:
+        if tournament.id == tournament_id:
+            return True
+    return False
+
+
+
+# ------- Flask -------
+app = Flask(__name__, static_folder='static', template_folder='templates')
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/')
+def index():
+    # render a template
+    return render_template('index.html')
+
+@app.route('/', methods=['POST'])
+def process_form():
+    global tournament_cache
+
+    name = request.form['name']
+    fencers_csv = request.files['fencers']
+    location = request.form['location']
+    num_pistes = request.form['pistes']
+    first_elimination_round = request.form['first_elimination_round']
+    elimination_mode = request.form['elimination_mode']
+    preliminary_rounds = request.form['number_of_preliminary_rounds']
+    preliminary_groups = request.form['number_of_preliminary_groups']
+
+    # do something with the form data
+
+    fencers = []
+    csv_contents = fencers_csv.read().decode('utf-8')
+    reader = csv.reader(csv_contents.splitlines())
+    for row in reader:
+        if row[0] != 'Name':
+            fencers.append(Fencer(row[0], row[1], row[2]))
+
+    random_id = random_generator.id(6)
+    
+    tournament_cache.append(Tournament(random_id, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes))
+
+    return redirect(url_for('dashboard', tournament_id=random_id))
+
+@app.route('/login-manager', methods=['POST'])
+def login_manager():
+    global tournament_cache
+    tournament_id = request.form['tournament_id']
+    if not check_tournament_exists(tournament_id):
+        return 404
+    else:
+        return redirect(url_for('dashboard', tournament_id=tournament_id))
+
+@app.route('/login-fencer', methods=['POST'])
+def login_fencer():
+    # TODO Implement
+    return 404
+
+
+
+@app.route('/<tournament_id>/dashboard')
+def dashboard(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return redirect(url_for('index'))
+    else:
+        return render_template('dashboard.html', tournament_id=tournament_id)
+
+@app.route('/<tournament_id>/matches')
+def matches(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        return render_template('/dashboard/matches.html')
+
+@app.route('/<tournament_id>/matches/update', methods=['GET'])
+def get_matches(tournament_id):
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return jsonify([])
+    return jsonify(tournament.get_matches())
+
+@app.route('/<tournament_id>/matches/generate')
+def generate_matches(tournament_id):
+    print("Generating Matches for: " + tournament_id)
+    tournament = get_tournament(tournament_id)
+    tournament.generate_matches()
+    return '', 200
+
+@app.route('/<tournament_id>/matches/set_active', methods=['POST'])
+def set_active(tournament_id):
+    try:
+        tournament = get_tournament(tournament_id)
+        # Get the match id from application/json response
+        match_id = request.json['id']
+        tournament.set_active(match_id)
+        return '', 200
+    except PisteError:
+        return '', 400
+
+@app.route('/<tournament_id>/matches/push_score', methods=['POST'])
+def push_score(tournament_id):
+    tournament = get_tournament(tournament_id)
+    match_id = request.form['id']
+    green_score = int(request.form['green_score'])
+    red_score = int(request.form['red_score'])
+    tournament.push_score(match_id, green_score, red_score)
+    # Return a 304 to prevent the page from reloading
+    return '', 304
+
+@app.route('/<tournament_id>/standings')
+def standings(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        return render_template('/dashboard/standings.html')
+
+@app.route('/<tournament_id>/standings/update', methods=['GET'])
+def get_standings(tournament_id):
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return jsonify([])
+    return jsonify(tournament.get_standings())
+
+
+
+
+
+
+
+
+
+app.run(debug=True, port=8080)
