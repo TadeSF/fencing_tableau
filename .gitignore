@@ -1,2 +1,5 @@
 __pycache__
 .DS_Store
+test.py
+notes.py
+tournaments/
