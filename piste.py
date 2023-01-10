@@ -25,4 +25,3 @@ class Piste:
             raise PisteError("This Piste is already/still occupied")
         self.occupied = True
         self.staged = False
-        print(f"Piste {self.number} started")

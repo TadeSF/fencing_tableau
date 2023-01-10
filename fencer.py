@@ -20,6 +20,10 @@ class Stage(Enum):
     def __str__(self):
         return self.name.replace("_", " ").title()
 
+    def next_stage(self):
+        if self.value != 1:
+            return Stage(self.value - 1)
+
 
 
 # Main Class for every individual fencer
@@ -27,7 +31,7 @@ class Fencer:
 
     def __init__(self, name: str, club: str = None, nationailty: str = None, start_number: int = None, num_prelim_rounds: int = 1):
         # Start number
-        self.start_number = None
+        self.start_number = start_number
 
         # Fencer information
         self.name = name
@@ -51,11 +55,19 @@ class Fencer:
         self.prelim_group = None
         self.intermediate_group = None
 
+        # Elimination Value
+        self.elimination_value = None # This Index is used for calculating the next opponent in the elimination stage
+        self.last_match_won = False
+
         # Past opponents (for repechage)
         self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
 
         # Stage information
         self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
+
+        # Final Rank
+        self.final_rank = None
+
 
 
         # Statistics
@@ -103,8 +115,9 @@ class Fencer:
             string_to_return = f"{self.start_number} {self.name}"
         return string_to_return
 
+    @property
     def short_str(self) -> str:
-        return f"{self.start_number} {self.name}"
+        return f"{self.start_number}   {self.name}"
 
 
     # statistics
@@ -117,9 +130,11 @@ class Fencer:
         if win:
             self.statistics["overall"]["wins"] += 1
             self.statistics[stage][round]["wins"] += 1
+            self.last_match_won = True
         else:
             self.statistics["overall"]["losses"] += 1
             self.statistics[stage][round]["losses"] += 1
+            self.last_match_won = False
 
         self.statistics["overall"]["matches"] += 1
         self.statistics["overall"]["points_for"] += points_for
@@ -132,12 +147,16 @@ class Fencer:
         self.group_opponents.append(opponent)
 
 
-    def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
-        return (round(self.statistics[stage]["wins"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
+    def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> int:
+        return int(round((self.statistics[stage]["wins"]*1.0) / (self.statistics[stage]["matches"]*1.0)*100) if self.statistics[stage]["matches"] != 0 else 0)
 
     def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> str:
         difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
         return str("+" + str(difference) if difference > 0 else str(difference))
+    
+    def points_difference_int(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> int:
+        difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
+        return int(difference)
 
     def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
         return (round(self.statistics[stage]["points_for"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
@@ -150,7 +169,7 @@ class Fencer:
 
 class Wildcard(Fencer):
     def __init__(self, wildcard_number: int):
-        super().__init__("Wildcard")
+        super().__init__("Wildcard", nationailty="WLD")
         self.wildcard_number = wildcard_number
         self.start_number = 0
 

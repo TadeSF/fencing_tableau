@@ -7,6 +7,21 @@ from piste import PisteError, Piste
 
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 
+# ------- Pickeling -------
+import pickle
+
+def save_tournament(tournament: Tournament):
+    with open(f'tournaments/{tournament.id}.pickle', 'wb') as f:
+        pickle.dump(tournament, f)
+
+def load_all_tournaments():
+    for file in os.listdir('tournaments'):
+        if file.endswith('.pickle'):
+            with open(f'tournaments/{file}', 'rb') as f:
+                tournament = pickle.load(f)
+                tournament_cache.append(tournament)
+
+
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
 
@@ -23,6 +38,7 @@ def check_tournament_exists(tournament_id) -> bool:
         if tournament.id == tournament_id:
             return True
     return False
+
 
 
 
@@ -56,9 +72,12 @@ def process_form():
     fencers = []
     csv_contents = fencers_csv.read().decode('utf-8')
     reader = csv.reader(csv_contents.splitlines())
+    i = 1
     for row in reader:
         if row[0] != 'Name':
-            fencers.append(Fencer(row[0], row[1], row[2]))
+            fencers.append(Fencer(row[0], row[1], row[2], i))
+            i += 1
+
 
     random_id = random_generator.id(6)
     
@@ -116,6 +135,7 @@ def set_active(tournament_id):
         # Get the match id from application/json response
         match_id = request.json['id']
         tournament.set_active(match_id)
+        save_tournament(tournament)
         return '', 200
     except PisteError:
         return '', 400
@@ -127,6 +147,7 @@ def push_score(tournament_id):
     green_score = int(request.form['green_score'])
     red_score = int(request.form['red_score'])
     tournament.push_score(match_id, green_score, red_score)
+    save_tournament(tournament)
     # Return a 304 to prevent the page from reloading
     return '', 304
 
@@ -157,6 +178,16 @@ def next_stage(tournament_id):
         return '', 404
     else:
         get_tournament(tournament_id).next_stage()
+        return '', 200
+
+
+
+@app.route('/<tournament_id>/simulate-current')
+def simulate_current(tournament_id):
+    if not check_tournament_exists(tournament_id):
+        return '', 404
+    else:
+        get_tournament(tournament_id).simulate_current()
         return '', 200
 
 

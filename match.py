@@ -8,7 +8,7 @@ import random_generator
 
 class Match:
 
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None, group: str = None, prelim_round: int=0):
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None):
 
         # ID
         self.id = random_generator.id(12)
@@ -21,6 +21,7 @@ class Match:
         self.piste: Piste = None
         self.match_ongoing = False
         self.match_completed = False
+        self.wildcard = False
 
         # Fencer Information
         self.green = fencer_green
@@ -28,11 +29,11 @@ class Match:
 
         # Stage information
         self.stage = stage
-        self.prelim_round = prelim_round
 
         # Score
         self.green_score = 0
         self.red_score = 0
+
 
     def __iter__(self):
         return iter([self.green, self.red])
@@ -77,8 +78,12 @@ class Match:
             self.match_completed = True
         
             # Update statistics
-            self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
-            self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
+            if type(self) == EliminationMatch:
+                self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
+                self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
+            else:
+                self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
+                self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
 
             # Free Piste
             self.piste.match_finished()
@@ -95,23 +100,23 @@ class Match:
 
 
 class GroupMatch(Match):
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, group_number = None, fencing_piste: int = None):
-        super().__init__(fencer_green, fencer_red, fencing_piste)
-        self.group_number = group_number
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None, group: str = None, prelim_round: int=0):
+        super().__init__(fencer_green, fencer_red, stage, fencing_piste)
+        self.group = group
+        self.prelim_round = prelim_round
 
 
 class EliminationMatch(Match):
-    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, fencing_piste: int = None):
-        super().__init__(fencer_green, fencer_red, fencing_piste)
-
-        # If the match is a wildcard match, the other fencer is automatically the winner
-        self.wildcard = False
+    def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None):
+        super().__init__(fencer_green, fencer_red, stage, fencing_piste)
 
         if self.green.name == "Wildcard":
             self.match_completed = True
             self.red_score = 1
             self.wildcard = True
+            self.red.last_match_won = True
         elif self.red.name == "Wildcard":
             self.match_completed = True
             self.green_score = 1
             self.wildcard = True
+            self.green.last_match_won = True

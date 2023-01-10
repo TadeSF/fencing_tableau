@@ -52,7 +52,20 @@ function advance() {
                 }
             })
         } else {
-            alert("There are still matches left to be completed!")
+            if (response.status === 404) {
+                alert("The Tournament does not exist!")
+            } else {
+                alert("There are still matches left to be completed!")
+            }
+        }
+    })
+}
+
+function simulate() {
+    fetch('simulate-current')
+    .then(response => {
+        if (response.status === 200) {
+            setTimeout(function() {update()}, 1000);
         }
     })
 }

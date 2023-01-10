@@ -86,7 +86,7 @@ async function update_standings(rankings) {
             nationality.appendChild(nationality_text)
         }
 
-        let win_percentage_text = document.createTextNode((element["win_percentage"] * 100))
+        let win_percentage_text = document.createTextNode(element["win_percentage"])
         if (element["win_lose"] == undefined) {element["win_lose"] = "0-0"}
         let win_lose_text = document.createTextNode(element["win_lose"])
         if (element["points_difference"] == undefined || element["points_difference"] == "0") {element["points_difference"] = "±0"}
