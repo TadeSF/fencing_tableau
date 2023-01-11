@@ -1,0 +1,25 @@
+.. fencing_tableau documentation master file, created by
+   sphinx-quickstart on Wed Jan 11 13:22:45 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to fencing_tableau's documentation!
+===========================================
+
+This Project is a Python-based Web-Application used to manage and host (rather informal) fencing competitions in accordance with FIE Guidlines. It creates a preliminary round and an elimination round with finals for a given number of competitors.
+The project is still in an early stage and not ready for testing.
+
+During testing, the Web-App will be hosted locally by a Laptop within a local Network that also runs all the Python calculations in the Background. The server is hosted via the Flask Python library. We are planning on bringing this as a server-hosted webservice to you, but since this is non-profit project we do in our freetime, we don't have the ressources to rent servers yet.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
