@@ -1,3 +1,10 @@
+"""
+main.py
+
+This file contains the flask server and the tournament cache.
+"""
+
+
 import csv
 import datetime
 import os
@@ -11,7 +18,21 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
 
-def get_tournament(tournament_id) -> Tournament:
+def get_tournament(tournament_id) -> Tournament | None:
+    """
+    This function returns a tournament from the tournament cache, given an id.
+    If the tournament with the given id does not exist, it returns None.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament to be returned.
+
+    Returns
+    -------
+    Tournament or None
+    """
+
     global tournament_cache
     for tournament in tournament_cache:
         if tournament.id == tournament_id:
@@ -19,6 +40,18 @@ def get_tournament(tournament_id) -> Tournament:
     return None
 
 def check_tournament_exists(tournament_id) -> bool:
+    """
+    This function checks if a tournament with given id exists in the tournament cache.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament to be checked.
+    
+    Returns
+    -------
+    bool
+    """
     global tournament_cache
     for tournament in tournament_cache:
         if tournament.id == tournament_id:

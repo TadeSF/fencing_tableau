@@ -14,17 +14,14 @@ During testing, the Web-App will be hosted locally by a Laptop within a local Ne
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   manager
-   manager/matches
-   manager/fencers
-   referee
-   referee/start match
-   referee/report scores
-   participant
-   Copyright
-   Legal
+   main
+   fencer
 
+Autofunctions
+=============
 
+.. autofunction:: main.get_tournament
+.. autofunction:: main.check_tournament_exists
 
 Indices and tables
 ==================

@@ -1,3 +1,10 @@
+"""
+fencer.py
+
+This module contains the Fencer class. Every participant in a Tournament gets a Fencer object.
+This module also holds the different Stage enums of the Tournament.
+"""
+
 import json
 from typing import Literal
 
@@ -31,8 +38,28 @@ class Stage(Enum):
 
 # Main Class for every individual fencer
 class Fencer:
+    """
+    Fencer class
+    """
 
     def __init__(self, name: str, club: str = None, nationailty: str = None, start_number: int = None, num_prelim_rounds: int = 1):
+        """
+        Constructor for the Fencer class
+
+        :param name: Name of the fencer
+        :param club: Club of the fencer
+        :param nationailty: Nationailty of the fencer
+        :param start_number: Start number of the fencer
+        :param num_prelim_rounds: Number of preliminary rounds
+
+        :type name: str
+        :type club: str
+        :type nationailty: str
+        :type start_number: int
+        :type num_prelim_rounds: int
+        
+        :raises ValueError: If the nationailty is not a 3 character code
+        """
         # Start number
         self.start_number = start_number
 
