@@ -6,6 +6,8 @@ from enum import Enum
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):
     PRELIMINARY_ROUND = -1
+    PLACEMENTS = -2
+
     TOP_1024 = 10
     TOP_512 = 9
     TOP_256 = 8
@@ -16,6 +18,7 @@ class Stage(Enum):
     QUARTER_FINALS = 3
     SEMI_FINALS = 2
     GRAND_FINAL = 1
+    FINISHED = 0
 
     def __str__(self):
         return self.name.replace("_", " ").title()
@@ -64,6 +67,7 @@ class Fencer:
 
         # Stage information
         self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
+        self.eliminated = False # Tracks if the fencer has been eliminated from the tournament
 
         # Final Rank
         self.final_rank = None
@@ -79,9 +83,7 @@ class Fencer:
                 "points_for": 0,
                 "points_against": 0
             },
-            "preliminary_round": [
-
-            ],
+            "preliminary_round": [],
             "elimination": [
                 {
                     "matches": 0,

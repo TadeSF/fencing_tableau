@@ -1,4 +1,5 @@
 import csv
+import datetime
 import os
 from match import *
 from tournament import *
@@ -6,21 +7,6 @@ from fencer import *
 from piste import PisteError, Piste
 
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
-
-# ------- Pickeling -------
-import pickle
-
-def save_tournament(tournament: Tournament):
-    with open(f'tournaments/{tournament.id}.pickle', 'wb') as f:
-        pickle.dump(tournament, f)
-
-def load_all_tournaments():
-    for file in os.listdir('tournaments'):
-        if file.endswith('.pickle'):
-            with open(f'tournaments/{file}', 'rb') as f:
-                tournament = pickle.load(f)
-                tournament_cache.append(tournament)
-
 
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
@@ -38,6 +24,32 @@ def check_tournament_exists(tournament_id) -> bool:
         if tournament.id == tournament_id:
             return True
     return False
+
+
+# ------- Pickeling -------
+# Pickeling is an easy way to save data to a file, so that it stays persistent even if the server has to restart.
+
+import pickle
+
+def save_tournament(tournament: Tournament):
+    with open(f'tournaments/{tournament.id}.pickle', 'wb') as f:
+        pickle.dump(tournament, f)
+
+def load_all_tournaments():
+    global tournament_cache
+    for file in os.listdir('tournaments'):
+        if file.endswith('.pickle'):
+            with open(f'tournaments/{file}', 'rb') as f:
+                tournament = pickle.load(f)
+                tournament_cache.append(tournament)
+
+def delete_old_tournaments():
+    global tournament_cache
+    for tournament in tournament_cache:
+        # Delete the tournament.pickle file if it is older than 1 day
+        if (datetime.datetime.now() - tournament.created_at).days > 1:
+            os.remove(f'tournaments/{tournament.id}.pickle')
+            tournament_cache.remove(tournament)
 
 
 
@@ -75,13 +87,15 @@ def process_form():
     i = 1
     for row in reader:
         if row[0] != 'Name':
-            fencers.append(Fencer(row[0], row[1], row[2], i))
+            fencers.append(Fencer(row[0], row[1], row[2], i, int(preliminary_rounds)))
             i += 1
 
 
     random_id = random_generator.id(6)
     
-    tournament_cache.append(Tournament(random_id, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes))
+    tournament = Tournament(random_id, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes)
+    tournament_cache.append(tournament)
+    save_tournament(tournament)
 
     return redirect(url_for('dashboard', tournament_id=random_id))
 
@@ -126,6 +140,8 @@ def get_matches(tournament_id):
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify([])
+    with open('matches.json', 'w') as f:
+        json.dump(tournament.get_matches(), f)
     return jsonify(tournament.get_matches())
 
 @app.route('/<tournament_id>/matches/set_active', methods=['POST'])
@@ -198,5 +214,6 @@ def simulate_current(tournament_id):
 
 
 
-
+load_all_tournaments()
+delete_old_tournaments()
 app.run(debug=True, port=8080)

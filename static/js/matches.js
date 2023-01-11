@@ -84,7 +84,7 @@ async function update_matches(matches) {
         }
 
         let score_text = document.createTextNode("- : -")
-        if (element["green_score"] != 0 && element["red_score"] != 0) {
+        if (element["green_score"] != 0 || element["red_score"] != 0) {
             score_text = document.createTextNode(element["green_score"] + " : " + element["red_score"])
         }
 

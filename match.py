@@ -59,11 +59,16 @@ class Match:
 
     @property
     def piste_str(self) -> str:
-        return str(self.piste.number) if self.piste != None else "TBA"
+        if self.piste != None:
+            return str(self.piste.number) 
+        elif self.wildcard:
+            return "-"
+        else:
+            return "TBA"
 
 
     # Input Results
-    def input_results(self, green_score: int, red_score: int):
+    def input_results(self, green_score: int, red_score: int) -> None:
         # Check for invalid score
         if green_score < 0 or red_score < 0:
             raise ValueError("Score must be a positive integer")
@@ -76,14 +81,6 @@ class Match:
             self.red_score = red_score
             self.match_ongoing = False
             self.match_completed = True
-        
-            # Update statistics
-            if type(self) == EliminationMatch:
-                self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
-                self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
-            else:
-                self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
-                self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
 
             # Free Piste
             self.piste.match_finished()
@@ -105,6 +102,14 @@ class GroupMatch(Match):
         self.group = group
         self.prelim_round = prelim_round
 
+    def input_results(self, green_score: int, red_score: int) -> None:
+        super().input_results(green_score, red_score)
+
+        self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
+        self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
+
+
+
 
 class EliminationMatch(Match):
     def __init__(self, fencer_green: Fencer, fencer_red: Fencer, stage: Stage, fencing_piste: Piste = None):
@@ -120,3 +125,9 @@ class EliminationMatch(Match):
             self.green_score = 1
             self.wildcard = True
             self.green.last_match_won = True
+
+    def input_results(self, green_score: int, red_score: int) -> None:
+        super().input_results(green_score, red_score)
+
+        self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
+        self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
