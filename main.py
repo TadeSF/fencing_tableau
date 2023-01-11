@@ -140,8 +140,6 @@ def get_matches(tournament_id):
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify([])
-    with open('matches.json', 'w') as f:
-        json.dump(tournament.get_matches(), f)
     return jsonify(tournament.get_matches())
 
 @app.route('/<tournament_id>/matches/set_active', methods=['POST'])
