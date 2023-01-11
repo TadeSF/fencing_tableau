@@ -113,6 +113,11 @@ def login_fencer():
     # TODO Implement
     return 404
 
+@app.route('/login-referee', methods=['POST'])
+def login_referee():
+    # TODO Implement
+    return 404
+
 @app.route('/<tournament_id>/dashboard')
 def dashboard(tournament_id):
     if not check_tournament_exists(tournament_id):

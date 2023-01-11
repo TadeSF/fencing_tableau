@@ -29,6 +29,12 @@ function login_fencer() {
   document.getElementById("login_fencer_form").style.display = "block";
 }
 
+// When button "Log in as Participant" is clicked, this function is called
+function login_referee() {
+  // Show the new_tournament_form div
+  document.getElementById("login_referee_form").style.display = "block";
+}
+
 document.addEventListener('click', (event) => {
   if (!document.getElementById("fencer_login_form").contains(event.target) && !document.getElementById("button_participate").contains(event.target)) {
     document.getElementById("login_fencer_form").style.display = 'none';
