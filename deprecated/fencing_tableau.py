@@ -181,7 +181,7 @@ def enter_prelim_live(matches: list, groups: list, fencers: list) -> Standings:
 
 def enter_intermediate_live(matches: list, groups: list):
     pass
-    # TODO – implement intermediate live mode
+    # implement intermediate live mode
 
 
 
@@ -317,7 +317,7 @@ def create_prelimenary_tableau():
     timeout_counter = 0 # Counter to prevent infinite loop if there are not enough fencers to fill all pistes
     double_warning = False # Boolean to enable a warning from being printed if there are not enough fencers to fill all pistes
 
-    # TODO – Implement the following rules of the Deutscher Fechter-Bund for the preliminary tableau:
+    # Implement the following rules of the Deutscher Fechter-Bund for the preliminary tableau:
     ''' Eine aktuelle Landesrangliste oder deutsche Rangliste hilft uns,
     die Turnierfavoriten gleichmäßig auf die Gruppen zu verteilen.
     Außerdem sollte nie mehr als ein Fechter vom selben Verein
@@ -403,7 +403,7 @@ def create_prelimenary_tableau():
 
 def create_intermediate_tableau(fencers: list):
     pass
-    # TODO – Implement intermediate tableau
+    # Implement intermediate tableau
 
 
 
@@ -439,7 +439,7 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     # CSV Mode
     if live_mode == "csv":
         csv_util.export_preliminary_matches(list_of_preliminary_matches, list_of_preliminary_groups)
-        #TODO – Add mechanism to continue the turnament after the CSV file has been imported
+        #Add mechanism to continue the turnament after the CSV file has been imported
 
     # Live Mode
     else:
@@ -450,7 +450,7 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
     # --- Intermediate Round ---
 
     # Only a third of all fencers can be eliminated in the preliminary round, so there will be an intermediate round
-    #TODO – Add intermediate round
+    #Add intermediate round
 
     # First, calculate if a intermediate round is needed
     # If a round of "only" 32 fencers doesn't eliminate a third of all fencers, then the intermediate round will be skipped
@@ -467,7 +467,7 @@ if __name__ == "__main__": # Only run the program if it is run directly, not if 
         # CSV Mode
         if live_mode == "csv":
             csv_util.export_intermediate_matches(list_of_intermediate_matches, list_of_intermediate_groups)
-            #TODO – Add mechanism to continue the turnament after the CSV file has been imported
+            #Add mechanism to continue the turnament after the CSV file has been imported
 
         # Live Mode
         elif live_mode == "live":
