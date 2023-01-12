@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main &mdash; fencing_tableau  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> fencing_tableau
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Main</a><ul>
+<li><a class="reference internal" href="#main.check_tournament_exists"><code class="docutils literal notranslate"><span class="pre">check_tournament_exists()</span></code></a></li>
+<li><a class="reference internal" href="#main.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
+<li><a class="reference internal" href="#main.delete_old_tournaments"><code class="docutils literal notranslate"><span class="pre">delete_old_tournaments()</span></code></a></li>
+<li><a class="reference internal" href="#main.favicon"><code class="docutils literal notranslate"><span class="pre">favicon()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_dashboard_infos"><code class="docutils literal notranslate"><span class="pre">get_dashboard_infos()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_matches"><code class="docutils literal notranslate"><span class="pre">get_matches()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_standings"><code class="docutils literal notranslate"><span class="pre">get_standings()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_tournament"><code class="docutils literal notranslate"><span class="pre">get_tournament()</span></code></a></li>
+<li><a class="reference internal" href="#main.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li><a class="reference internal" href="#main.load_all_tournaments"><code class="docutils literal notranslate"><span class="pre">load_all_tournaments()</span></code></a></li>
+<li><a class="reference internal" href="#main.login_fencer"><code class="docutils literal notranslate"><span class="pre">login_fencer()</span></code></a></li>
+<li><a class="reference internal" href="#main.login_manager"><code class="docutils literal notranslate"><span class="pre">login_manager()</span></code></a></li>
+<li><a class="reference internal" href="#main.login_referee"><code class="docutils literal notranslate"><span class="pre">login_referee()</span></code></a></li>
+<li><a class="reference internal" href="#main.matches"><code class="docutils literal notranslate"><span class="pre">matches()</span></code></a></li>
+<li><a class="reference internal" href="#main.matches_left"><code class="docutils literal notranslate"><span class="pre">matches_left()</span></code></a></li>
+<li><a class="reference internal" href="#main.next_stage"><code class="docutils literal notranslate"><span class="pre">next_stage()</span></code></a></li>
+<li><a class="reference internal" href="#main.process_form"><code class="docutils literal notranslate"><span class="pre">process_form()</span></code></a></li>
+<li><a class="reference internal" href="#main.push_score"><code class="docutils literal notranslate"><span class="pre">push_score()</span></code></a></li>
+<li><a class="reference internal" href="#main.save_tournament"><code class="docutils literal notranslate"><span class="pre">save_tournament()</span></code></a></li>
+<li><a class="reference internal" href="#main.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
+<li><a class="reference internal" href="#main.simulate_current"><code class="docutils literal notranslate"><span class="pre">simulate_current()</span></code></a></li>
+<li><a class="reference internal" href="#main.standings"><code class="docutils literal notranslate"><span class="pre">standings()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fencing_tableau</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Main</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/main.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-main">
+<span id="main"></span><h1>Main<a class="headerlink" href="#module-main" title="Permalink to this heading"></a></h1>
+<p>main.py</p>
+<p>This file contains the flask server and the tournament cache.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.check_tournament_exists">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">check_tournament_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/main.html#check_tournament_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.check_tournament_exists" title="Permalink to this definition"></a></dt>
+<dd><p>This function checks if a tournament with given id exists in the tournament cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament to be checked.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.dashboard">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.dashboard" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.delete_old_tournaments">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_old_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_old_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_old_tournaments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.favicon">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">favicon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#favicon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.favicon" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_dashboard_infos">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_dashboard_infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_dashboard_infos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_dashboard_infos" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_matches">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_matches" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_standings">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_standings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_standings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_standings" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_tournament">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tournament.Tournament</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/main.html#get_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_tournament" title="Permalink to this definition"></a></dt>
+<dd><p>This function returns a tournament from the tournament cache, given an id.
+If the tournament with the given id does not exist, it returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament to be returned.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tournament or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.index">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.index" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.load_all_tournaments">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_all_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#load_all_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.load_all_tournaments" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_fencer">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_fencer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_fencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_fencer" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_manager">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_manager" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_referee">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_referee</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_referee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_referee" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.matches">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.matches" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.matches_left">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">matches_left</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#matches_left"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.matches_left" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.next_stage">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">next_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#next_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.next_stage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.process_form">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">process_form</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#process_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.process_form" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.push_score">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">push_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#push_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.push_score" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.save_tournament">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">save_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tournament</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#save_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.save_tournament" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.set_active">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.set_active" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.simulate_current">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">simulate_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#simulate_current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.simulate_current" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.standings">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">standings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#standings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.standings" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, CC BY-NC, Tade Strehk, Moritz Hellmich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

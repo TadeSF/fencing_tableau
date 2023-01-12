@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fencer Module &mdash; fencing_tableau  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> fencing_tableau
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Fencer Module</a><ul>
+<li><a class="reference internal" href="#fencer.Fencer"><code class="docutils literal notranslate"><span class="pre">Fencer</span></code></a><ul>
+<li><a class="reference internal" href="#fencer.Fencer.points_against_per_game"><code class="docutils literal notranslate"><span class="pre">Fencer.points_against_per_game()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.points_difference"><code class="docutils literal notranslate"><span class="pre">Fencer.points_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.points_difference_int"><code class="docutils literal notranslate"><span class="pre">Fencer.points_difference_int()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.points_per_game"><code class="docutils literal notranslate"><span class="pre">Fencer.points_per_game()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.short_str"><code class="docutils literal notranslate"><span class="pre">Fencer.short_str</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.update_statistics"><code class="docutils literal notranslate"><span class="pre">Fencer.update_statistics()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Fencer.win_percentage"><code class="docutils literal notranslate"><span class="pre">Fencer.win_percentage()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fencer.Stage"><code class="docutils literal notranslate"><span class="pre">Stage</span></code></a><ul>
+<li><a class="reference internal" href="#fencer.Stage.FINISHED"><code class="docutils literal notranslate"><span class="pre">Stage.FINISHED</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.GRAND_FINAL"><code class="docutils literal notranslate"><span class="pre">Stage.GRAND_FINAL</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.PLACEMENTS"><code class="docutils literal notranslate"><span class="pre">Stage.PLACEMENTS</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.PRELIMINARY_ROUND"><code class="docutils literal notranslate"><span class="pre">Stage.PRELIMINARY_ROUND</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.QUARTER_FINALS"><code class="docutils literal notranslate"><span class="pre">Stage.QUARTER_FINALS</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.SEMI_FINALS"><code class="docutils literal notranslate"><span class="pre">Stage.SEMI_FINALS</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_1024"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_1024</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_128"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_128</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_16"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_16</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_256"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_256</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_32"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_32</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_512"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_512</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.TOP_64"><code class="docutils literal notranslate"><span class="pre">Stage.TOP_64</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Stage.next_stage"><code class="docutils literal notranslate"><span class="pre">Stage.next_stage()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fencer.Wildcard"><code class="docutils literal notranslate"><span class="pre">Wildcard</span></code></a><ul>
+<li><a class="reference internal" href="#fencer.Wildcard.points_against_per_game"><code class="docutils literal notranslate"><span class="pre">Wildcard.points_against_per_game()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Wildcard.points_difference"><code class="docutils literal notranslate"><span class="pre">Wildcard.points_difference()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Wildcard.points_per_game"><code class="docutils literal notranslate"><span class="pre">Wildcard.points_per_game()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Wildcard.update_statistics"><code class="docutils literal notranslate"><span class="pre">Wildcard.update_statistics()</span></code></a></li>
+<li><a class="reference internal" href="#fencer.Wildcard.win_percentage"><code class="docutils literal notranslate"><span class="pre">Wildcard.win_percentage()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fencing_tableau</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Fencer Module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/fencer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-fencer">
+<span id="fencer-module"></span><h1>Fencer Module<a class="headerlink" href="#module-fencer" title="Permalink to this heading"></a></h1>
+<p>fencer.py</p>
+<p>This module contains the Fencer class. Every participant in a Tournament gets a Fencer object.
+This module also holds the different Stage enums of the Tournament.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="fencer.Fencer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fencer.</span></span><span class="sig-name descname"><span class="pre">Fencer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">club</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nationailty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_prelim_rounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Fencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fencer class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.points_against_per_game">
+<span class="sig-name descname"><span class="pre">points_against_per_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fencer.html#Fencer.points_against_per_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.points_against_per_game" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.points_difference">
+<span class="sig-name descname"><span class="pre">points_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/fencer.html#Fencer.points_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.points_difference" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.points_difference_int">
+<span class="sig-name descname"><span class="pre">points_difference_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fencer.html#Fencer.points_difference_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.points_difference_int" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.points_per_game">
+<span class="sig-name descname"><span class="pre">points_per_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/fencer.html#Fencer.points_per_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.points_per_game" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="fencer.Fencer.short_str">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">short_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#fencer.Fencer.short_str" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.update_statistics">
+<span class="sig-name descname"><span class="pre">update_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_for</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_against</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Fencer.update_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.update_statistics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Fencer.win_percentage">
+<span class="sig-name descname"><span class="pre">win_percentage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/fencer.html#Fencer.win_percentage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Fencer.win_percentage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fencer.Stage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fencer.</span></span><span class="sig-name descname"><span class="pre">Stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Stage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.FINISHED">
+<span class="sig-name descname"><span class="pre">FINISHED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#fencer.Stage.FINISHED" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.GRAND_FINAL">
+<span class="sig-name descname"><span class="pre">GRAND_FINAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#fencer.Stage.GRAND_FINAL" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.PLACEMENTS">
+<span class="sig-name descname"><span class="pre">PLACEMENTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-2</span></em><a class="headerlink" href="#fencer.Stage.PLACEMENTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.PRELIMINARY_ROUND">
+<span class="sig-name descname"><span class="pre">PRELIMINARY_ROUND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1</span></em><a class="headerlink" href="#fencer.Stage.PRELIMINARY_ROUND" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.QUARTER_FINALS">
+<span class="sig-name descname"><span class="pre">QUARTER_FINALS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#fencer.Stage.QUARTER_FINALS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.SEMI_FINALS">
+<span class="sig-name descname"><span class="pre">SEMI_FINALS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#fencer.Stage.SEMI_FINALS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_1024">
+<span class="sig-name descname"><span class="pre">TOP_1024</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#fencer.Stage.TOP_1024" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_128">
+<span class="sig-name descname"><span class="pre">TOP_128</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#fencer.Stage.TOP_128" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_16">
+<span class="sig-name descname"><span class="pre">TOP_16</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#fencer.Stage.TOP_16" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_256">
+<span class="sig-name descname"><span class="pre">TOP_256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#fencer.Stage.TOP_256" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_32">
+<span class="sig-name descname"><span class="pre">TOP_32</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#fencer.Stage.TOP_32" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_512">
+<span class="sig-name descname"><span class="pre">TOP_512</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#fencer.Stage.TOP_512" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="fencer.Stage.TOP_64">
+<span class="sig-name descname"><span class="pre">TOP_64</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#fencer.Stage.TOP_64" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Stage.next_stage">
+<span class="sig-name descname"><span class="pre">next_stage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Stage.next_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Stage.next_stage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="fencer.Wildcard">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fencer.</span></span><span class="sig-name descname"><span class="pre">Wildcard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wildcard_number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fencer.Fencer" title="fencer.Fencer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fencer</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Wildcard.points_against_per_game">
+<span class="sig-name descname"><span class="pre">points_against_per_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard.points_against_per_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard.points_against_per_game" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Wildcard.points_difference">
+<span class="sig-name descname"><span class="pre">points_difference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard.points_difference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard.points_difference" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Wildcard.points_per_game">
+<span class="sig-name descname"><span class="pre">points_per_game</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard.points_per_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard.points_per_game" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Wildcard.update_statistics">
+<span class="sig-name descname"><span class="pre">update_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_for</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_against</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard.update_statistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard.update_statistics" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fencer.Wildcard.win_percentage">
+<span class="sig-name descname"><span class="pre">win_percentage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'overall'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'preliminary'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'intermediate'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'elimination'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'overall'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fencer.html#Wildcard.win_percentage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#fencer.Wildcard.win_percentage" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, CC BY-NC, Tade Strehk, Moritz Hellmich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

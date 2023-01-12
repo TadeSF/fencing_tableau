@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>main &mdash; fencing_tableau  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> fencing_tableau
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">fencing_tableau</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">main.py</span>
+
+<span class="sd">This file contains the flask server and the tournament cache.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">match</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tournament</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fencer</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">piste</span> <span class="kn">import</span> <span class="n">PisteError</span><span class="p">,</span> <span class="n">Piste</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">send_from_directory</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="c1"># ------- Tournament Cache -------</span>
+<span class="n">tournament_cache</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tournament</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="get_tournament"><a class="viewcode-back" href="../main.html#main.get_tournament">[docs]</a><span class="k">def</span> <span class="nf">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tournament</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns a tournament from the tournament cache, given an id.</span>
+<span class="sd">    If the tournament with the given id does not exist, it returns None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament to be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tournament or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+    <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">tournament_cache</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tournament</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">tournament_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tournament</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="check_tournament_exists"><a class="viewcode-back" href="../main.html#main.check_tournament_exists">[docs]</a><span class="k">def</span> <span class="nf">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function checks if a tournament with given id exists in the tournament cache.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament to be checked.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+    <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">tournament_cache</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tournament</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">tournament_id</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<span class="c1"># ------- Pickeling -------</span>
+<span class="c1"># Pickeling is an easy way to save data to a file, so that it stays persistent even if the server has to restart.</span>
+
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<div class="viewcode-block" id="save_tournament"><a class="viewcode-back" href="../main.html#main.save_tournament">[docs]</a><span class="k">def</span> <span class="nf">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">:</span> <span class="n">Tournament</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tournaments/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tournament</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_all_tournaments"><a class="viewcode-back" href="../main.html#main.load_all_tournaments">[docs]</a><span class="k">def</span> <span class="nf">load_all_tournaments</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;tournaments&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.pickle&#39;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tournaments/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">tournament</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">tournament_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="delete_old_tournaments"><a class="viewcode-back" href="../main.html#main.delete_old_tournaments">[docs]</a><span class="k">def</span> <span class="nf">delete_old_tournaments</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+    <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">tournament_cache</span><span class="p">:</span>
+        <span class="c1"># Delete the tournament.pickle file if it is older than 1 day</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">tournament</span><span class="o">.</span><span class="n">created_at</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tournaments/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.pickle&#39;</span><span class="p">)</span>
+            <span class="n">tournament_cache</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span></div>
+
+
+
+
+<span class="c1"># ------- Flask -------</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="favicon"><a class="viewcode-back" href="../main.html#main.favicon">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/favicon.ico&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">favicon</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="s1">&#39;static&#39;</span><span class="p">),</span> <span class="s1">&#39;favicon.ico&#39;</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;image/vnd.microsoft.icon&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../main.html#main.index">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="c1"># render a template</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="process_form"><a class="viewcode-back" href="../main.html#main.process_form">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">process_form</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="n">fencers_csv</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;fencers&#39;</span><span class="p">]</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+    <span class="n">num_pistes</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;pistes&#39;</span><span class="p">]</span>
+    <span class="n">first_elimination_round</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;first_elimination_round&#39;</span><span class="p">]</span>
+    <span class="n">elimination_mode</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;elimination_mode&#39;</span><span class="p">]</span>
+    <span class="n">preliminary_rounds</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;number_of_preliminary_rounds&#39;</span><span class="p">]</span>
+    <span class="n">preliminary_groups</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;number_of_preliminary_groups&#39;</span><span class="p">]</span>
+
+    <span class="c1"># do something with the form data</span>
+
+    <span class="n">fencers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">csv_contents</span> <span class="o">=</span> <span class="n">fencers_csv</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csv_contents</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">:</span>
+            <span class="n">fencers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Fencer</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">preliminary_rounds</span><span class="p">)))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="n">random_id</span> <span class="o">=</span> <span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    
+    <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span><span class="n">random_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fencers</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">preliminary_rounds</span><span class="p">,</span> <span class="n">preliminary_groups</span><span class="p">,</span> <span class="n">first_elimination_round</span><span class="p">,</span> <span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">num_pistes</span><span class="p">)</span>
+    <span class="n">tournament_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+    <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span> <span class="n">tournament_id</span><span class="o">=</span><span class="n">random_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="login_manager"><a class="viewcode-back" href="../main.html#main.login_manager">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-manager&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login_manager</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">tournament_cache</span>
+    <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;dashboard&#39;</span><span class="p">,</span> <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament_id</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="login_fencer"><a class="viewcode-back" href="../main.html#main.login_fencer">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-fencer&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login_fencer</span><span class="p">():</span>
+    <span class="c1"># TODO Implement</span>
+    <span class="k">return</span> <span class="mi">404</span></div>
+
+<div class="viewcode-block" id="login_referee"><a class="viewcode-back" href="../main.html#main.login_referee">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-referee&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">login_referee</span><span class="p">():</span>
+    <span class="c1"># TODO Implement</span>
+    <span class="k">return</span> <span class="mi">404</span></div>
+
+<div class="viewcode-block" id="dashboard"><a class="viewcode-back" href="../main.html#main.dashboard">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/dashboard&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">dashboard</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;dashboard.html&#39;</span><span class="p">,</span> <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_dashboard_infos"><a class="viewcode-back" href="../main.html#main.get_dashboard_infos">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/dashboard/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_dashboard_infos</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_dashboard_infos</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="matches"><a class="viewcode-back" href="../main.html#main.matches">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;/dashboard/matches.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_matches"><a class="viewcode-back" href="../main.html#main.get_matches">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_matches</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">([])</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_matches</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="set_active"><a class="viewcode-back" href="../main.html#main.set_active">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/set_active&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">set_active</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+        <span class="c1"># Get the match id from application/json response</span>
+        <span class="n">match_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">tournament</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">match_id</span><span class="p">)</span>
+        <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="n">PisteError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">400</span></div>
+
+<div class="viewcode-block" id="push_score"><a class="viewcode-back" href="../main.html#main.push_score">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/push_score&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">push_score</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+    <span class="n">match_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="n">green_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;green_score&#39;</span><span class="p">])</span>
+    <span class="n">red_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;red_score&#39;</span><span class="p">])</span>
+    <span class="n">tournament</span><span class="o">.</span><span class="n">push_score</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">green_score</span><span class="p">,</span> <span class="n">red_score</span><span class="p">)</span>
+    <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+    <span class="c1"># Return a 304 to prevent the page from reloading</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">304</span></div>
+
+<div class="viewcode-block" id="standings"><a class="viewcode-back" href="../main.html#main.standings">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/standings&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">standings</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;/dashboard/standings.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_standings"><a class="viewcode-back" href="../main.html#main.get_standings">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/standings/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_standings</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">([])</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_standings</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="matches_left"><a class="viewcode-back" href="../main.html#main.matches_left">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches-left&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">matches_left</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span><span class="o">.</span><span class="n">get_matches_left</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="next_stage"><a class="viewcode-back" href="../main.html#main.next_stage">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/next-stage&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">next_stage</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span><span class="o">.</span><span class="n">next_stage</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_current"><a class="viewcode-back" href="../main.html#main.simulate_current">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/simulate-current&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">simulate_current</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span><span class="o">.</span><span class="n">simulate_current</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span></div>
+
+
+
+
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">load_all_tournaments</span><span class="p">()</span>
+    <span class="n">delete_old_tournaments</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, CC BY-NC, Tade Strehk, Moritz Hellmich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,4 +1,9 @@
-.. autosummary::
-   :toctree: generated
+Fencer Module
+=============
 
-   fencer
+.. automodule:: fencer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+   sphinxbuild -b html . build

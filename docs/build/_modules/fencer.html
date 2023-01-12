@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fencer &mdash; fencing_tableau  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> fencing_tableau
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">fencing_tableau</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">fencer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for fencer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">fencer.py</span>
+
+<span class="sd">This module contains the Fencer class. Every participant in a Tournament gets a Fencer object.</span>
+<span class="sd">This module also holds the different Stage enums of the Tournament.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="c1"># Enum for the different advancement stages of a fencer</span>
+<div class="viewcode-block" id="Stage"><a class="viewcode-back" href="../fencer.html#fencer.Stage">[docs]</a><span class="k">class</span> <span class="nc">Stage</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">PRELIMINARY_ROUND</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">PLACEMENTS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+
+    <span class="n">TOP_1024</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">TOP_512</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">TOP_256</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">TOP_128</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">TOP_64</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">TOP_32</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">TOP_16</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">QUARTER_FINALS</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">SEMI_FINALS</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">GRAND_FINAL</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">FINISHED</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Stage.next_stage"><a class="viewcode-back" href="../fencer.html#fencer.Stage.next_stage">[docs]</a>    <span class="k">def</span> <span class="nf">next_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Stage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div></div>
+
+
+
+<span class="c1"># Main Class for every individual fencer</span>
+<div class="viewcode-block" id="Fencer"><a class="viewcode-back" href="../fencer.html#fencer.Fencer">[docs]</a><span class="k">class</span> <span class="nc">Fencer</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fencer class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">club</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nationailty</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">num_prelim_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for the Fencer class</span>
+
+<span class="sd">        :param name: Name of the fencer</span>
+<span class="sd">        :param club: Club of the fencer</span>
+<span class="sd">        :param nationailty: Nationailty of the fencer</span>
+<span class="sd">        :param start_number: Start number of the fencer</span>
+<span class="sd">        :param num_prelim_rounds: Number of preliminary rounds</span>
+
+<span class="sd">        :type name: str</span>
+<span class="sd">        :type club: str</span>
+<span class="sd">        :type nationailty: str</span>
+<span class="sd">        :type start_number: int</span>
+<span class="sd">        :type num_prelim_rounds: int</span>
+<span class="sd">        </span>
+<span class="sd">        :raises ValueError: If the nationailty is not a 3 character code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Start number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_number</span> <span class="o">=</span> <span class="n">start_number</span>
+
+        <span class="c1"># Fencer information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="o">=</span> <span class="n">club</span>
+
+        <span class="k">if</span> <span class="n">nationailty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get 3 character nationality code if not already</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nationailty</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;countries.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">countries</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">country</span> <span class="ow">in</span> <span class="n">countries</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">nationailty</span> <span class="o">==</span> <span class="n">country</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+                            <span class="n">nationailty</span> <span class="o">=</span> <span class="n">country</span><span class="p">[</span><span class="s2">&quot;alpha-3&quot;</span><span class="p">]</span>
+                            <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid (english) country input / Nationailty must be 3 characters long&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span> <span class="o">=</span> <span class="n">nationailty</span>
+
+        <span class="c1"># Grouping information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prelim_group</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_group</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Elimination Value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elimination_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># This Index is used for calculating the next opponent in the elimination stage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_match_won</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Past opponents (for repechage)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_opponents</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># This is needed for matchmaking in the direct elimination stage when repechage is used.</span>
+
+        <span class="c1"># Stage information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">:</span> <span class="n">Stage</span> <span class="o">=</span> <span class="n">Stage</span><span class="o">.</span><span class="n">PRELIMINARY_ROUND</span> <span class="c1"># Tracks the advancement of the fencer (to determine standings)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eliminated</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Tracks if the fencer has been eliminated from the tournament</span>
+
+        <span class="c1"># Final Rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_rank</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+
+        <span class="c1"># Statistics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;overall&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;matches&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;wins&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;losses&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;points_for&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;points_against&quot;</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;preliminary_round&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;elimination&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;matches&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;wins&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;losses&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;points_for&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;points_against&quot;</span><span class="p">:</span> <span class="mi">0</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_prelim_rounds</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;preliminary_round&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;matches&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;wins&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;losses&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;points_for&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;points_against&quot;</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="p">})</span>
+
+
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="p">:</span>
+            <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">club</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="p">:</span>
+            <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="si">}</span><span class="s2">) / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">club</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">string_to_return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">short_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+    <span class="c1"># statistics</span>
+<div class="viewcode-block" id="Fencer.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="n">Stage</span><span class="o">.</span><span class="n">PRELIMINARY_ROUND</span><span class="p">:</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="s2">&quot;elimination&quot;</span>
+
+        <span class="k">if</span> <span class="n">win</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">][</span><span class="s2">&quot;wins&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="nb">round</span><span class="p">][</span><span class="s2">&quot;wins&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_match_won</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">][</span><span class="s2">&quot;losses&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="nb">round</span><span class="p">][</span><span class="s2">&quot;losses&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_match_won</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">points_for</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">points_against</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="nb">round</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="nb">round</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">points_for</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="nb">round</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">points_against</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_opponents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opponent</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Fencer.win_percentage"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.win_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">win_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;wins&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Fencer.points_difference"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_difference">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">difference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="k">if</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">))</span></div>
+    
+<div class="viewcode-block" id="Fencer.points_difference_int"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_difference_int">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">difference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Fencer.points_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Fencer.points_against_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_against_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_against_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div></div>
+
+
+
+
+<div class="viewcode-block" id="Wildcard"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard">[docs]</a><span class="k">class</span> <span class="nc">Wildcard</span><span class="p">(</span><span class="n">Fencer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wildcard_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;Wildcard&quot;</span><span class="p">,</span> <span class="n">nationailty</span><span class="o">=</span><span class="s2">&quot;WLD&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wildcard_number</span> <span class="o">=</span> <span class="n">wildcard_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_number</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="Wildcard.points_against_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_against_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_against_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Wildcard.points_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Wildcard.points_difference"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_difference">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Wildcard.win_percentage"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.win_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">win_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Wildcard.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, CC BY-NC, Tade Strehk, Moritz Hellmich.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

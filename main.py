@@ -249,7 +249,7 @@ def simulate_current(tournament_id):
 
 
 
-
-load_all_tournaments()
-delete_old_tournaments()
-app.run(debug=True, port=8080)
+if __name__ == '__main__':
+    load_all_tournaments()
+    delete_old_tournaments()
+    app.run(debug=True, port=8080)
