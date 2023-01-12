@@ -37,7 +37,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../main.html">Main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Main module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../fencer.html">Fencer Module</a></li>
 </ul>
 
@@ -66,14 +66,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for main</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">main.py</span>
-
-<span class="sd">This file contains the flask server and the tournament cache.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<span class="kn">import</span> <span class="nn">csv</span>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">match</span> <span class="kn">import</span> <span class="o">*</span>
@@ -98,7 +91,10 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Tournament or None</span>
+<span class="sd">    Tournament object</span>
+<span class="sd">        if the tournament exists</span>
+<span class="sd">    None</span>
+<span class="sd">        if the tournament does not exist</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">global</span> <span class="n">tournament_cache</span>
@@ -118,7 +114,10 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    bool</span>
+<span class="sd">    True</span>
+<span class="sd">        if the tournament exists</span>
+<span class="sd">    False</span>
+<span class="sd">        if the tournament does not exist</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">tournament_cache</span>
     <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">tournament_cache</span><span class="p">:</span>
@@ -133,10 +132,22 @@
 <span class="kn">import</span> <span class="nn">pickle</span>
 
 <div class="viewcode-block" id="save_tournament"><a class="viewcode-back" href="../main.html#main.save_tournament">[docs]</a><span class="k">def</span> <span class="nf">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">:</span> <span class="n">Tournament</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function saves a tournament to a file, so that it can be loaded again later, even if the server has to restart.</span>
+<span class="sd">    This is done by pickeling a tournament object. The file is saved in the /tournaments folder and is named after the tournament id.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament : Tournament</span>
+<span class="sd">        The tournament to be saved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;tournaments/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">tournament</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="load_all_tournaments"><a class="viewcode-back" href="../main.html#main.load_all_tournaments">[docs]</a><span class="k">def</span> <span class="nf">load_all_tournaments</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">tournament_cache</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;tournaments&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.pickle&#39;</span><span class="p">):</span>
@@ -145,6 +156,9 @@
                 <span class="n">tournament_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="delete_old_tournaments"><a class="viewcode-back" href="../main.html#main.delete_old_tournaments">[docs]</a><span class="k">def</span> <span class="nf">delete_old_tournaments</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function deletes all tournament files that are older than 1 day from the /tournaments folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">tournament_cache</span>
     <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">tournament_cache</span><span class="p">:</span>
         <span class="c1"># Delete the tournament.pickle file if it is older than 1 day</span>
@@ -158,17 +172,55 @@
 <span class="c1"># ------- Flask -------</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="favicon"><a class="viewcode-back" href="../main.html#main.favicon">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/favicon.ico&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/favicon.ico&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">favicon</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="s1">&#39;static&#39;</span><span class="p">),</span> <span class="s1">&#39;favicon.ico&#39;</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;image/vnd.microsoft.icon&#39;</span><span class="p">)</span></div>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on GET request /favicon.ico the favicon.ico file from the static folder.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    send_from_directory(favicon.ico)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="s1">&#39;static&#39;</span><span class="p">),</span> <span class="s1">&#39;favicon.ico&#39;</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;image/vnd.microsoft.icon&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="index"><a class="viewcode-back" href="../main.html#main.index">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
-    <span class="c1"># render a template</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on GET request / the index.html file from the templates folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="process_form"><a class="viewcode-back" href="../main.html#main.process_form">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">process_form</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start a new Tournament:</span>
+<span class="sd">    Flask processes a POST request that contains infos on a new tournament.</span>
+<span class="sd">    It creates a new tournament object and adds it to the tournament cache as well as saving it to a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the tournament.</span>
+<span class="sd">    fencers : file</span>
+<span class="sd">        A csv file containing the fencers with the Headers Name, Club, Nationality. Nationality has to be the alpha-3 Countrycode.</span>
+<span class="sd">    location : str</span>
+<span class="sd">        The location of the tournament.</span>
+<span class="sd">    pistes : int</span>
+<span class="sd">        The number of pistes.</span>
+<span class="sd">    first_elimination_round : int</span>
+<span class="sd">        The first elimination round (by default, this will be calculated automaticly)</span>
+<span class="sd">    elimination_mode : str</span>
+<span class="sd">        The elimination mode (manager can choose between &quot;KO&quot;, &quot;Placement&quot; or &quot;Repechage&quot;)</span>
+<span class="sd">    preliminary_rounds : int</span>
+<span class="sd">        The number of preliminary rounds.</span>
+<span class="sd">    preliminary_groups : int</span>
+<span class="sd">        The number of preliminary groups (by default, this will be calculated automaticly)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    redirects to /dashboard/&lt;tournament_id&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">global</span> <span class="n">tournament_cache</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
@@ -191,7 +243,6 @@
             <span class="n">fencers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Fencer</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">preliminary_rounds</span><span class="p">)))</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-
     <span class="n">random_id</span> <span class="o">=</span> <span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
     
     <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span><span class="n">random_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fencers</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">preliminary_rounds</span><span class="p">,</span> <span class="n">preliminary_groups</span><span class="p">,</span> <span class="n">first_elimination_round</span><span class="p">,</span> <span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">num_pistes</span><span class="p">)</span>
@@ -202,6 +253,14 @@
 
 <div class="viewcode-block" id="login_manager"><a class="viewcode-back" href="../main.html#main.login_manager">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-manager&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login_manager</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a POST request to login as a manager.</span>
+<span class="sd">    Note: This is not implemented fully yet.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    redirects to /dashboard/&lt;tournament_id&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">tournament_cache</span>
     <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
@@ -211,16 +270,44 @@
 
 <div class="viewcode-block" id="login_fencer"><a class="viewcode-back" href="../main.html#main.login_fencer">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-fencer&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login_fencer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a POST request to login as a fencer.</span>
+<span class="sd">    Note: This is not implemented yet.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    404</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO Implement</span>
     <span class="k">return</span> <span class="mi">404</span></div>
 
 <div class="viewcode-block" id="login_referee"><a class="viewcode-back" href="../main.html#main.login_referee">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/login-referee&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">login_referee</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a POST request to login as a referee.</span>
+<span class="sd">    Note: This is not implemented yet.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    404</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO Implement</span>
     <span class="k">return</span> <span class="mi">404</span></div>
 
 <div class="viewcode-block" id="dashboard"><a class="viewcode-back" href="../main.html#main.dashboard">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/dashboard&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">dashboard</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on GET request /&lt;tournament_id&gt;/dashboard the dashboard.html file from the templates folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dashboard.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -228,6 +315,19 @@
 
 <div class="viewcode-block" id="get_dashboard_infos"><a class="viewcode-back" href="../main.html#main.get_dashboard_infos">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/dashboard/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">get_dashboard_infos</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on GET request /&lt;tournament_id&gt;/dashboard/update the dashboard infos as a json object.</span>
+<span class="sd">    This includes general information about the tournament.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    json object (from tournament.get_dashboard_infos())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
@@ -236,6 +336,19 @@
 
 <div class="viewcode-block" id="matches"><a class="viewcode-back" href="../main.html#main.matches">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/matches the matches.html file from the templates folder.</span>
+<span class="sd">    This is the page where the matches are displayed and it is visible on the dashboard as an iframe and can be opened in fullscreen.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matches.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
@@ -243,6 +356,18 @@
 
 <div class="viewcode-block" id="get_matches"><a class="viewcode-back" href="../main.html#main.get_matches">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">get_matches</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/matches/update all matches of the current state as a json object.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    json object (from tournament.get_matches())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">([])</span>
@@ -250,6 +375,25 @@
 
 <div class="viewcode-block" id="set_active"><a class="viewcode-back" href="../main.html#main.set_active">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/set_active&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">set_active</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a POST request to set a certain match as active.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">    The function will return a 400 Error Code, when the Piste that was assigned to the Match</span>
+<span class="sd">    is still in use by another match.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+<span class="sd">    match_id : str</span>
+<span class="sd">        The id of the match.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    200 (on success)</span>
+<span class="sd">    400 (on PisteError)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
         <span class="c1"># Get the match id from application/json response</span>
@@ -262,17 +406,45 @@
 
 <div class="viewcode-block" id="push_score"><a class="viewcode-back" href="../main.html#main.push_score">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches/push_score&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">push_score</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a POST request to push a score of a finished match.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+<span class="sd">    match_id : str</span>
+<span class="sd">        The id of the match.</span>
+<span class="sd">    green_score : int</span>
+<span class="sd">        The score of the green fencer.</span>
+<span class="sd">    red_score : int</span>
+<span class="sd">        The score of the red fencer.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    200</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
     <span class="n">match_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
     <span class="n">green_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;green_score&#39;</span><span class="p">])</span>
     <span class="n">red_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;red_score&#39;</span><span class="p">])</span>
     <span class="n">tournament</span><span class="o">.</span><span class="n">push_score</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">green_score</span><span class="p">,</span> <span class="n">red_score</span><span class="p">)</span>
     <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-    <span class="c1"># Return a 304 to prevent the page from reloading</span>
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">304</span></div>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span></div>
 
 <div class="viewcode-block" id="standings"><a class="viewcode-back" href="../main.html#main.standings">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/standings&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">standings</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/standings the standings.html file from the templates folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    standings.html, 200</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
@@ -280,6 +452,18 @@
 
 <div class="viewcode-block" id="get_standings"><a class="viewcode-back" href="../main.html#main.get_standings">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/standings/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">get_standings</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/standings/update the standings of the current state as a json object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    json object (from tournament.get_standings()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">([])</span>
@@ -287,6 +471,18 @@
 
 <div class="viewcode-block" id="matches_left"><a class="viewcode-back" href="../main.html#main.matches_left">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/matches-left&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">matches_left</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/matches-left the number of matches left in the current stage as a string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str (from tournament.get_matches_left()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
@@ -294,6 +490,18 @@
 
 <div class="viewcode-block" id="next_stage"><a class="viewcode-back" href="../main.html#main.next_stage">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/next-stage&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">next_stage</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a GET request to go to the next stage.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    200</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
@@ -304,6 +512,19 @@
 
 <div class="viewcode-block" id="simulate_current"><a class="viewcode-back" href="../main.html#main.simulate_current">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/simulate-current&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">simulate_current</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a GET request to simulate all matches of the current stage.</span>
+<span class="sd">    This is only used for testing purposes and will be deprecated in later versions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    200</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>

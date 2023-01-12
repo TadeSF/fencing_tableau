@@ -5,5 +5,3 @@ Fencer Module
    :members:
    :undoc-members:
    :show-inheritance:
-
-   sphinxbuild -b html . build

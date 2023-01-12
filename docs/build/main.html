@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Main &mdash; fencing_tableau  documentation</title>
+  <title>Main module &mdash; fencing_tableau  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -40,29 +40,53 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Main</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#main.check_tournament_exists"><code class="docutils literal notranslate"><span class="pre">check_tournament_exists()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.delete_old_tournaments"><code class="docutils literal notranslate"><span class="pre">delete_old_tournaments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.favicon"><code class="docutils literal notranslate"><span class="pre">favicon()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.get_dashboard_infos"><code class="docutils literal notranslate"><span class="pre">get_dashboard_infos()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.get_matches"><code class="docutils literal notranslate"><span class="pre">get_matches()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.get_standings"><code class="docutils literal notranslate"><span class="pre">get_standings()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.get_tournament"><code class="docutils literal notranslate"><span class="pre">get_tournament()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.load_all_tournaments"><code class="docutils literal notranslate"><span class="pre">load_all_tournaments()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.login_fencer"><code class="docutils literal notranslate"><span class="pre">login_fencer()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.login_manager"><code class="docutils literal notranslate"><span class="pre">login_manager()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.login_referee"><code class="docutils literal notranslate"><span class="pre">login_referee()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.matches"><code class="docutils literal notranslate"><span class="pre">matches()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.matches_left"><code class="docutils literal notranslate"><span class="pre">matches_left()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.next_stage"><code class="docutils literal notranslate"><span class="pre">next_stage()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.process_form"><code class="docutils literal notranslate"><span class="pre">process_form()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.push_score"><code class="docutils literal notranslate"><span class="pre">push_score()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.save_tournament"><code class="docutils literal notranslate"><span class="pre">save_tournament()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.simulate_current"><code class="docutils literal notranslate"><span class="pre">simulate_current()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#main.standings"><code class="docutils literal notranslate"><span class="pre">standings()</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Main module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tournament-cache">Tournament Cache</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#main.get_tournament"><code class="docutils literal notranslate"><span class="pre">get_tournament()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main.check_tournament_exists"><code class="docutils literal notranslate"><span class="pre">check_tournament_exists()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tournament-loading-saving">Tournament Loading/Saving</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#main.save_tournament"><code class="docutils literal notranslate"><span class="pre">save_tournament()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main.load_all_tournaments"><code class="docutils literal notranslate"><span class="pre">load_all_tournaments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main.delete_old_tournaments"><code class="docutils literal notranslate"><span class="pre">delete_old_tournaments()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#flask-server-setup">Flask Server Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flask-routes">Flask Routes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sites">Sites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#main.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.matches"><code class="docutils literal notranslate"><span class="pre">matches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.standings"><code class="docutils literal notranslate"><span class="pre">standings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-login-functions">Setup-/ Login-Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#main.process_form"><code class="docutils literal notranslate"><span class="pre">process_form()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.login_manager"><code class="docutils literal notranslate"><span class="pre">login_manager()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.login_referee"><code class="docutils literal notranslate"><span class="pre">login_referee()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.login_fencer"><code class="docutils literal notranslate"><span class="pre">login_fencer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#get-tournament-infos">Get Tournament Infos</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#main.get_dashboard_infos"><code class="docutils literal notranslate"><span class="pre">get_dashboard_infos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.get_matches"><code class="docutils literal notranslate"><span class="pre">get_matches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.get_standings"><code class="docutils literal notranslate"><span class="pre">get_standings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.matches_left"><code class="docutils literal notranslate"><span class="pre">matches_left()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pushing-data-to-the-server">Pushing Data to the Server</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#main.push_score"><code class="docutils literal notranslate"><span class="pre">push_score()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#main.next_stage"><code class="docutils literal notranslate"><span class="pre">next_stage()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-tools">Testing-Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#main.simulate_current"><code class="docutils literal notranslate"><span class="pre">simulate_current()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="fencer.html">Fencer Module</a></li>
@@ -82,7 +106,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">Main</li>
+      <li class="breadcrumb-item active">Main module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/main.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -92,54 +116,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-main">
-<span id="main"></span><h1>Main<a class="headerlink" href="#module-main" title="Permalink to this heading"></a></h1>
-<p>main.py</p>
-<p>This file contains the flask server and the tournament cache.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="main.check_tournament_exists">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">check_tournament_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/main.html#check_tournament_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.check_tournament_exists" title="Permalink to this definition"></a></dt>
-<dd><p>This function checks if a tournament with given id exists in the tournament cache.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament to be checked.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.dashboard">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.dashboard" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.delete_old_tournaments">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_old_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_old_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_old_tournaments" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.favicon">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">favicon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#favicon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.favicon" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.get_dashboard_infos">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_dashboard_infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_dashboard_infos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_dashboard_infos" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.get_matches">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_matches" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.get_standings">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_standings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_standings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_standings" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
+  <section id="main-module">
+<h1>Main module<a class="headerlink" href="#main-module" title="Permalink to this heading"></a></h1>
+<p>This module is the main module of the application. It contains the main functions as well as the Flask server setup and routes.</p>
+<section id="tournament-cache">
+<h2>Tournament Cache<a class="headerlink" href="#tournament-cache" title="Permalink to this heading"></a></h2>
+<p>The Tournament Cache is a list of all the tournaments that are currently loaded in the application. It is used to have the tournament ready in RAM for quicker loading times and to avoid loading the same tournament twice.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="main.get_tournament">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tournament.Tournament</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/main.html#get_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_tournament" title="Permalink to this definition"></a></dt>
@@ -149,82 +131,346 @@ If the tournament with the given id does not exist, it returns None.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament to be returned.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tournament or None</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Tournament object</em> – if the tournament exists</p></li>
+<li><p><em>None</em> – if the tournament does not exist</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="main.index">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.index" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="main.check_tournament_exists">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">check_tournament_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/main.html#check_tournament_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.check_tournament_exists" title="Permalink to this definition"></a></dt>
+<dd><p>This function checks if a tournament with given id exists in the tournament cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament to be checked.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>True</em> – if the tournament exists</p></li>
+<li><p><em>False</em> – if the tournament does not exist</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="tournament-loading-saving">
+<h2>Tournament Loading/Saving<a class="headerlink" href="#tournament-loading-saving" title="Permalink to this heading"></a></h2>
+<p>These Functions are used to load and save tournaments from the /tournaments directory, where they get saved in case the server crashes.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.save_tournament">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">save_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tournament</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#save_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.save_tournament" title="Permalink to this definition"></a></dt>
+<dd><p>This function saves a tournament to a file, so that it can be loaded again later, even if the server has to restart.
+This is done by pickeling a tournament object. The file is saved in the /tournaments folder and is named after the tournament id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament</strong> (<em>Tournament</em>) – The tournament to be saved.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.load_all_tournaments">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_all_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#load_all_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.load_all_tournaments" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="main.login_fencer">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_fencer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_fencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_fencer" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="main.delete_old_tournaments">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">delete_old_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#delete_old_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.delete_old_tournaments" title="Permalink to this definition"></a></dt>
+<dd><p>This function deletes all tournament files that are older than 1 day from the /tournaments folder.</p>
+</dd></dl>
+
+</section>
+<section id="flask-server-setup">
+<h2>Flask Server Setup<a class="headerlink" href="#flask-server-setup" title="Permalink to this heading"></a></h2>
+<p>If the main.py file is executed directly, Flask will start the server. The server is configured to run on the local network, so that it can be accessed from other devices on the same network. In adittion, the Tournament Cache is filled with loaded files as mentioned above.
+The server will be run on port 8080:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setting up the Flask server</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+   <span class="c1"># Load all tournaments from the /tournaments directory and delete old tournaments</span>
+   <span class="n">load_all_tournaments</span><span class="p">()</span>
+   <span class="n">delete_old_tournaments</span><span class="p">()</span>
+
+   <span class="c1"># Start the server on port 8080</span>
+   <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="flask-routes">
+<h2>Flask Routes<a class="headerlink" href="#flask-routes" title="Permalink to this heading"></a></h2>
+<p>The Flask server has the following routes and functions:</p>
+<section id="sites">
+<h3>Sites<a class="headerlink" href="#sites" title="Permalink to this heading"></a></h3>
+<p>The following routes are used to display the different sites of the application.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.index">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.index" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on GET request / the index.html file from the templates folder.</p>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="main.login_manager">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_manager" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.login_referee">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_referee</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_referee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_referee" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="main.dashboard">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">dashboard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.dashboard" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on GET request /&lt;tournament_id&gt;/dashboard the dashboard.html file from the templates folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dashboard.html</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.matches">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.matches" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.matches_left">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">matches_left</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#matches_left"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.matches_left" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.next_stage">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">next_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#next_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.next_stage" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.process_form">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">process_form</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#process_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.process_form" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.push_score">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">push_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#push_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.push_score" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.save_tournament">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">save_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tournament</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#save_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.save_tournament" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.set_active">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.set_active" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.simulate_current">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">simulate_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#simulate_current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.simulate_current" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/matches the matches.html file from the templates folder.
+This is the page where the matches are displayed and it is visible on the dashboard as an iframe and can be opened in fullscreen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matches.html</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.standings">
 <span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">standings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#standings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.standings" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/standings the standings.html file from the templates folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p></li>
+<li><p><strong>Returns</strong> – </p></li>
+<li><p><strong>standings.html</strong> – </p></li>
+<li><p><strong>200</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
+</section>
+<section id="setup-login-functions">
+<h3>Setup-/ Login-Functions<a class="headerlink" href="#setup-login-functions" title="Permalink to this heading"></a></h3>
+<p>The following routes are used to setup a tournament or login and logout of the application.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.process_form">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">process_form</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#process_form"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.process_form" title="Permalink to this definition"></a></dt>
+<dd><p>Start a new Tournament:
+Flask processes a POST request that contains infos on a new tournament.
+It creates a new tournament object and adds it to the tournament cache as well as saving it to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the tournament.</p></li>
+<li><p><strong>fencers</strong> (<em>file</em>) – A csv file containing the fencers with the Headers Name, Club, Nationality. Nationality has to be the alpha-3 Countrycode.</p></li>
+<li><p><strong>location</strong> (<em>str</em>) – The location of the tournament.</p></li>
+<li><p><strong>pistes</strong> (<em>int</em>) – The number of pistes.</p></li>
+<li><p><strong>first_elimination_round</strong> (<em>int</em>) – The first elimination round (by default, this will be calculated automaticly)</p></li>
+<li><p><strong>elimination_mode</strong> (<em>str</em>) – The elimination mode (manager can choose between “KO”, “Placement” or “Repechage”)</p></li>
+<li><p><strong>preliminary_rounds</strong> (<em>int</em>) – The number of preliminary rounds.</p></li>
+<li><p><strong>preliminary_groups</strong> (<em>int</em>) – The number of preliminary groups (by default, this will be calculated automaticly)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>redirects to /dashboard/&lt;tournament_id&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_manager">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_manager" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a POST request to login as a manager.
+Note: This is not implemented fully yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>redirects to /dashboard/&lt;tournament_id&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_referee">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_referee</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_referee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_referee" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a POST request to login as a referee.
+Note: This is not implemented yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>404</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.login_fencer">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_fencer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_fencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_fencer" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a POST request to login as a fencer.
+Note: This is not implemented yet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>404</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="get-tournament-infos">
+<h3>Get Tournament Infos<a class="headerlink" href="#get-tournament-infos" title="Permalink to this heading"></a></h3>
+<p>The following routes are used to get tournament infos from the server. They are used to display the tournament infos on different Sites, but first and foremost the dashboard.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_dashboard_infos">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_dashboard_infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_dashboard_infos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_dashboard_infos" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on GET request /&lt;tournament_id&gt;/dashboard/update the dashboard infos as a json object.
+This includes general information about the tournament.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>json object (from tournament.get_dashboard_infos())</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_matches">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_matches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_matches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_matches" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/matches/update all matches of the current state as a json object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>json object (from tournament.get_matches())</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.get_standings">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_standings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#get_standings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_standings" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/standings/update the standings of the current state as a json object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>json object (from tournament.get_standings()</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.matches_left">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">matches_left</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#matches_left"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.matches_left" title="Permalink to this definition"></a></dt>
+<dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/matches-left the number of matches left in the current stage as a string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str (from tournament.get_matches_left()</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="pushing-data-to-the-server">
+<h3>Pushing Data to the Server<a class="headerlink" href="#pushing-data-to-the-server" title="Permalink to this heading"></a></h3>
+<p>The following routes are used to push data to the server. They are used to update the tournament infos on the server, like pushing Scores, setting matches active or advancing in stages.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.push_score">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">push_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#push_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.push_score" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a POST request to push a score of a finished match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p></li>
+<li><p><strong>match_id</strong> (<em>str</em>) – The id of the match.</p></li>
+<li><p><strong>green_score</strong> (<em>int</em>) – The score of the green fencer.</p></li>
+<li><p><strong>red_score</strong> (<em>int</em>) – The score of the red fencer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>200</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.set_active">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.set_active" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a POST request to set a certain match as active.</p>
+<p>The function will return a 400 Error Code, when the Piste that was assigned to the Match
+is still in use by another match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p></li>
+<li><p><strong>match_id</strong> (<em>str</em>) – The id of the match.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>200 (on success)</em></p></li>
+<li><p><em>400 (on PisteError)</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="main.next_stage">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">next_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#next_stage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.next_stage" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a GET request to go to the next stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>200</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="testing-tools">
+<h3>Testing-Tools<a class="headerlink" href="#testing-tools" title="Permalink to this heading"></a></h3>
+<p>The following routes are used only for testing purposes. They are used to test the functionality of the application.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.simulate_current">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">simulate_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#simulate_current"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.simulate_current" title="Permalink to this definition"></a></dt>
+<dd><p>Flask processes a GET request to simulate all matches of the current stage.
+This is only used for testing purposes and will be deprecated in later versions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>200</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 </section>
 
 
