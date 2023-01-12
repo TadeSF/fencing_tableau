@@ -10,7 +10,8 @@ build:
 
 python:
   install:
-    - requirements: docs/requirements.txt
+    - flask
+    - sphinx
     - method: pip
       path: .
       
