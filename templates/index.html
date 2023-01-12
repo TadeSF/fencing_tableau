@@ -13,9 +13,11 @@
         <h1>Focus on FENCING,<br>not on organizing</h1>
         <p class="header-text">DuellingDynasty helps you create and manage the fencing tournament of your dreams.</p>
         <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">Start Tournament</button>
-        <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
-        <button class="cta-button" id="button_manage" onclick="login_referee()">Log in as Referee</button>
-        <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
+        <div class="button-flex">
+          <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
+          <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
+          <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
+        </div>
       </div>
     </header>
     <main>

@@ -1,10 +1,3 @@
-"""
-fencer.py
-
-This module contains the Fencer class. Every participant in a Tournament gets a Fencer object.
-This module also holds the different Stage enums of the Tournament.
-"""
-
 import json
 from typing import Literal
 
@@ -12,6 +5,41 @@ from enum import Enum
 
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):
+    """
+    Enum for the different advancement stages of a fencer / a match / the tournament in general
+
+    
+    ----------------
+
+    - -1 PRELIMINARY_ROUND: 
+        The fencer is in the preliminary round
+    - -2 PLACEMENTS:
+        The fencer has lost in the elimination and is currently in his placement matches
+
+    - 10 TOP_1024:
+        The fencer is in the top 1024
+    - 9 TOP_512:
+        The fencer is in the top 512
+    - 8 TOP_256:
+        The fencer is in the top 256
+    - 7 TOP_128:
+        The fencer is in the top 128
+    - 6 TOP_64:
+        The fencer is in the top 64
+    - 5 TOP_32:
+        The fencer is in the top 32
+    - 4 TOP_16:
+        The fencer is in the top 16
+    - 3 QUARTER_FINALS:
+        The fencer is in the quarter finals
+    - 2 SEMI_FINALS:
+        The fencer is in the semi finals
+    - 1 GRAND_FINAL:
+        The fencer is in the grand final
+
+    - 0 FINISHED:
+        The fencer has finished the tournament
+    """
     PRELIMINARY_ROUND = -1
     PLACEMENTS = -2
 
@@ -28,10 +56,20 @@ class Stage(Enum):
     FINISHED = 0
 
     def __str__(self):
+        """
+        Returns the name of the stage in a readable format (e.g. "Preliminary Round" instead of "PRELIMINARY_ROUND")
+        """
         return self.name.replace("_", " ").title()
 
     def next_stage(self):
-        if self.value != 1:
+        """
+        Advances the stage by one (e.g. TOP_1024 -> TOP_512)
+        This only works if the stage is not the last stage (FINISHED) or one of the special cases indicated by the negative enum values (PRELIMINARY_ROUND, PLACEMENTS)
+        Returns
+        -------
+        Stage (-1)
+        """
+        if self.value >= 1:
             return Stage(self.value - 1)
 
 
@@ -39,26 +77,85 @@ class Stage(Enum):
 # Main Class for every individual fencer
 class Fencer:
     """
-    Fencer class
+    Main Class for every individual fencer. When creating the tournament, a csv file is read and a list of Fencer objects is created.
+    The Fencer class contains all basic information about the fencer, such as name, club and nationailty, but also 
+    information about the tournament, matches and statistics.
+
+    The fencer class is the main source for the fencer's hub-page, where every individual fencer can see his/her statistics and matches.
     """
 
     def __init__(self, name: str, club: str = None, nationailty: str = None, start_number: int = None, num_prelim_rounds: int = 1):
         """
         Constructor for the Fencer class
 
-        :param name: Name of the fencer
-        :param club: Club of the fencer
-        :param nationailty: Nationailty of the fencer
-        :param start_number: Start number of the fencer
-        :param num_prelim_rounds: Number of preliminary rounds
+        Parameters
+        ----------
+        name : str
+            The name of the fencer (Sur- and Firstname are one string)
+        club : str, optional
+            The club the fencer is associated with (preferrably only an acronym or abbreviation), by default None
+        nationailty : str, optional
+            The nationailty of the fencer, by default None
 
-        :type name: str
-        :type club: str
-        :type nationailty: str
-        :type start_number: int
-        :type num_prelim_rounds: int
+            Note
+            ----
+            Preferably only use the alpha-3 Code e.g. GER for Germany or FRA for France.
+            The full (english) name works as well, since it is cross referenced in :meth:`__init__`, but is not recommended
+
+        start_number : int, optional
+            The start number of the fencer, by default None
+
+            Note
+            ----
+            Since the start number is assigned automatically later anyways, it is not necessary to provide it here
+
+        num_prelim_rounds : int, optional
+            The number of preliminary rounds, by default 1, important for statistics
         
-        :raises ValueError: If the nationailty is not a 3 character code
+        Attributes
+        ----------
+        self.start_number : int
+        self.name : str
+        self.club : str
+        self.nationality : len(3) str
+            Alpha-3 country code
+        self.prelim_group : int
+            Holds the group number the fencer is in
+            Variable assigned when the preliminary round is created
+        self.elimination_value : int
+            Holds an index for the final ranking
+            When a fencer loses a match in "KO" mode, the elimination value is the current stage.
+            In "Placement" mode, the index is only assigned at the very last match of the tournament in accordance to his/her performance in the elimination round
+        self.last_match_won : bool
+            Holds the information if the fencer won his/her last match.
+
+            Note
+            ----
+            TODO This can also be an array, holding the whole fencers history
+
+        self.group_opponents : list of Fencer
+            Holds the opponents the fencer has faced in the preliminary round, used for repechage
+
+            Note
+            ----
+            Since repechage is not implemented yet, this is not used yet
+
+        self.stage : Stage
+            Keeps track of the Stage the fencer is in
+        self.eliminated : bool
+            Tracks whether the fencer has been eliminated from the direct elimination round or not
+        self.final_rank : int
+            Holds the final rank of the fencer
+            This is only assigned at the very end of the tournament
+        self.statistics : dict
+            This dictionary holds all relevant statistics in any stage.
+            It tracks matches, wins, losses, points_for, points_against in all preliminary rounds, the elimination round and overall.
+            The keys are: "overall", "elimination" and "preliminary_round" (last is a list of all preliminary rounds)
+        
+
+
+        
+
         """
         # Start number
         self.start_number = start_number
@@ -83,7 +180,6 @@ class Fencer:
 
         # Grouping information
         self.prelim_group = None
-        self.intermediate_group = None
 
         # Elimination Value
         self.elimination_value = None # This Index is used for calculating the next opponent in the elimination stage
@@ -134,6 +230,17 @@ class Fencer:
 
 
     def __str__(self) -> str:
+        """
+        Returns a string representation of the fencer depending on the information available
+
+        Returns
+        -------
+        Start Number Name : str
+        Start Number Name (Nationailty) : str
+        Start Number Name / Club : str
+        Start Number Name (Nationailty) / Club : str
+
+        """
         if self.club is None and self.nationality:
             string_to_return = f"{self.start_number} {self.name} ({self.nationality})"
         elif self.club and self.nationality is None:
@@ -146,11 +253,37 @@ class Fencer:
 
     @property
     def short_str(self) -> str:
+        """
+        ``@property``
+
+        Returns a short string representation of the fencer consisting of start number and name
+
+        Returns
+        -------
+        Start Number (3x Space) Name : str
+        """
         return f"{self.start_number}   {self.name}"
 
 
     # statistics
-    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
+    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0) -> None:
+        """
+        This function updates the statistics of the fencer and is called after every match is finished and the score has been pushed.
+        The function updates the statistics for the current stage and the overall statistics.
+
+        Parameters
+        ----------
+        win : bool
+            Whether the fencer won the match or not
+        opponent : Fencer
+            The opponent of the fencer
+        points_for : int
+            The points the fencer scored in the match
+        points_against : int
+            The points the opponent scored in the match
+        round : int
+            The round the match was played in (default: 0)
+        """
         if self.stage == Stage.PRELIMINARY_ROUND:
             stage = self.stage.name.lower()
         else:
@@ -177,42 +310,162 @@ class Fencer:
 
 
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> int:
+        """
+        Calculates the Win Percentage of the fencer for a given stage
+
+        Note
+        ----
+        The Win Percentage is the first parameter used for determining the standings of the fencer in the preliminary stage
+
+        Parameters
+        ----------
+        stage : Literal["overall", "preliminary", "intermediate", "elimination"]
+            The stage for which the win percentage should be calculated (default: "overall")
+        
+        Returns
+        -------
+        Win Percentage : int
+
+            Note
+            ----
+            The win percentage is multiplied by 100 and rounded to the nearest integer.
+        """
         return int(round((self.statistics[stage]["wins"]*1.0) / (self.statistics[stage]["matches"]*1.0)*100) if self.statistics[stage]["matches"] != 0 else 0)
 
-    def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> str:
-        difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
-        return str("+" + str(difference) if difference > 0 else str(difference))
-    
     def points_difference_int(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> int:
+        """
+        Calculates the Points Difference of the fencer for a given stage.
+        The Points Difference is calculated by subtracting the points against from the points for.
+
+        Note
+        ----
+        The Points Difference is the second parameter after the win percentage used for determining the standings of the fencer in the preliminary stage
+
+        Parameters
+        ----------
+        stage : Literal["overall", "preliminary", "intermediate", "elimination"]
+            The stage for which the points difference should be calculated (default: "overall")
+
+        Returns
+        -------
+        Points Difference : int
+        """
         difference = self.statistics[stage]["points_for"] - self.statistics[stage]["points_against"]
         return int(difference)
 
+    def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> str:
+        """
+        See :meth:`points_difference_int`, but returns a string with a "+" in front of the points difference if it is positive, with a "-" if it is negative and nothing if it is 0.
+
+        Returns
+        -------
+        Points Difference : str
+        """
+        difference = self.points_difference_int(stage)
+        return str("+" + str(difference) if difference > 0 else str(difference))
+
     def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
+        """
+        Calculates the Points per Game of the fencer for a given stage.
+        The Points per Game is calculated by dividing the points for by the number of matches.
+
+        Parameters
+        ----------
+        stage : Literal["overall", "preliminary", "intermediate", "elimination"]
+        
+        Returns
+        -------
+        Points per Game : float
+        """
         return (round(self.statistics[stage]["points_for"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
     def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> float:
+        """
+        Calculates the Points against per Game of the fencer for a given stage.
+
+        Parameters
+        ----------
+        stage : Literal["overall", "preliminary", "intermediate", "elimination"]
+
+        Returns
+        -------
+        Points against per Game : float
+        """
         return (round(self.statistics[stage]["points_against"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
 
 
 
 class Wildcard(Fencer):
+    """
+    The Wildcard class is a subclass of the Fencer class and represents a "Placeholder" fencer that is used to fill up the number of fencers in the elimination Stage to a multiple of 4.
+    
+    Note
+    ----
+    Main purpose is to signal to the :class:`Match`, that the fencer is a wildcard and that the :class:`fencer.Fencer` Opponent wins instantly 1:0. Also, there will be no :meth:`fencer.Fencer.update_statistics` call to update the :class:`fencer.Wildcard` or the Opponent :class:`fencer.Fencer`.
+    """
     def __init__(self, wildcard_number: int):
+        """
+        Parameters
+        wildcard_number : int
+            The number of the wildcard. Used to distinguish between different wildcards.
+            Could be seen as the equivalent to the :class:`fencer.Fencer.start_number`
+        """
         super().__init__("Wildcard", nationailty="WLD")
         self.wildcard_number = wildcard_number
         self.start_number = 0
 
     def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        """
+        See :meth:`fencer.Fencer.points_against_per_game`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.
+
+        Raises
+        ------
+        TypeError
+            "Wildcard has no statistics like a normal fencer"
+        """
         raise(TypeError("Wildcard has no statistics like a normal fencer"))
 
     def points_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        """
+        See :meth:`fencer.Fencer.points_per_game`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.
+
+        Raises
+        ------
+        TypeError
+            "Wildcard has no statistics like a normal fencer"
+        """
         raise(TypeError("Wildcard has no statistics like a normal fencer"))
 
     def points_difference(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        """
+        See :meth:`fencer.Fencer.points_difference`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.
+
+        Raises
+        ------
+        TypeError
+            "Wildcard has no statistics like a normal fencer"
+        """
         raise(TypeError("Wildcard has no statistics like a normal fencer"))
 
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
+        """
+        See :meth:`fencer.Fencer.win_percentage`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.
+
+        Raises
+        ------
+        TypeError
+            "Wildcard has no statistics like a normal fencer"
+        """
         raise(TypeError("Wildcard has no statistics like a normal fencer"))
 
     def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0):
+        """
+        See :meth:`fencer.Fencer.update_statistics`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer and cannot not be updated.
+
+        Raises
+        ------
+        TypeError
+            "Wildcard has no statistics like a normal fencer"
+        """
         raise(TypeError("Wildcard has no statistics like a normal fencer"))

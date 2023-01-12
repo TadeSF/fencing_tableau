@@ -73,6 +73,14 @@ header p {
     padding: 0 2rem;
 }
 
+.button-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
 main {
     display: flex;
     flex-direction: column;

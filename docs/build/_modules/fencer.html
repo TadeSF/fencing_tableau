@@ -36,8 +36,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fencer.html">Fencer Module</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -63,20 +66,48 @@
            <div itemprop="articleBody">
              
   <h1>Source code for fencer</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">fencer.py</span>
-
-<span class="sd">This module contains the Fencer class. Every participant in a Tournament gets a Fencer object.</span>
-<span class="sd">This module also holds the different Stage enums of the Tournament.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
 <span class="c1"># Enum for the different advancement stages of a fencer</span>
 <div class="viewcode-block" id="Stage"><a class="viewcode-back" href="../fencer.html#fencer.Stage">[docs]</a><span class="k">class</span> <span class="nc">Stage</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Enum for the different advancement stages of a fencer / a match / the tournament in general</span>
+
+<span class="sd">    </span>
+<span class="sd">    ----------------</span>
+
+<span class="sd">    - -1 PRELIMINARY_ROUND: </span>
+<span class="sd">        The fencer is in the preliminary round</span>
+<span class="sd">    - -2 PLACEMENTS:</span>
+<span class="sd">        The fencer has lost in the elimination and is currently in his placement matches</span>
+
+<span class="sd">    - 10 TOP_1024:</span>
+<span class="sd">        The fencer is in the top 1024</span>
+<span class="sd">    - 9 TOP_512:</span>
+<span class="sd">        The fencer is in the top 512</span>
+<span class="sd">    - 8 TOP_256:</span>
+<span class="sd">        The fencer is in the top 256</span>
+<span class="sd">    - 7 TOP_128:</span>
+<span class="sd">        The fencer is in the top 128</span>
+<span class="sd">    - 6 TOP_64:</span>
+<span class="sd">        The fencer is in the top 64</span>
+<span class="sd">    - 5 TOP_32:</span>
+<span class="sd">        The fencer is in the top 32</span>
+<span class="sd">    - 4 TOP_16:</span>
+<span class="sd">        The fencer is in the top 16</span>
+<span class="sd">    - 3 QUARTER_FINALS:</span>
+<span class="sd">        The fencer is in the quarter finals</span>
+<span class="sd">    - 2 SEMI_FINALS:</span>
+<span class="sd">        The fencer is in the semi finals</span>
+<span class="sd">    - 1 GRAND_FINAL:</span>
+<span class="sd">        The fencer is in the grand final</span>
+
+<span class="sd">    - 0 FINISHED:</span>
+<span class="sd">        The fencer has finished the tournament</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">PRELIMINARY_ROUND</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">PLACEMENTS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
 
@@ -92,11 +123,21 @@
     <span class="n">GRAND_FINAL</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">FINISHED</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+<div class="viewcode-block" id="Stage.__str__"><a class="viewcode-back" href="../fencer.html#fencer.Stage.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of the stage in a readable format (e.g. &quot;Preliminary Round&quot; instead of &quot;PRELIMINARY_ROUND&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Stage.next_stage"><a class="viewcode-back" href="../fencer.html#fencer.Stage.next_stage">[docs]</a>    <span class="k">def</span> <span class="nf">next_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Advances the stage by one (e.g. TOP_1024 -&gt; TOP_512)</span>
+<span class="sd">        This only works if the stage is not the last stage (FINISHED) or one of the special cases indicated by the negative enum values (PRELIMINARY_ROUND, PLACEMENTS)</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Stage (-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Stage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div></div>
 
 
@@ -104,26 +145,85 @@
 <span class="c1"># Main Class for every individual fencer</span>
 <div class="viewcode-block" id="Fencer"><a class="viewcode-back" href="../fencer.html#fencer.Fencer">[docs]</a><span class="k">class</span> <span class="nc">Fencer</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fencer class</span>
+<span class="sd">    Main Class for every individual fencer. When creating the tournament, a csv file is read and a list of Fencer objects is created.</span>
+<span class="sd">    The Fencer class contains all basic information about the fencer, such as name, club and nationailty, but also </span>
+<span class="sd">    information about the tournament, matches and statistics.</span>
+
+<span class="sd">    The fencer class is the main source for the fencer&#39;s hub-page, where every individual fencer can see his/her statistics and matches.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">club</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nationailty</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">num_prelim_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Fencer.__init__"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">club</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nationailty</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">start_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">num_prelim_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor for the Fencer class</span>
 
-<span class="sd">        :param name: Name of the fencer</span>
-<span class="sd">        :param club: Club of the fencer</span>
-<span class="sd">        :param nationailty: Nationailty of the fencer</span>
-<span class="sd">        :param start_number: Start number of the fencer</span>
-<span class="sd">        :param num_prelim_rounds: Number of preliminary rounds</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the fencer (Sur- and Firstname are one string)</span>
+<span class="sd">        club : str, optional</span>
+<span class="sd">            The club the fencer is associated with (preferrably only an acronym or abbreviation), by default None</span>
+<span class="sd">        nationailty : str, optional</span>
+<span class="sd">            The nationailty of the fencer, by default None</span>
 
-<span class="sd">        :type name: str</span>
-<span class="sd">        :type club: str</span>
-<span class="sd">        :type nationailty: str</span>
-<span class="sd">        :type start_number: int</span>
-<span class="sd">        :type num_prelim_rounds: int</span>
+<span class="sd">            Note</span>
+<span class="sd">            ----</span>
+<span class="sd">            Preferably only use the alpha-3 Code e.g. GER for Germany or FRA for France.</span>
+<span class="sd">            The full (english) name works as well, since it is cross referenced in :meth:`__init__`, but is not recommended</span>
+
+<span class="sd">        start_number : int, optional</span>
+<span class="sd">            The start number of the fencer, by default None</span>
+
+<span class="sd">            Note</span>
+<span class="sd">            ----</span>
+<span class="sd">            Since the start number is assigned automatically later anyways, it is not necessary to provide it here</span>
+
+<span class="sd">        num_prelim_rounds : int, optional</span>
+<span class="sd">            The number of preliminary rounds, by default 1, important for statistics</span>
 <span class="sd">        </span>
-<span class="sd">        :raises ValueError: If the nationailty is not a 3 character code</span>
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        self.start_number : int</span>
+<span class="sd">        self.name : str</span>
+<span class="sd">        self.club : str</span>
+<span class="sd">        self.nationality : len(3) str</span>
+<span class="sd">            Alpha-3 country code</span>
+<span class="sd">        self.prelim_group : int</span>
+<span class="sd">            Holds the group number the fencer is in</span>
+<span class="sd">            Variable assigned when the preliminary round is created</span>
+<span class="sd">        self.elimination_value : int</span>
+<span class="sd">            Holds an index for the final ranking</span>
+<span class="sd">            When a fencer loses a match in &quot;KO&quot; mode, the elimination value is the current stage.</span>
+<span class="sd">            In &quot;Placement&quot; mode, the index is only assigned at the very last match of the tournament in accordance to his/her performance in the elimination round</span>
+<span class="sd">        self.last_match_won : bool</span>
+<span class="sd">            Holds the information if the fencer won his/her last match.</span>
+
+<span class="sd">            Note</span>
+<span class="sd">            ----</span>
+<span class="sd">            TODO This can also be an array, holding the whole fencers history</span>
+
+<span class="sd">        self.group_opponents : list of Fencer</span>
+<span class="sd">            Holds the opponents the fencer has faced in the preliminary round, used for repechage</span>
+
+<span class="sd">            Note</span>
+<span class="sd">            ----</span>
+<span class="sd">            Since repechage is not implemented yet, this is not used yet</span>
+
+<span class="sd">        self.stage : Stage</span>
+<span class="sd">            Keeps track of the Stage the fencer is in</span>
+<span class="sd">        self.eliminated : bool</span>
+<span class="sd">            Tracks whether the fencer has been eliminated from the direct elimination round or not</span>
+<span class="sd">        self.final_rank : int</span>
+<span class="sd">            Holds the final rank of the fencer</span>
+<span class="sd">            This is only assigned at the very end of the tournament</span>
+<span class="sd">        self.statistics : dict</span>
+<span class="sd">            This dictionary holds all relevant statistics in any stage.</span>
+<span class="sd">            It tracks matches, wins, losses, points_for, points_against in all preliminary rounds, the elimination round and overall.</span>
+<span class="sd">            The keys are: &quot;overall&quot;, &quot;elimination&quot; and &quot;preliminary_round&quot; (last is a list of all preliminary rounds)</span>
+<span class="sd">        </span>
+
+
+<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Start number</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_number</span> <span class="o">=</span> <span class="n">start_number</span>
@@ -148,7 +248,6 @@
 
         <span class="c1"># Grouping information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prelim_group</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">intermediate_group</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Elimination Value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elimination_value</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># This Index is used for calculating the next opponent in the elimination stage</span>
@@ -194,11 +293,22 @@
                 <span class="s2">&quot;losses&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="s2">&quot;points_for&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="s2">&quot;points_against&quot;</span><span class="p">:</span> <span class="mi">0</span>
-            <span class="p">})</span>
+            <span class="p">})</span></div>
 
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="Fencer.__str__"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.__str__">[docs]</a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a string representation of the fencer depending on the information available</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Start Number Name : str</span>
+<span class="sd">        Start Number Name (Nationailty) : str</span>
+<span class="sd">        Start Number Name / Club : str</span>
+<span class="sd">        Start Number Name (Nationailty) / Club : str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="p">:</span>
             <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">club</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -207,15 +317,41 @@
             <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nationality</span><span class="si">}</span><span class="s2">) / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">club</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">string_to_return</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">string_to_return</span>
+        <span class="k">return</span> <span class="n">string_to_return</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">short_str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ``@property``</span>
+
+<span class="sd">        Returns a short string representation of the fencer consisting of start number and name</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Start Number (3x Space) Name : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_number</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
     <span class="c1"># statistics</span>
-<div class="viewcode-block" id="Fencer.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Fencer.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function updates the statistics of the fencer and is called after every match is finished and the score has been pushed.</span>
+<span class="sd">        The function updates the statistics for the current stage and the overall statistics.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        win : bool</span>
+<span class="sd">            Whether the fencer won the match or not</span>
+<span class="sd">        opponent : Fencer</span>
+<span class="sd">            The opponent of the fencer</span>
+<span class="sd">        points_for : int</span>
+<span class="sd">            The points the fencer scored in the match</span>
+<span class="sd">        points_against : int</span>
+<span class="sd">            The points the opponent scored in the match</span>
+<span class="sd">        round : int</span>
+<span class="sd">            The round the match was played in (default: 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="n">Stage</span><span class="o">.</span><span class="n">PRELIMINARY_ROUND</span><span class="p">:</span>
             <span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -242,44 +378,164 @@
 
 
 <div class="viewcode-block" id="Fencer.win_percentage"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.win_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">win_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Win Percentage of the fencer for a given stage</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        The Win Percentage is the first parameter used for determining the standings of the fencer in the preliminary stage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage : Literal[&quot;overall&quot;, &quot;preliminary&quot;, &quot;intermediate&quot;, &quot;elimination&quot;]</span>
+<span class="sd">            The stage for which the win percentage should be calculated (default: &quot;overall&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Win Percentage : int</span>
+
+<span class="sd">            Note</span>
+<span class="sd">            ----</span>
+<span class="sd">            The win percentage is multiplied by 100 and rounded to the nearest integer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;wins&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Fencer.points_difference"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_difference">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">difference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="k">if</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">))</span></div>
-    
 <div class="viewcode-block" id="Fencer.points_difference_int"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_difference_int">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Points Difference of the fencer for a given stage.</span>
+<span class="sd">        The Points Difference is calculated by subtracting the points against from the points for.</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        The Points Difference is the second parameter after the win percentage used for determining the standings of the fencer in the preliminary stage</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage : Literal[&quot;overall&quot;, &quot;preliminary&quot;, &quot;intermediate&quot;, &quot;elimination&quot;]</span>
+<span class="sd">            The stage for which the points difference should be calculated (default: &quot;overall&quot;)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Points Difference : int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">difference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="Fencer.points_difference"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_difference">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`points_difference_int`, but returns a string with a &quot;+&quot; in front of the points difference if it is positive, with a &quot;-&quot; if it is negative and nothing if it is 0.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Points Difference : str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">difference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points_difference_int</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;+&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span> <span class="k">if</span> <span class="n">difference</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">difference</span><span class="p">))</span></div>
+
 <div class="viewcode-block" id="Fencer.points_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Points per Game of the fencer for a given stage.</span>
+<span class="sd">        The Points per Game is calculated by dividing the points for by the number of matches.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage : Literal[&quot;overall&quot;, &quot;preliminary&quot;, &quot;intermediate&quot;, &quot;elimination&quot;]</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Points per Game : float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_for&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Fencer.points_against_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.points_against_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_against_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Points against per Game of the fencer for a given stage.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stage : Literal[&quot;overall&quot;, &quot;preliminary&quot;, &quot;intermediate&quot;, &quot;elimination&quot;]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Points against per Game : float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;points_against&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;matches&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span></div></div>
 
 
 
 
 <div class="viewcode-block" id="Wildcard"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard">[docs]</a><span class="k">class</span> <span class="nc">Wildcard</span><span class="p">(</span><span class="n">Fencer</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wildcard_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Wildcard class is a subclass of the Fencer class and represents a &quot;Placeholder&quot; fencer that is used to fill up the number of fencers in the elimination Stage to a multiple of 4.</span>
+<span class="sd">    </span>
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Main purpose is to signal to the :class:`Match`, that the fencer is a wildcard and that the :class:`fencer.Fencer` Opponent wins instantly 1:0. Also, there will be no :meth:`fencer.Fencer.update_statistics` call to update the :class:`fencer.Wildcard` or the Opponent :class:`fencer.Fencer`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Wildcard.__init__"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wildcard_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        wildcard_number : int</span>
+<span class="sd">            The number of the wildcard. Used to distinguish between different wildcards.</span>
+<span class="sd">            Could be seen as the equivalent to the :class:`fencer.Fencer.start_number`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;Wildcard&quot;</span><span class="p">,</span> <span class="n">nationailty</span><span class="o">=</span><span class="s2">&quot;WLD&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wildcard_number</span> <span class="o">=</span> <span class="n">wildcard_number</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_number</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_number</span> <span class="o">=</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="Wildcard.points_against_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_against_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_against_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`fencer.Fencer.points_against_per_game`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            &quot;Wildcard has no statistics like a normal fencer&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Wildcard.points_per_game"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_per_game">[docs]</a>    <span class="k">def</span> <span class="nf">points_per_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`fencer.Fencer.points_per_game`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            &quot;Wildcard has no statistics like a normal fencer&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Wildcard.points_difference"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.points_difference">[docs]</a>    <span class="k">def</span> <span class="nf">points_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`fencer.Fencer.points_difference`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            &quot;Wildcard has no statistics like a normal fencer&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Wildcard.win_percentage"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.win_percentage">[docs]</a>    <span class="k">def</span> <span class="nf">win_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">,</span> <span class="s2">&quot;preliminary&quot;</span><span class="p">,</span> <span class="s2">&quot;intermediate&quot;</span><span class="p">,</span> <span class="s2">&quot;elimination&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;overall&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`fencer.Fencer.win_percentage`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            &quot;Wildcard has no statistics like a normal fencer&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="Wildcard.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Wildcard.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See :meth:`fencer.Fencer.update_statistics`, but raises a TypeError, because the :class:`fencer.Wildcard` has no statistics like a normal fencer and cannot not be updated.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            &quot;Wildcard has no statistics like a normal fencer&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Wildcard has no statistics like a normal fencer&quot;</span><span class="p">))</span></div></div>
 </pre></div>
 
