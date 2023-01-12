@@ -3,7 +3,7 @@ version: 2
 sphinx:
   configuration: docs/conf.py
 
-build:4
+build:
   tools:
     python: "3.11"
 
