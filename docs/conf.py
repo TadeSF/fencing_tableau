@@ -13,10 +13,6 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 import main
-# import fencer
-# import tournament
-# import match
-# import piste
 
 
 
