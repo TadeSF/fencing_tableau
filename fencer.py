@@ -85,7 +85,7 @@ class Fencer:
     The fencer class is the main source for the fencer's hub-page, where every individual fencer can see his/her statistics and matches.
     """
 
-    def __init__(self, name: str, club: str = None, nationailty: str = None, gender: Literal["M", "F", "D"] = None, handeness: Literal["R", "L"] = None, start_number: int = None, num_prelim_rounds: int = 1):
+    def __init__(self, name: str, club: str = None, nationailty: str = None, gender: Literal["M", "F", "D"] = None, handedness: Literal["R", "L"] = None, start_number: int = None, num_prelim_rounds: int = 1):
         """
         Constructor for the Fencer class
 
@@ -104,8 +104,8 @@ class Fencer:
             The full (english) name works as well, since it is cross referenced in :meth:`__init__`, but is not recommended
         gender : str, optional
             The gender of the fencer, by default None, can be either "M", "F" or "D"
-        handeness : str, optional
-            The handeness of the fencer, by default None, can be either "R" or "L"
+        handedness : str, optional
+            The handedness of the fencer, by default None, can be either "R" or "L"
 
         start_number : int, optional
             The start number of the fencer, by default None
@@ -128,8 +128,8 @@ class Fencer:
             Alpha-3 country code
         self.gender : str
             Holds the gender of the fencer, either "M" for male, "F" for female or "D" for divers
-        self.handeness : str
-            Holds the handeness of the fencer, either "R" for right handed or "L" for left handed
+        self.handedness : str
+            Holds the handedness of the fencer, either "R" for right handed or "L" for left handed
         self.prelim_group : int
             Holds the group number the fencer is in
             Variable assigned when the preliminary round is created
@@ -194,7 +194,7 @@ class Fencer:
 
         self.gender: Literal["M", "F", "D"] = gender
 
-        self.handeness: Literal["R", "L"] = handeness
+        self.handedness: Literal["R", "L"] = handedness
 
 
         # Grouping information
@@ -202,7 +202,6 @@ class Fencer:
 
         # Elimination Value
         self.elimination_value = None # This Index is used for calculating the next opponent in the elimination stage
-        self.last_match_won = False
 
         # Past opponents (for repechage)
         self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
@@ -213,7 +212,6 @@ class Fencer:
 
         # Final Rank
         self.final_rank = None
-
 
 
         # Statistics
@@ -236,6 +234,8 @@ class Fencer:
                 }
             ]
         }
+
+        self.last_matches: list[dict] = []
 
         for _ in range(num_prelim_rounds):
             self.statistics["preliminary_round"].append({
@@ -283,15 +283,37 @@ class Fencer:
         """
         return f"{self.start_number}   {self.name}"
 
+    @property
+    def last_match_won(self):
+        if len(self.last_matches) == 0:
+            return None
+        else:
+            return self.last_matches[-1]["win"]
+
+    @property
+    def outcome_last_matches(self) -> list[bool]:
+        """
+        ``@property``
+
+        Returns a list of the last 5 matches of the fencer
+
+        Returns
+        -------
+        List of 5 bools
+        """
+        return [match["win"] for match in self.last_matches]
+
 
     # statistics
-    def update_statistics(self, win: bool, opponent, points_for: int, points_against: int, round: int = 0) -> None:
+    def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0) -> None:
         """
         This function updates the statistics of the fencer and is called after every match is finished and the score has been pushed.
         The function updates the statistics for the current stage and the overall statistics.
 
         Parameters
         ----------
+        match : Match
+            The match object of the match that was played
         win : bool
             Whether the fencer won the match or not
         opponent : Fencer
@@ -308,14 +330,18 @@ class Fencer:
         else:
             stage = "elimination"
 
+        self.last_matches.append({
+            "win": win,
+            "opponent": opponent.id,
+            "match": match.id,
+        })
+
         if win:
             self.statistics["overall"]["wins"] += 1
             self.statistics[stage][round]["wins"] += 1
-            self.last_match_won = True
         else:
             self.statistics["overall"]["losses"] += 1
             self.statistics[stage][round]["losses"] += 1
-            self.last_match_won = False
 
         self.statistics["overall"]["matches"] += 1
         self.statistics["overall"]["points_for"] += points_for

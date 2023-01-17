@@ -34,9 +34,34 @@ class Match:
         self.green_score = 0
         self.red_score = 0
 
+    
+    def __getitem__(self, index: Literal["green", "red"]):
+        if index == "green":
+            return self.green
+        elif index == "red":
+            return self.red
+        else:
+            raise KeyError("Invalid key")
+
 
     def __iter__(self):
         return iter([self.green, self.red])
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sorting_id": self.sorting_id,
+            "group": self.group,
+            "piste": self.piste,
+            "match_ongoing": self.match_ongoing,
+            "match_completed": self.match_completed,
+            "wildcard": self.wildcard,
+            "green": self.green,
+            "red": self.red,
+            "stage": self.stage,
+            "green_score": self.green_score,
+            "red_score": self.red_score
+        }
 
     # Statistics
     @property
@@ -105,8 +130,8 @@ class GroupMatch(Match):
     def input_results(self, green_score: int, red_score: int) -> None:
         super().input_results(green_score, red_score)
 
-        self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
-        self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
+        self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
+        self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
 
 
 
@@ -119,15 +144,15 @@ class EliminationMatch(Match):
             self.match_completed = True
             self.red_score = 1
             self.wildcard = True
-            self.red.last_match_won = True
+            self.last_match_won = True
         elif self.red.name == "Wildcard":
             self.match_completed = True
             self.green_score = 1
             self.wildcard = True
-            self.green.last_match_won = True
+            self.last_match_won = True
 
     def input_results(self, green_score: int, red_score: int) -> None:
         super().input_results(green_score, red_score)
 
-        self.green.update_statistics(True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
-        self.red.update_statistics(False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
+        self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
+        self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score)

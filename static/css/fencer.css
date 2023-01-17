@@ -1,0 +1,91 @@
+body {
+    font-family: margin-mvb, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+.Section {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Name-Banner {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+#Main-Flag {
+    width: 40px;
+    height: 30px;
+    background-color: black;
+    margin-right: 20px;
+}
+
+.Standing-Wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.Standing-Block {
+    background-color: #ffffff;
+    border-radius: 10px;
+    width: 50%;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Standing-Block-Description {
+    font-size: 12px;
+}
+
+.Standing-Block-Number {
+    font-size: 40px;
+}
+
+.Title {
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.Streak-Wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.Streak-Block {
+    background-color: #ffffff;
+    border-radius: 10px;
+    width: 50%;
+    padding: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ name }}</title>
+    <link rel="stylesheet" href="/static/css/fencer.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+</head>
+<body>
+    <div class="Section">
+        <h1>Fencer Hub</h1>
+        <div class="Name-Banner">
+            <div id="Main-Flag"></div>
+            <div id="Main-Name">{{ name }} ({{ club }})</div>
+        </div>
+    </div>
+    <div class="Section">
+        <div class="Standing-Wrapper">
+            <div class="Standing-Block">
+                <div class="Standing-Block-Description">Overall</div>
+                <div class="Standing-Block-Number" id="Current_Standing"></div>
+            </div>
+            <div class="Standing-Block" id="Group-Standing-Block">
+                <div class="Standing-Block-Description">Group</div>
+                <div class="Standing-Block-Number" id="Group_Standing"></div>
+            </div>
+        </div>
+        <div class="Title">Last Matches:</div>
+        <div class="Streak-Wrapper" id="Streak">
+            <div class="Streak-Block" id="Streak-5">-</div>
+            <div class="Streak-Block" id="Streak-4">-</div>
+            <div class="Streak-Block" id="Streak-3">-</div>
+            <div class="Streak-Block" id="Streak-2">-</div>
+            <div class="Streak-Block" id="Streak-1">-</div>
+        </div>
+        <div style="font-size: 12px; text-align: right; padding-right: 10px;">recent</div>
+    </div>
+    <div class="Section">
+        <div class="Next-Piste">
+            <div>Next Piste:</div>
+            <div id="Next-Piste-Number"></div>
+        </div>
+        <div class="Next-Match">
+        </div>
+    </div>
+
+
+
+    <script src="/static/js/fencer.js"></script>
+</body>
+</html>

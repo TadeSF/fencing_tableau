@@ -3,7 +3,10 @@ function get_standings() {
     .then(response => response.json())
     .then(response => {
         let standings = response["standings"]
-        update_standings(standings)
+        let stage = response["stage"]
+        let max_elimination_ranks = response["first_elimination_round"]
+        console.log(stage, max_elimination_ranks)
+        update_standings(standings, stage, max_elimination_ranks)
     })
 }
 
@@ -41,7 +44,7 @@ function clearTable(table) {
 }
 
 
-async function update_standings(rankings) {
+async function update_standings(rankings, stage, max_elimination_ranks) {
     let standings = document.getElementById('standings_table')
 
     // Remove all rows from the table
@@ -50,6 +53,8 @@ async function update_standings(rankings) {
     // Add the new, updated rows
     for (const element of rankings) {
         let row = document.createElement('tr')
+        let id = document.createElement('td')
+        id.style.display = "none"
         let rank = document.createElement('td')
         let nationality = document.createElement('td')
         let name = document.createElement('td')
@@ -60,6 +65,7 @@ async function update_standings(rankings) {
         let points_for = document.createElement('td')
         let points_against = document.createElement('td')
 
+        let id_text = document.createTextNode(element["id"])
         let rank_text = document.createTextNode(element["rank"])
         let name_text = document.createTextNode(element["name"])
         let club_text = document.createTextNode(element["club"])
@@ -94,7 +100,7 @@ async function update_standings(rankings) {
         let points_for_text = document.createTextNode(element["points_for"])
         let points_against_text = document.createTextNode(element["points_against"])
 
-
+        id.appendChild(id_text)
         rank.appendChild(rank_text)
         name.appendChild(name_text)
         club.appendChild(club_text)
@@ -108,6 +114,7 @@ async function update_standings(rankings) {
         name.className = "cell-name"
         rank.className = "cell-rank"
 
+        row.appendChild(id)
         row.appendChild(rank)
         row.appendChild(nationality)
         row.appendChild(name)
@@ -117,6 +124,31 @@ async function update_standings(rankings) {
         row.appendChild(point_difference)
         row.appendChild(points_for)
         row.appendChild(points_against)
+
+        if (stage !== "Preliminary Round") {
+            if (element["eliminated"] === true && stage !== "Finished") {
+                row.classList.add("eliminated")
+            } else if (element["eliminated"] === true && stage === "Finished") {
+                row.classList.add("normal")
+            } else {
+                row.classList.add("not-eliminated")
+            }
+            if (element["rank"] <= 3) {
+                row.classList.add("podium")
+            }
+        } else {
+            if (element["rank"] <= max_elimination_ranks) {
+                row.classList.add("advancing")
+            } else if (max_elimination_ranks == null) {
+                row.classList.add("normal")
+            } else {
+                row.classList.add("eliminated")
+            }
+        }
+
+        row.onclick = function() {
+            open_fencer_window(element["id"])
+        }
 
         standings.appendChild(row)
     }
@@ -142,3 +174,8 @@ window.addEventListener('message', function(event) {
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
 };
+
+function open_fencer_window(id) {
+    let url = "fencer/" + id
+    window.open(url, "_blank")
+}

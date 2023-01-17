@@ -25,3 +25,7 @@ class Piste:
             raise PisteError("This Piste is already/still occupied")
         self.occupied = True
         self.staged = False
+
+    def reset(self):
+        self.staged = False
+        self.occupied = False

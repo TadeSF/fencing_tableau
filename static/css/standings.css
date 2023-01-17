@@ -59,3 +59,47 @@ thead {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+.normal,
+.eliminated,
+.not-eliminated,
+.advancing {
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.normal {
+    background-color: rgb(255, 255, 255);
+}
+
+.eliminated {
+    background-color: rgb(255, 202, 202);
+}
+
+.not-eliminated {
+    background-color: rgb(255, 255, 255);
+}
+
+.advancing {
+    background-color: rgb(202, 255, 202);
+}
+
+.normal:hover,
+.eliminated:hover,
+.not-eliminated:hover,
+.advancing:hover {
+    background-color: rgb(203, 203, 203);
+    transition: 0.3s;
+}
+
+.normal:active,
+.eliminated:active,
+.not-eliminated:active,
+.advancing:active {
+    background-color: rgb(255, 238, 0);
+    color: rgb(68, 68, 68);
+}
+
+.podium {
+    font-weight: bold;
+}

@@ -5,8 +5,9 @@ from match import GroupMatch, EliminationMatch
 from tournament import *
 from fencer import Fencer, Wildcard, Stage
 from piste import PisteError, Piste
+import random_generator
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, abort
 
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
@@ -85,7 +86,8 @@ def load_all_tournaments():
         if file.endswith('.pickle'):
             with open(f'tournaments/{file}', 'rb') as f:
                 tournament = pickle.load(f)
-                tournament_cache.append(tournament)
+                if tournament is not None:
+                    tournament_cache.append(tournament)
 
 def delete_old_tournaments():
     """
@@ -97,6 +99,35 @@ def delete_old_tournaments():
         if (datetime.datetime.now() - tournament.created_at).days > 1:
             os.remove(f'tournaments/{tournament.id}.pickle')
             tournament_cache.remove(tournament)
+
+
+
+# ------- Searches -------
+def search_fencer(tournament_id, fencer_id) -> Fencer | None:
+    """
+    This function searches for a fencer in a tournament, given the tournament id and the fencer id.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament to be searched in.
+    fencer_id : str
+        The id of the fencer to be searched for.
+
+    Returns
+    -------
+    Fencer object
+        if the fencer exists
+    None
+        if the fencer does not exist
+    """
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return None
+    for fencer in tournament.fencers:
+        if fencer.id == fencer_id:
+            return fencer
+    return None
 
 
 
@@ -134,7 +165,7 @@ def process_form():
     name : str
         The name of the tournament.
     fencers : file
-        A csv file containing the fencers with the Headers Name, Club, Nationality. Nationality has to be the alpha-3 Countrycode.
+        A csv file containing the fencers with the Headers Name, Club, Nationality, Gender, Handedness. Nationality has to be the alpha-3 Countrycode. Gender and Handedness are optional.
     location : str
         The location of the tournament.
     pistes : int
@@ -164,16 +195,27 @@ def process_form():
     preliminary_rounds = request.form['number_of_preliminary_rounds']
     preliminary_groups = request.form['number_of_preliminary_groups']
 
-    # do something with the form data
+    # --- Process the data from the form
+    # Process csv file
 
     fencers = []
     csv_contents = fencers_csv.read().decode('utf-8')
     reader = csv.reader(csv_contents.splitlines())
     i = 1
+
+
     for row in reader:
         if row[0] != 'Name':
-            fencers.append(Fencer(row[0], row[1], row[2], i, int(preliminary_rounds)))
+            fencer_name = row[0]
+            fencer_club = row[1]
+            fencer_nationality = row[2]
+            fencer_gender = row[3] if len(row) > 3 else None
+            fencer_handedness = row[4] if len(row) > 4 else None
+
+            fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality, fencer_gender, fencer_handedness, i, int(preliminary_rounds)))
             i += 1
+
+    # Generate and save the new tournament
 
     random_id = random_generator.id(6)
     
@@ -191,12 +233,15 @@ def login_manager():
 
     Returns
     -------
-    redirects to /dashboard/<tournament_id>
+    redirects to /dashboard/<tournament_id>, 200
+        On success
+    404
+        On tournament not found
     """
     global tournament_cache
     tournament_id = request.form['tournament_id']
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         return redirect(url_for('dashboard', tournament_id=tournament_id))
 
@@ -211,7 +256,7 @@ def login_fencer():
     404
     """
     # TODO Implement
-    return 404
+    abort(404)
 
 @app.route('/login-referee', methods=['POST'])
 def login_referee():
@@ -224,7 +269,7 @@ def login_referee():
     404
     """
     # TODO Implement
-    return 404
+    abort(404)
 
 @app.route('/<tournament_id>/dashboard')
 def dashboard(tournament_id):
@@ -238,10 +283,13 @@ def dashboard(tournament_id):
 
     Returns
     -------
-    dashboard.html
+    dashboard.html 200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return redirect(url_for('index'))
+        abort(404)
     else:
         return render_template('dashboard.html', tournament_id=tournament_id)
 
@@ -258,10 +306,13 @@ def get_dashboard_infos(tournament_id):
 
     Returns
     -------
-    json object (from tournament.get_dashboard_infos())
+    json object (from tournament.get_dashboard_infos()), 200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         tournament = get_tournament(tournament_id)
     return jsonify(tournament.get_dashboard_infos())
@@ -279,10 +330,13 @@ def matches(tournament_id):
 
     Returns
     -------
-    matches.html
+    matches.html, 200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         return render_template('/dashboard/matches.html')
 
@@ -376,9 +430,12 @@ def standings(tournament_id):
 
     Returns
     standings.html, 200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         return render_template('/dashboard/standings.html')
 
@@ -414,9 +471,12 @@ def matches_left(tournament_id):
     Returns
     -------
     str (from tournament.get_matches_left()
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         return get_tournament(tournament_id).get_matches_left()
 
@@ -433,12 +493,71 @@ def next_stage(tournament_id):
     Returns
     -------
     200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         get_tournament(tournament_id).next_stage()
         return '', 200
+
+
+@app.route('/<tournament_id>/fencer/<fencer_id>')
+def fencer(tournament_id, fencer_id):
+    """
+    Flask serves on a GET request /<tournament_id>/fencer/<fencer_id> the fencer.html file from the templates folder.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    fencer_id : str
+        The id of the fencer.
+
+    Returns
+    -------
+    fencer.html, 200
+        On success
+    404
+        On tournament not found
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        tournament = get_tournament(tournament_id)
+        fencer = tournament.get_fencer_object(fencer_id)
+        if fencer is None:
+            abort(404)
+        else:
+            return render_template('/fencer.html',
+                name=fencer.short_str,
+                club=fencer.club,
+                )
+
+
+@app.route('/<tournament_id>/fencer/<fencer_id>/update', methods=['GET'])
+def get_fencer(tournament_id, fencer_id):
+    """
+    Flask serves on a GET request /<tournament_id>/fencer/<fencer_id>/update the fencer object as a json object.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    fencer_id : str
+        The id of the fencer.
+
+    Returns
+    -------
+    json object (from tournament.get_fencer_object()
+    """
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return jsonify([])
+    return jsonify(tournament.get_fencer_hub_information(fencer_id))
+
 
 
 
@@ -456,16 +575,24 @@ def simulate_current(tournament_id):
     Returns
     -------
     200
+        On success
+    404
+        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        return '', 404
+        abort(404)
     else:
         get_tournament(tournament_id).simulate_current()
         return '', 200
 
 
 
-
+@app.errorhandler(404)
+def page_not_found(e):
+    """
+    404 Error handler: Flask serves on a 404 Error the 404.html file from the templates folder.
+    """
+    return render_template('404.html'), 404
 
 
 
