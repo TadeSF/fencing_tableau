@@ -1,9 +1,9 @@
 import csv
 import datetime
 import os
-from match import *
+from match import GroupMatch, EliminationMatch
 from tournament import *
-from fencer import *
+from fencer import Fencer, Wildcard, Stage
 from piste import PisteError, Piste
 
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify

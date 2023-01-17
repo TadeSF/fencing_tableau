@@ -1,8 +1,9 @@
 import datetime
 import math
+import random
 import time
-from fencer import *
-from match import *
+from fencer import Fencer, Wildcard, Stage
+from match import GroupMatch, EliminationMatch
 from piste import Piste
 
 from typing import Literal, List
@@ -218,7 +219,7 @@ def save_final_ranking(fencers_list: List[List[Fencer]], mode: Literal["ko", "re
 
 
 
-# ------- Tournament Class -------
+# ------- Tournament Base Class -------
 
 class Tournament:
 
@@ -527,3 +528,8 @@ class Tournament:
 
             print(f"Simulating... |{'#' * 20}|")
             print("Simulation Done.")
+
+
+
+
+# ------- Different Tournament Class Modes -------
