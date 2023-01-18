@@ -285,7 +285,9 @@ class Fencer:
 
     @property
     def last_match_won(self):
+        print(self.last_matches)
         if len(self.last_matches) == 0:
+            print("No last match available")
             return None
         else:
             return self.last_matches[-1]["win"]
@@ -301,7 +303,7 @@ class Fencer:
         -------
         List of 5 bools
         """
-        return [match["win"] for match in self.last_matches]
+        return [match["win"] for match in self.last_matches][-8:]
 
 
     # statistics
@@ -336,6 +338,8 @@ class Fencer:
             "match": match.id,
         })
 
+        print(self.last_matches)
+
         if win:
             self.statistics["overall"]["wins"] += 1
             self.statistics[stage][round]["wins"] += 1
@@ -352,6 +356,15 @@ class Fencer:
         self.statistics[stage][round]["points_against"] += points_against
 
         self.group_opponents.append(opponent)
+
+    
+    def update_statistics_wildcard_game(self, match):
+        self.last_matches.append({
+            "win": True,
+            "opponent": "Wildcard",
+            "match": match.id,
+        })
+
 
 
     def win_percentage(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall") -> int:
@@ -459,6 +472,10 @@ class Wildcard(Fencer):
         super().__init__("Wildcard", nationailty="WLD")
         self.wildcard_number = wildcard_number
         self.start_number = 0
+
+    @property
+    def last_match_won(self):
+        return False
 
     def points_against_per_game(self, stage: Literal["overall", "preliminary", "intermediate", "elimination"] = "overall"):
         """

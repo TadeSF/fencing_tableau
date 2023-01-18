@@ -144,12 +144,12 @@ class EliminationMatch(Match):
             self.match_completed = True
             self.red_score = 1
             self.wildcard = True
-            self.last_match_won = True
+            self.red.update_statistics_wildcard_game(self)
         elif self.red.name == "Wildcard":
             self.match_completed = True
             self.green_score = 1
             self.wildcard = True
-            self.last_match_won = True
+            self.green.update_statistics_wildcard_game(self)
 
     def input_results(self, green_score: int, red_score: int) -> None:
         super().input_results(green_score, red_score)
