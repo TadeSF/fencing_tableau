@@ -376,7 +376,7 @@ class Tournament:
 
     # --- GET Requests handling from client ---
 
-    def get_standings(self) -> dict:
+    def get_standings(self, group) -> dict:
         # Get current standings and return them as a dictionary for the GUI
         standings = {
             "stage": str(self.stage),
@@ -386,6 +386,16 @@ class Tournament:
 
         # Sort fencers by overall score
         fencers = sorting_fencers(self.fencers)
+
+
+
+        # If a specific group is requested, only return the fencers of that group
+        if group != "all" and group != None and self.stage == Stage.PRELIMINARY_ROUND:
+            print(fencers)
+            for fencer in fencers:
+                if fencer.prelim_group != group:
+                    fencers.remove(fencer)
+            
 
         for fencer in fencers:
             standings["standings"].append({
@@ -518,6 +528,8 @@ class Tournament:
                     next_matches.append({
                         "id": match.id,
                         "piste": match.piste_str,
+                        "piste_occupied": match.piste.occupied if match.piste else None,
+                        "color": "green" if match.green == fencer else "red",
                         "ongoing": match.match_ongoing,
                         "opponent": self.get_opponent(fencer, match),
                     })
@@ -531,8 +543,9 @@ class Tournament:
                 "outcome_last_matches": fencer.outcome_last_matches,
                 "last_matches": fencer.last_matches,
                 "current_rank": self.get_current_rank(fencer),
+                "group": fencer.prelim_group if self.stage == Stage.PRELIMINARY_ROUND else None,
                 "current_group_rank": self.get_current_group_rank(fencer) if self.stage == Stage.PRELIMINARY_ROUND else None,
-            }
+            }   
 
 
     # --- POST Request handling from client ---

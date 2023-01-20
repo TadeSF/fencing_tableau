@@ -14,7 +14,8 @@ body {
     margin-right: auto;
 }
 
-.Name-Banner {
+.Name-Banner,
+.Fencer-Banner {
     background-color: #ffffff;
     border-radius: 10px;
     padding: 10px;
@@ -25,6 +26,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 18px;
+    margin-bottom: 10px;
 }
 
 #Main-Flag {
@@ -34,7 +36,8 @@ body {
     margin-right: 20px;
 }
 
-.Standing-Wrapper {
+.Standing-Wrapper,
+.Next-Piste-Wrapper {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -42,10 +45,10 @@ body {
     margin-bottom: 10px;
 }
 
-.Standing-Block {
+.Standing-Block,
+.Next-Piste-Block {
     background-color: #ffffff;
     border-radius: 10px;
-    width: 50%;
     padding: 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -53,13 +56,33 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: 0.5s ease-in-out;
 }
 
-.Standing-Block-Description {
+.Standing-Block {
+    width: 50%;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px grey;
+    transition: 0.3s;
+}
+
+.Standing-Block:hover {
+    box-shadow: 0px 0px 0px grey;
+    translate: 5px 5px;
+}
+
+.Standing-Block:active {
+    box-shadow: inset 2px 2px 0px grey;
+    translate: 5px 5px;
+}
+
+.Standing-Block-Description,
+.Next-Piste-Block-Description {
     font-size: 12px;
 }
 
-.Standing-Block-Number {
+.Standing-Block-Number,
+.Next-Piste-Block-Number {
     font-size: 40px;
 }
 
@@ -88,4 +111,50 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#Next-Match-Fencer {
+    margin-bottom: 5px;
+}
+
+
+.Next-Match-Flag {
+    width: 40px;
+    height: 30px;
+    background-color: black;
+    margin-right: 20px;
+}
+
+
+
+.piste_helper {
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    margin: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 12px;
+    transition: all 0.5s;
+    max-height: 0;
+    padding:0;
+    overflow: hidden;
+}
+.hide{
+    max-height: 50vh;
+    padding:10px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow:auto;
+}
+
+
+#Next-Piste-Block {
+    cursor: help;
+    width: 100%;
+}
+
+#Next-Piste-Block:hover {
+    box-shadow: inset 2px 2px 0px grey;
 }

@@ -12,19 +12,20 @@
 <body>
     <div class="Section">
         <h1>Fencer Hub</h1>
-        <div class="Name-Banner">
+        <div class="Name-Banner" id="Name-Banner">
             <div id="Main-Flag"></div>
             <div id="Main-Name">{{ name }} ({{ club }})</div>
         </div>
     </div>
     <div class="Section">
+        <h2>Performance Overview</h2>
         <div class="Standing-Wrapper">
-            <div class="Standing-Block">
+            <div class="Standing-Block" onclick="standings('all')">
                 <div class="Standing-Block-Description">Overall</div>
                 <div class="Standing-Block-Number" id="Current_Standing"></div>
             </div>
-            <div class="Standing-Block" id="Group-Standing-Block">
-                <div class="Standing-Block-Description">Group</div>
+            <div class="Standing-Block" id="Group-Standing-Block" onclick="standings('group')">
+                <div class="Standing-Block-Description">Group <span id="Group_Number"></span></div>
                 <div class="Standing-Block-Number" id="Group_Standing"></div>
             </div>
         </div>
@@ -38,12 +39,36 @@
         </div>
         <div style="font-size: 12px; text-align: right; padding-right: 10px;">recent</div>
     </div>
-    <div class="Section">
-        <div class="Next-Piste">
-            <div>Next Piste:</div>
-            <div id="Next-Piste-Number"></div>
-        </div>
+    <div class="Section" id="Next-Match-Section">
         <div class="Next-Match">
+            <h2 id="Next-Piste-Title">Upcoming Match</h2>
+            <div class="Next-Piste-Wrapper">
+                <div class="Next-Piste-Block" id="Next-Piste-Block">
+                    <div class="Next-Piste-Block-Description">Piste</div>
+                    <div class="Next-Piste-Block-Number" id="Next-Piste-Number">TBA</div>
+                </div>
+            </div>
+            <div class="piste_helper" id="piste_helper">Hello World</div>
+            <div class="Match Information">
+                <div>
+                    <div class="Title">Against:</div>
+                    <div class="Fencer-Banner" id="Next-Match-Fencer">
+                        <div class="Next-Match-Flag"></div>
+                        <div class="Next-Match-Name"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="Section" id="Next-Opponents">
+        <h2>Upcoming Opponents</h2>
+        <div id="Opponents-Wrapper">
+
+        </div>
+    </div>
+    <div class="Section" id="No-More-Matches" style="display: none;">
+        <div class="Next-Match">
+            <div class="Title">No more matches in this round!</div>
         </div>
     </div>
 

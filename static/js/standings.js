@@ -1,11 +1,11 @@
 function get_standings() {
-    fetch('standings/update')
+    let group_query = document.getElementById('Group_Number').innerHTML
+    fetch('update/' + group_query)
     .then(response => response.json())
     .then(response => {
         let standings = response["standings"]
         let stage = response["stage"]
         let max_elimination_ranks = response["first_elimination_round"]
-        console.log(stage, max_elimination_ranks)
         update_standings(standings, stage, max_elimination_ranks)
     })
 }
@@ -167,7 +167,6 @@ window.addEventListener('message', function(event) {
   if (event.data === 'update') {
     // Call the function
     get_standings();
-    console.log("Updating standings")
   }
 });
 

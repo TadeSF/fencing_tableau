@@ -14,7 +14,7 @@ class Piste:
         return self.number - 1
 
     @property
-    def free_now(self):
+    def free_now(self) -> bool:
         return True if not self.staged and not self.occupied else False
 
     def match_finished(self):

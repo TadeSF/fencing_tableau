@@ -418,8 +418,8 @@ def push_score(tournament_id):
     save_tournament(tournament)
     return '', 200
 
-@app.route('/<tournament_id>/standings')
-def standings(tournament_id):
+@app.route('/<tournament_id>/standings/<group>')
+def standings(tournament_id, group):
     """
     Flask serves on a GET request /<tournament_id>/standings the standings.html file from the templates folder.
 
@@ -427,6 +427,8 @@ def standings(tournament_id):
     ----------
     tournament_id : str
         The id of the tournament.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
 
     Returns
     standings.html, 200
@@ -437,10 +439,10 @@ def standings(tournament_id):
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        return render_template('/dashboard/standings.html')
+        return render_template('/dashboard/standings.html', group=group)
 
-@app.route('/<tournament_id>/standings/update', methods=['GET'])
-def get_standings(tournament_id):
+@app.route('/<tournament_id>/standings/update/<group>', methods=['GET'])
+def get_standings(tournament_id, group):
     """
     Flask serves on a GET request /<tournament_id>/standings/update the standings of the current state as a json object.
 
@@ -448,6 +450,8 @@ def get_standings(tournament_id):
     ----------
     tournament_id : str
         The id of the tournament.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
 
     Returns
     -------
@@ -456,7 +460,26 @@ def get_standings(tournament_id):
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify([])
-    return jsonify(tournament.get_standings())
+
+    return jsonify(tournament.get_standings(group))
+
+@app.route('/<tournament_id>/standings/fencer/<fencer_id>')
+def redirict_fencer_from_standings(tournament_id, fencer_id):
+    """
+    Flask processes a GET request to redirect to the fencer page from the standings page.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    fencer_id : str
+        The id of the fencer.
+
+    Returns
+    -------
+    302
+    """
+    return redirect(f'/{tournament_id}/fencer/{fencer_id}')
 
 @app.route('/<tournament_id>/matches-left', methods=['GET'])
 def matches_left(tournament_id):
@@ -557,6 +580,32 @@ def get_fencer(tournament_id, fencer_id):
     if tournament is None:
         return jsonify([])
     return jsonify(tournament.get_fencer_hub_information(fencer_id))
+
+@app.route('/<tournament_id>/fencer/standings/<group>', methods=['GET'])
+def redirect_standings(tournament_id, group):
+    """
+    Flask serves on a GET request /<tournament_id>/fencer/<fencer_id>/standings the standings.html file from the templates folder.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    fencer_id : str
+        The id of the fencer.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
+
+    Returns
+    -------
+    standings.html, 200
+        On success
+    404
+        On tournament not found
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        return redirect(f'/{tournament_id}/standings/{group}')
 
 
 
