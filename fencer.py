@@ -210,6 +210,9 @@ class Fencer:
         self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
         self.eliminated = False # Tracks if the fencer has been eliminated from the tournament
 
+        # Approved of last tableau
+        self.approved_tableau = False
+
         # Final Rank
         self.final_rank = None
 

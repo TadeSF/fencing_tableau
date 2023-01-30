@@ -186,6 +186,17 @@ async function update() {
             document.getElementById("Next-Match-Section").style.display = "none";
             document.getElementById("Next-Opponents").style.display = "none";
             document.getElementById("No-More-Matches").style.display = "block";
+            if (data["group_stage"] == true) {
+                document.getElementById("tableau-wrapper").style.display = "flex";
+                if (data["approved_tableau"] == false) {
+                    document.getElementById("approval-needed").style.display = "block";
+                } else {
+                    document.getElementById("approval-needed").style.display = "none";
+                }
+            } else {
+                document.getElementById("tableau-wrapper").style.display = "none";
+                document.getElementById("approval-needed").style.display = "none";
+            }
         }
     });
 
@@ -220,3 +231,52 @@ document.querySelector("#Next-Piste-Block").addEventListener("click", (event) =>
     let pisteHelper = document.querySelector(".piste_helper");
     pisteHelper.classList.toggle("hide");
 });
+
+
+function viewTableau() {
+    let url = window.location.href;
+    let tournament = url.split("/")[3];
+    let group = document.getElementById("Group_Number").innerHTML;
+    let round = 1;
+    window.open("/" + tournament + "/tableau/" + round + "/" + group, "_blank");
+}
+
+function report_issue() {
+    alert("Please report the issue directly to the tournament director.");
+}
+
+function approve_tableau() {
+    let url = window.location.href;
+    let tournament = url.split("/")[3];
+    let group = document.getElementById("Group_Number").innerHTML;
+    let round = 1;
+    let fencer_id = url.split("/")[5];
+    // get current timestamp
+    let timestamp = new Date()
+    timestamp = timestamp.toISOString();
+    let data = {
+        "timestamp": timestamp,
+        "group": group,
+        "round": round,
+        "tournament": tournament,
+        "fencer_id": fencer_id
+    }
+    // POST request
+    fetch("/" + tournament + "/tableau/" + round + "/" + group + "/approve", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then((response) => {
+        return response.json();
+    }
+    ).then((data) => {
+        if (data["success"] === true) {
+            alert("Tableau approved!");
+            document.getElementById("approval-needed").style.display = "none";
+        } else {
+            alert("Error! Tableau already approved or something went wrong!");
+        }
+    }); 
+}

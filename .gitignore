@@ -3,3 +3,4 @@ __pycache__
 test.py
 notes.py
 tournaments/*
+tournament_cache/*

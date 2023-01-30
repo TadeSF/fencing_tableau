@@ -1,0 +1,100 @@
+body {
+    font-family: margin-mvb, sans-serif;
+    margin: 0;
+    text-align: center;
+
+}
+
+.tableau-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+table {
+    text-align: center;
+}
+
+tr:hover {
+    background-color: #eaeaea;
+}
+
+.rotate {
+    writing-mode:vertical-lr;
+    transform: rotate(180deg);
+    display: inline-block;
+    height: 200px;
+    vertical-align: bottom;
+}
+
+.blank {
+    background-color: #cacaca;
+    border-radius: 5px;
+}
+
+.corner {
+    background-color: #ffffff;
+}
+
+.header {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    text-align: left;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+.header:hover {
+    background-color: #eaeaea;
+    cursor: pointer;
+}
+
+.win {
+    border-radius: 50%;
+    border: solid 1px #000000;
+}
+
+.win:hover {
+    background-color: green;
+    color: #ffffff;
+}
+
+.lose {
+    border-radius: 50%;
+    border: solid 1px #eaeaea;
+}
+
+.lose:hover {
+    background-color: red;
+    color: #ffffff;
+    border-color: #000000;
+}
+
+.result {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #ebebeb;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #b7b7b7;
+}
+
+button:active {
+    background-color: #9c9c9c;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Group Tableau</title>
+    <link rel="stylesheet" href="/static/css/tableau.css">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+  </head>
+  <body>
+    <div id="header">
+      <h1 class="section_headline_reload">Tableau Round <span id="round">{{ round }}</span> [Group <span id="group">{{ group }}</span>]</h1>
+    </div>
+    <div class="tableau-wrapper">
+        <table id="tableau">
+        </table>
+    </div>
+    <div>
+        <button id="print" onclick="print_page()">Print</button>
+        <button id="back" onclick="back()">Back</button>
+    </div>
+    <script src="/static/js/tableau.js"></script>
+  </body>
+  </html>

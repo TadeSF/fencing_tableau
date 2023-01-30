@@ -68,7 +68,20 @@
     </div>
     <div class="Section" id="No-More-Matches" style="display: none;">
         <div class="Next-Match">
-            <div class="Title">No more matches in this round!</div>
+            <h2>Matches Finished</h2>
+            <p>You finished all matches in the current round.</p>
+            <br>
+            <div class="Standing-Wrapper" id="tableau-wrapper" style="display: none;">
+                <div class="Standing-Block" id="view_tableau" onclick="viewTableau()">View Tableau</div>
+            </div>
+            <br>
+            <div id="approval-needed">
+                <h2>Approve Group Tableau</h2>
+                <div class="Standing-Wrapper" style="margin-top: 10px;">
+                    <div class="Standing-Block" id="report_issue" onclick="report_issue('group')">Report Issue</div>
+                    <div class="Standing-Block" id="approve_tableau" onclick="approve_tableau('group')">Approve</div>
+                </div>
+            </div>
         </div>
     </div>
 

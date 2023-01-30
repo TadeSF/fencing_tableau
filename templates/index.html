@@ -128,7 +128,7 @@
           </div>
           <br> -->
           <label for="pw">Master Password</label>
-          <input type="password" id="pw" name="pw" placeholder="Password" required><br>
+          <input type="password" id="master_password" name="master_password" placeholder="Password" required><br>
           <br>
           <button type="submit" value="submit">Create Tournament</button>
         </form>
@@ -140,7 +140,7 @@
           <label for="tournament_id">Login with Tournament ID</label>
           <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
           <br>
-          <input type="password" id="pw" name="pw" placeholder="Password" required><br>
+          <input type="password" id="manager_password" name="pw" placeholder="Password" required><br>
           <br>
           <button type="submit" value="submit">Login</button>
         </form>
@@ -148,17 +148,15 @@
     </div>
     <div id="login_fencer_form">
       <div class="form_container">
-        <form method="POST" enctype="multipart/form-data" id="fencer_login_form" action="/login-fencer">
+        <form method="POST" enctype="multipart/form-data" id="fencer_login_form" onsubmit="submitFencerForm(event)">
           <label for="tournament_id">Login with Tournament ID</label>
-          <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
+          <input type="text" id="fencer_tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
           <br>
-          <label for="fencer_id">Input your Start Number</label>
-          <input type="number" id="fencer_id" name="fencer_id" placeholder="Starting Number" required><br>
-          <br>
-          <label for="fencer_name">Input your Name</label>
-          <input type="text" id="fencer_name" name="fencer_name" placeholder="Name" required><br>
+          <label for="fencer_name">Input Name or Start_Number</label>
+          <input type="text" id="fencer_search" name="fencer_search" placeholder="Name or #"><br>
           <br>
           <button type="submit" value="submit">Login</button>
+          <div id="fencer-error-message"></div>
         </form>
       </div>
     </div>

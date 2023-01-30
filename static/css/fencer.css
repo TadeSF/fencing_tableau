@@ -158,3 +158,14 @@ body {
 #Next-Piste-Block:hover {
     box-shadow: inset 2px 2px 0px grey;
 }
+
+
+#report_issue {
+    background-color: red;
+    color: white;
+}
+
+#approve_tableau {
+    background-color: green;
+    color: white;
+}

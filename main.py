@@ -64,6 +64,13 @@ def check_tournament_exists(tournament_id) -> bool:
 
 import pickle
 
+def create_local_tournament_folder():
+    """
+    This function creates a folder called "tournaments" in the root directory, if it does not already exist.
+    """
+    if not os.path.exists('tournament_cache'):
+        os.makedirs('tournament_cache')
+
 def save_tournament(tournament: Tournament):
     """
     This function saves a tournament to a file, so that it can be loaded again later, even if the server has to restart.
@@ -74,7 +81,8 @@ def save_tournament(tournament: Tournament):
     tournament : Tournament
         The tournament to be saved.
     """
-    with open(f'tournaments/{tournament.id}.pickle', 'wb') as f:
+    create_local_tournament_folder()
+    with open(f'tournament_cache/{tournament.id}.pickle', 'wb') as f:
         pickle.dump(tournament, f)
 
 def load_all_tournaments():
@@ -82,9 +90,10 @@ def load_all_tournaments():
     This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.
     """
     global tournament_cache
-    for file in os.listdir('tournaments'):
+    create_local_tournament_folder()
+    for file in os.listdir('tournament_cache'):
         if file.endswith('.pickle'):
-            with open(f'tournaments/{file}', 'rb') as f:
+            with open(f'tournament_cache/{file}', 'rb') as f:
                 tournament = pickle.load(f)
                 if tournament is not None:
                     tournament_cache.append(tournament)
@@ -94,10 +103,11 @@ def delete_old_tournaments():
     This function deletes all tournament files that are older than 1 day from the /tournaments folder.
     """
     global tournament_cache
+    create_local_tournament_folder()
     for tournament in tournament_cache:
         # Delete the tournament.pickle file if it is older than 1 day
         if (datetime.datetime.now() - tournament.created_at).days > 1:
-            os.remove(f'tournaments/{tournament.id}.pickle')
+            os.remove(f'tournament_cache/{tournament.id}.pickle')
             tournament_cache.remove(tournament)
 
 
@@ -255,8 +265,42 @@ def login_fencer():
     -------
     404
     """
-    # TODO Implement
-    abort(404)
+    data = request.get_json()
+    tournament_id = data['tournament_id']
+    search = data['search']
+
+    try: 
+        start_number = int(search)
+        name = None
+    except ValueError:
+        start_number = None
+        name = search
+    
+
+    if not check_tournament_exists(tournament_id):
+        print(tournament_id)
+        print("Tournament not found")
+        return jsonify({'error': 'Tournament not found'}), 404
+    else:
+        tournament = get_tournament(tournament_id)
+        if start_number is None and name is None:
+            return jsonify({'error': 'No start number or name given'}), 400
+        elif name and name != "":
+            fencer_id = tournament.get_fencer_id_by_name(name)
+        elif start_number and start_number != "":
+            fencer_id = tournament.get_fencer_id_by_start_number(start_number)
+
+        if fencer_id is None:
+            return jsonify({'error': 'Fencer not found'}), 404
+        else:
+            fencer = tournament.get_fencer_by_id(fencer_id)
+            return jsonify({
+            'success': 'Fencer found',
+            'tournament_id': tournament_id,
+            'fencer_id': fencer.id,
+            'description': str(fencer),
+            }), 200
+
 
 @app.route('/login-referee', methods=['POST'])
 def login_referee():
@@ -606,6 +650,90 @@ def redirect_standings(tournament_id, group):
         abort(404)
     else:
         return redirect(f'/{tournament_id}/standings/{group}')
+
+@app.route('/<tournament_id>/tableau/<round>/<group>')
+def tableau(tournament_id, round, group):
+    """
+    Flask serves on a GET request /<tournament_id>/tableau/<round>/<group> the tableau.html file from the templates folder.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    round : str
+        The requested round (only if in Preliminary Stage). If ``round`` is "all", overall standings are reported.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
+
+    Returns
+    -------
+    tableau.html, 200
+        On success
+    404
+        On tournament not found
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        return render_template('/tableau.html',
+            round=round,
+            group=group,
+            )
+
+@app.route('/<tournament_id>/tableau/<round>/<group>/update', methods=['GET'])
+def get_tableau(tournament_id, round, group):
+    """
+    Flask serves on a GET request /<tournament_id>/tableau/<round>/<group>/update the tableau object as a json object.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    round : str
+        The requested round (only if in Preliminary Stage). If ``round`` is "all", overall standings are reported.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
+
+    Returns
+    -------
+    json object (from tournament.get_tableau_object()
+    """
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return jsonify([]), 404
+    response = tournament.get_tableau_array(group)
+    return jsonify(response), 200
+
+@app.route('/<tournament_id>/tableau/<round>/<group>/approve', methods=['POST'])
+def approve_tableau(tournament_id, round, group):
+    """
+    Flask processes a POST request to approve the tableau by a certain Fencer.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    round : str
+        The requested round (only if in Preliminary Stage). If ``round`` is "all", overall standings are reported.
+    group : str
+        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
+
+    Returns
+    -------
+    200
+        On success
+    304
+        On already approved tableau
+    404
+        On tournament not found
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        data = request.get_json()
+        
+        response = get_tournament(tournament_id).approve_tableau(round, group, data['timestamp'], data['fencer_id'])
+        return response, 200
 
 
 

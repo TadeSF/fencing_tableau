@@ -1,11 +1,13 @@
 import datetime
 import math
+import os
 import random
 import time
 from fencer import Fencer, Wildcard, Stage
 from match import GroupMatch, EliminationMatch, Match
 from piste import Piste
 import random_generator
+from fuzzywuzzy import fuzz
 
 from typing import Literal, List
 
@@ -248,6 +250,26 @@ def save_final_ranking(fencers_list: List[List[Fencer]], mode: Literal["ko", "pl
             fencers_list[1][0].final_rank = 4
 
 
+# ------- Approval procedure and logging -------
+
+def register_approval(fencer_id, fencer_name, tournamnet_id, timestamp, round, group):
+    # Check if folder /approvals exists
+    if not os.path.exists("approvals"):
+        os.mkdir("approvals")
+    # Check if approval file for tournament exists
+    if not os.path.exists(f"approvals/{tournamnet_id}.txt"):
+        with open(f"approvals/{tournamnet_id}.txt", "w") as file:
+            file.write("")
+    # Check if fencer is already approved
+    # with open(f"approvals/{tournamnet_id}.txt", "r") as file:
+    #     for line in file.readlines():
+    #         if fencer_id in line:
+    #             if f"round {round}" in line and f"group {group}" in line:
+    #                 return False
+    # Add fencer to approval file
+    with open(f"approvals/{tournamnet_id}.txt", "a") as file:
+        file.write(f"Fencer {fencer_name} (ID: {fencer_id}) approved at {timestamp} (GMT) the tableau for group {group} in preliminary round {round}.")
+    return True
 
 
 # ------- Tournament Base Class -------
@@ -391,7 +413,6 @@ class Tournament:
 
         # If a specific group is requested, only return the fencers of that group
         if group != "all" and group != None and self.stage == Stage.PRELIMINARY_ROUND:
-            print(fencers)
             for fencer in fencers:
                 if fencer.prelim_group != group:
                     fencers.remove(fencer)
@@ -539,12 +560,14 @@ class Tournament:
                 "name": fencer.short_str,
                 "club": fencer.club,
                 "nationality": fencer.nationality,
+                "approved_tableau": fencer.approved_tableau,
                 "next_matches": next_matches,
                 "outcome_last_matches": fencer.outcome_last_matches,
                 "last_matches": fencer.last_matches,
                 "current_rank": self.get_current_rank(fencer),
                 "group": fencer.prelim_group if self.stage == Stage.PRELIMINARY_ROUND else None,
                 "current_group_rank": self.get_current_group_rank(fencer) if self.stage == Stage.PRELIMINARY_ROUND else None,
+                "group_stage": True if self.stage == Stage.PRELIMINARY_ROUND else False,
             }   
 
 
@@ -608,6 +631,115 @@ class Tournament:
 
         for piste in self.pistes:
             piste.reset()
+
+        for fencer in self.fencers:
+            fencer.approved_tableau = False
+
+    
+    # --- Search ---
+    def get_fencer_by_id(self, fencer_id) -> Fencer:
+        for fencer in self.fencers:
+            if fencer.id == fencer_id:
+                return fencer
+
+    def get_fencer_id_by_name(self, fencer_name) -> str | None:
+        best_match = None
+        best_ratio = 0
+        for fencer in self.fencers:
+            ratio = fuzz.token_set_ratio(fencer.name, fencer_name)
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_match = fencer.id
+        if best_ratio >= 70: # to be adjusted according to the desired threshold
+            return best_match
+        else:
+            return None
+    
+    def get_fencer_id_by_start_number(self, start_number) -> str | None:
+        if start_number < len(self.fencers):
+            for fencer in self.fencers:
+                if fencer.start_number == int(start_number):
+                    return fencer.id
+        return None
+
+    def get_tableau_array(self, group) -> list:
+        tableau = []
+
+        fencers_in_group = []
+        for fencer in self.fencers:
+            if fencer.prelim_group == int(group):
+                fencers_in_group.append(fencer)
+        
+        fencers_in_group = sorting_fencers(fencers_in_group)
+
+        # For the first row of the tableau, all fencers get a column, the first column is empty
+        tableau.append([])
+        tableau[0].append({"cell_type": "blank_header"})
+        for fencer in fencers_in_group:
+            tableau[0].append({
+                "cell_type": "header",
+                "id": fencer.id,
+                "name": fencer.short_str,
+                "nationality": fencer.nationality,
+                "approved": fencer.approved_tableau
+            })
+
+        # From now on, the first column is the fencer's name, the other columns are the results against the fencer in the first row
+        # flip_score = True
+        for fencer in fencers_in_group:
+            tableau.append([])
+            tableau[-1].append({
+                "cell_type": "header",
+                "id": fencer.id,
+                "name": fencer.short_str,
+                "nationality": fencer.nationality,
+                "approved": fencer.approved_tableau
+            })
+
+            for opponent in fencers_in_group:
+                if fencer.id == opponent.id:
+                    tableau[-1].append({
+                        "cell_type": "blank"
+                    })
+                
+                else:
+                    # Search all matches of the match
+                    for match in self.preliminary_matches[self.preliminary_stage - 1]:
+                        if match.green.id == fencer.id and match.red.id == opponent.id:
+                            tableau[-1].append({
+                                "cell_type": "result",
+                                "match_id": match.id,
+                                "finished": match.match_completed,
+                                "content": match.green_score,
+                                "win": True if match.red_score < match.green_score else False
+                            })
+                        elif match.green.id == opponent.id and match.red.id == fencer.id:
+                            tableau[-1].append({
+                                "cell_type": "result",
+                                "match_id": match.id,
+                                "finished": match.match_completed,
+                                "content": match.red_score,
+                                "win": True if match.green_score < match.red_score else False
+                            })
+        
+        return tableau
+
+
+    def approve_tableau(self, round, group, timestamp, fencer_id):
+        # TODO need to implement a check if all approvals are in before advancing to the next stage
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            if self.preliminary_stage == int(round):
+                for fencer in self.fencers:
+                    if fencer.id == fencer_id:
+                        if register_approval(fencer_id, fencer.short_str, self.id, timestamp, round, group) and fencer.approved_tableau == False:
+                            fencer.approved_tableau = True
+                            return {"success": True, "message": "Tableau approved"}
+        return {"success": False, "message": "Tableau not approved"}
+
+
+
+
+
 
 
     # --- Simulation ---
