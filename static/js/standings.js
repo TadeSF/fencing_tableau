@@ -1,6 +1,11 @@
 function get_standings() {
-    let group_query = document.getElementById('Group_Number').innerHTML
-    fetch('update/' + group_query)
+    group_query = document.getElementById("filter").value
+    if (group_query === "all" || group_query === "") {
+        group_query = ""
+    } else {
+        group_query = "?group=" + group_query
+    }
+    fetch('standings/update' + group_query)
     .then(response => response.json())
     .then(response => {
         let standings = response["standings"]
@@ -46,6 +51,7 @@ function clearTable(table) {
 
 async function update_standings(rankings, stage, max_elimination_ranks) {
     let standings = document.getElementById('standings_table')
+    console.log(standings)
 
     // Remove all rows from the table
     clearTable(standings);
@@ -154,9 +160,39 @@ async function update_standings(rankings, stage, max_elimination_ranks) {
     }
 }
 
+function updateFilter() {
+    let num_groups = document.getElementById("filter").dataset.num_groups
+    let filter = document.getElementById("filter")
+    filter.innerHTML = ""
+    let all_option = document.createElement("option")
+    all_option.value = ""
+    all_option.text = "All Fencers"
+    filter.appendChild(all_option)
+    for (let i = 1; i <= num_groups; i++) {
+        let option = document.createElement("option")
+        option.value = i
+        option.text = "Group " + i
+        filter.appendChild(option)
+    }
+    if (filter.dataset.requested_group === "all") {
+        filter.value = ""
+    } else {
+        filter.value = filter.dataset.requested_group
+    }
+}
+
+function open_in_new_tab() {
+    window.open("standings", "_blank")
+}
+
 window.onload = function() {
-    get_standings()
-  };
+    updateFilter()
+    // if not an iframe, update the matches
+    if (window.self === window.top) {
+        document.getElementById("open_in_new_tab").style.display = "none"
+        get_standings()
+    }
+}
 
 // loop to update the standings every 90 seconds
 setInterval(get_standings, 60000)
@@ -169,6 +205,13 @@ window.addEventListener('message', function(event) {
     get_standings();
   }
 });
+
+function savePDF() {
+    header = document.getElementById("header")
+    header.style.display = "none"
+    window.print()
+    header.style.display = "flex"
+}
 
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);

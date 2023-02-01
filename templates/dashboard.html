@@ -3,6 +3,7 @@
     <head>
         <title>Management Dashboard</title>
         <link rel="stylesheet" href="/static/css/dashboard.css">
+        <link rel="stylesheet" href="/static/css/loading_screen.css">
         <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
     </head>
     <body>
@@ -75,9 +76,28 @@
                 <iframe src="matches" id="matches_frame" class="flex-item-matches" width="100%"></iframe>
             </div>
             <div class="flex-column-2">
-                <iframe src="standings/all" id="standings_frame" class="flex-item-standings" width="100%"></iframe>
+                <iframe src="standings" id="standings_frame" class="flex-item-standings" width="100%"></iframe>
                 <div style="height: 10px;"></div>
             </div>
+        </div>
+        <div class="overlay" id="login-overlay">
+            <div class="overlay-flex-wrapper">
+                <div class="overlay_description">
+                    <h1>Management Dashboard</h1>
+                    <div id="main_id_container_pw" style="margin: auto">
+                        <div id="main_id_text_pw">XXXXXX</div>
+                        <div id="main_id_description_pw">Tournament ID</div>
+                    </div>
+                </div>
+                <form id="overlay-form">
+                    <h2>Please Enter Master Password</h2>
+                    <input type="password" name="password" id="password-input">
+                    <button type="submit" id="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div id="loading-screen">
+            <div id="loading-icon"></div>
         </div>
     <script src="/static/js/dashboard.js"></script>
     </body>

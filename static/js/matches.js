@@ -1,3 +1,5 @@
+// import { jsPDF } from "jspdf";
+
 function get_matches() {
     fetch('matches/update')
     .then(response => response.json())
@@ -93,15 +95,27 @@ async function update_matches(matches) {
         button.className = "cell_button"
         button.id = "button_" + element["id"]
         if (element["ongoing"] == true) {
-            button.innerHTML = "Input Score"
+            button.innerHTML = "Ongoing"
             button.classList.add("cell_button-ongoing")
+            button.onmouseover = function() {
+                this.innerHTML = "Input Score"
+            }
+            button.onmouseout = function() {
+                this.innerHTML = "Ongoing"
+            }
             button.onclick = function() {
                 openPromptWindow(this.parentNode.childNodes[0].innerHTML)
             }
 
         } else if (element["ongoing"] == false && element["complete"] == false) {
-            button.innerHTML = "Start Match"
+            button.innerHTML = "Not Started"
             button.classList.add("cell_button-start")
+            button.onmouseover = function() {
+                this.innerHTML = "Start Match"
+            }
+            button.onmouseout = function() {
+                this.innerHTML = "Not Started"
+            }
             button.onclick = function() {
                 match_set_active(this.parentNode.childNodes[0].innerHTML)
             }
@@ -109,6 +123,16 @@ async function update_matches(matches) {
         } else if (element["ongoing"] == false && element["complete"] == true) {
             button.innerHTML = "Completed"
             button.classList.add("cell_button-finished")
+            button.onmouseover = function() {
+                this.innerHTML = "Correct Score"
+            }
+            button.onmouseout = function() {
+                this.innerHTML = "Completed"
+            }
+            button.style.backgroundColor.hover = "red"
+            button.onclick = function() {
+                openPromptWindow(this.parentNode.childNodes[0].innerHTML)
+            }
         } else {
             button.innerHTML = "Y"
         }
@@ -225,16 +249,20 @@ function push_score(id, green_score, red_score) {
         method: 'POST',
         body: data
     })
-    .then(response => {
+    .then(response => response.json())
+    .then(data => {
+        if(data.success == false) {
+            alert(data.message)
+        }
+    })
+    .then(data => {
         get_matches()
-        // let reciever_iframe = window.frames["standings"]
-        // reciever_iframe.contentWindow.postMessage("should_update_standings", reciever_iframe.location.origin);
-        // Get the "standings" iframe
-        // Get the "standings_frame" iframe
-        let reciever_iframe = window.parent.document.getElementById("standings_frame");
-
-        // Send the message to the "standings_frame" iframe, allowing the message to be sent to any origin
-        reciever_iframe.contentWindow.postMessage("should_update_standings", "*");
+        // if window is an iframe, send message to parent window
+        if (window.parent !== window) {
+            let reciever_iframe = window.parent.document.getElementById("standings_frame");
+            // Send the message to the "standings_frame" iframe, allowing the message to be sent to any origin
+            reciever_iframe.contentWindow.postMessage("should_update_standings", "*");
+        }
     })
 }
 
@@ -252,11 +280,17 @@ function match_set_active(id) {
     .then(response => {
         if (response.ok) {
             let button = document.getElementById("button_" + id)
-            button.innerHTML = "Input Score"
+            button.innerHTML = "Ongoing"
             button.classList.add("cell_button-ongoing")
             button.classList.remove("cell_button-start")
             button.onclick = function() {
                 openPromptWindow(this.parentNode.childNodes[0].innerHTML)
+            }
+            button.onmouseover = function() {
+                this.innerHTML = "Input Score"
+            }
+            button.onmouseout = function() {
+                this.innerHTML = "Ongoing"
             }
         } else {
             alert("A match on the same piste is already ongoing")
@@ -267,6 +301,18 @@ function match_set_active(id) {
     })
 }
 
+function open_in_new_tab() {
+    window.open("matches", "_blank")
+}
+
+window.onload = function() {
+    // if not an iframe, update the matches
+    if (window.self === window.top) {
+        document.getElementById("open_in_new_tab").style.display = "none"
+        get_matches()
+    }
+}
+
 // Listen for messages from the parent window
 window.addEventListener('message', function(event) {
     // Check if the message is 'callFunction'
@@ -274,7 +320,14 @@ window.addEventListener('message', function(event) {
       // Call the function
       get_matches();
     }
-  });
+});
+
+function savePDF() {
+    header = document.getElementById("header")
+    header.style.display = "none"
+    window.print()
+    header.style.display = "flex"
+}
 
 
 window.onerror = function(error, url, line) {

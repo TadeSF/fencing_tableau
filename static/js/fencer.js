@@ -1,3 +1,7 @@
+const fencer_id = document.getElementById("body").dataset.fencer_id
+const tournament_id = document.getElementById("body").dataset.tournament_id
+
+
 function get_flag(country) {
     return new Promise((resolve, reject) => {
       // Check if the file is already in cache
@@ -204,10 +208,10 @@ async function update() {
 
 
 window.onload = function() {
+    setTimeout(function() {
+        document.getElementById('loading-screen').style.display = 'none';
+    }, 1000);
     update();
-
-    // Wait for 2 seconds
-    // setTimeout(function() {update()}, 1000);
 }
 
 // Update every 10 seconds
@@ -223,7 +227,7 @@ function standings(content) {
         group = document.getElementById("Group_Number").innerHTML;
     }
 
-    window.open("standings/" + group, "_blank");
+    window.open("/" + tournament_id + "/standings?group=" + group, "_blank");
 
 }
 
@@ -234,11 +238,9 @@ document.querySelector("#Next-Piste-Block").addEventListener("click", (event) =>
 
 
 function viewTableau() {
-    let url = window.location.href;
-    let tournament = url.split("/")[3];
     let group = document.getElementById("Group_Number").innerHTML;
     let round = 1;
-    window.open("/" + tournament + "/tableau/" + round + "/" + group, "_blank");
+    window.open("/" + tournament_id + "/tableau/" + round + "/" + group, "_blank");
 }
 
 function report_issue() {

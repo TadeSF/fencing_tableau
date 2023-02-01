@@ -7,6 +7,7 @@ function update() {
     .then(response => response.json())
     .then(response => {
         document.getElementById("main_id_text").innerHTML = response["id"]
+        document.getElementById("main_id_text_pw").innerHTML = response["id"]
         document.getElementById("Tournament_Name").innerHTML = response["name"]
         document.getElementById("Tournament_Location").innerHTML = response["location"]
         document.getElementById("Tournament_Stage").innerHTML = response["stage"]
@@ -35,11 +36,6 @@ function update() {
     })
 }
 
-window.onload = function() {
-    // Wait for 2 seconds
-    setTimeout(function() {update()}, 1000);
-}
-
 function advance() {
     fetch('matches-left')
     .then(response => response.text())
@@ -62,10 +58,66 @@ function advance() {
 }
 
 function simulate() {
+    document.getElementById("loading-screen").style.display = "flex";
     fetch('simulate-current')
     .then(response => {
         if (response.status === 200) {
-            setTimeout(function() {update()}, 1000);
+            setTimeout(function() {
+                update();
+                document.getElementById("loading-screen").style.display = "none";
+        }, 1000);
+        } else {
+            alert("There are no matches left to be simulated!")
+            document.getElementById("loading-screen").style.display = "none";
         }
     })
 }
+
+async function checkLogin() {
+    let response = await fetch('dashboard/check-login');
+    let responseText = await response.text();
+    let parsedResponse = JSON.parse(responseText);
+    return parsedResponse.success;
+}
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+      document.getElementById('loading-screen').style.display = 'none';
+    }, 1000);
+  });
+
+
+window.onload = async function() {
+    // Wait for 2 seconds
+    let loginStatus = await checkLogin();
+    if (loginStatus == false) {
+      document.getElementById("login-overlay").style.display = "block";
+    } else {
+      document.getElementById("login-overlay").style.display = "none";
+    }
+    setTimeout(function() {update()}, 1000);
+};
+  
+// overlay-form submit
+document.getElementById("overlay-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let password = document.getElementById("password-input").value;
+    let tournament_id = document.getElementById("main_id_text").innerHTML;
+    let data = {
+        tournament: tournament_id,
+        password: password
+    };
+    let response = fetch("/master-login", {
+        method: "POST",
+        body: JSON.stringify(data), 
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }).then(response => {
+        if (response.status === 200) {
+            document.getElementById("login-overlay").style.display = "none";
+        } else {
+            alert("Invalid username or password!");
+        }
+    });
+});

@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Fencing Tournament Standings</title>
+    <title>Standings</title>
     <link rel="stylesheet" href="/static/css/standings.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
   </head>
   <body>
     <div id="header">
-      <h1 onclick="get_standings()" class="section_headline_reload">Standings [<span id="Group_Number">{{ group }}</span>]</h1>
+      <h1>Standings</h1>
+      <i class="fa-solid fa-sync" id="reload" onclick="get_standings()"></i>
+      <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
+      <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
+      <form id="filter_form">
+        <select id="filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}" onchange="get_standings()">
+          <option value="">All Groups</option>
+        </select>
+      </form>
     </div>
+    <div style="height: 70px;"></div>
     
     <table id="standings_table">
       <thead>
@@ -27,10 +39,9 @@
       </thead>
       <tbody id="main_standings">
       </tbody>
-      <tfoot>
-      </tfoot>
     </table>
-    <div style="height: 20px;"></div>
+    <div style="height: 40px;"></div>
+    <script src="/static/js/jspdf.js"></script>
     <script src="/static/js/standings.js"></script>
   </body>
-  </html>
+</html>

@@ -9,13 +9,45 @@ table {
     border-collapse: collapse;
     width: 100%;
     position: sticky;
-    min-height: 1vh;
+    margin: 0 auto;
 }
 
 h1, h2 {
     text-align: center;
+    margin: 0 20px;
 }
 
+#header {
+    background-color: white;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    z-index: 1;
+    top: 0;
+}
+
+i {
+    font-size: 1.5em;
+    margin: 0 20px;
+    transition: 0.3s;
+}
+
+i:hover {
+    cursor: pointer;
+    color: rgb(151, 151, 151);
+    transform: translate(-2px, -2px);
+}
+
+th {
+    position: sticky;
+    top: 70px;
+    background-color: #c8c8c8;
+    color: #000000;
+    z-index: 1;
+}
   
 th, td {
     text-align: center;
@@ -28,23 +60,8 @@ tr {
 
 thead {
     top: 0;
-    background-color: rgb(174, 174, 174);
-    color: rgb(255, 255, 255);
-}
-
-.section_headline_reload {
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.section_headline_reload:hover {
-    cursor: pointer;
-    color: blue;
-    transition: 0.3s;
-}
-
-.section_headline_reload:active {
-    color: grey;
+    background-color: #c8c8c8;
+    color: #000000;
 }
 
 .cell-rank {
@@ -103,3 +120,28 @@ thead {
 .podium {
     font-weight: bold;
 }
+
+
+form {
+    margin: 0 20px;
+}
+
+form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    width: 100%;
+    padding: 0.6em;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    text-align: center;
+  }
+  form select:focus {
+    border-color: #db3434;
+    box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
+    text-align: center;
+  }

@@ -1,13 +1,18 @@
 import csv
 import datetime
 import os
-from match import GroupMatch, EliminationMatch
-from tournament import *
-from fencer import Fencer, Wildcard, Stage
-from piste import PisteError, Piste
-import random_generator
+import traceback
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, abort
+from flask import   (Flask, Request, Response, abort, jsonify, make_response,
+                    redirect, render_template, request, send_file,
+                    send_from_directory, url_for)
+
+import random_generator
+from exceptions import *
+from fencer import Fencer, Stage, Wildcard
+from match import EliminationMatch, GroupMatch
+from piste import Piste, PisteError
+from tournament import *
 
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
@@ -64,6 +69,7 @@ def check_tournament_exists(tournament_id) -> bool:
 
 import pickle
 
+
 def create_local_tournament_folder():
     """
     This function creates a folder called "tournaments" in the root directory, if it does not already exist.
@@ -111,6 +117,31 @@ def delete_old_tournaments():
             tournament_cache.remove(tournament)
 
 
+# ------- Login-Cookies -------
+def create_master_cookie(response: Response, tournament_id: str) -> Response:
+    """
+    """
+    response.set_cookie('logged_in_master', 'true', max_age=60*60*24)
+    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
+    return response
+
+def check_logged_in_as_referee(request: Request, tournament_id: str) -> bool:
+    """
+    """
+    pass # TODO
+    
+
+def check_logged_in_as_master(request: Request, tournament_id: str) -> bool:
+    """
+    """
+    if 'logged_in_master' in request.cookies:
+        if "tournament" in request.cookies:
+            if request.cookies['tournament'] == tournament_id:
+                print("Logged in")
+                return True
+    print("Not logged in")
+    return False
+
 
 # ------- Searches -------
 def search_fencer(tournament_id, fencer_id) -> Fencer | None:
@@ -140,6 +171,40 @@ def search_fencer(tournament_id, fencer_id) -> Fencer | None:
     return None
 
 
+# ------- CSV -------
+
+def check_csv(file) -> list:
+    headers = next(file)
+    body = []
+    if headers != ['Name', 'Club', 'Nationality', 'Gender', 'Handedness', 'Age']:
+        print(headers)
+        raise CSVError(f"Invalid headers\n\nMust be {['Name', 'Club', 'Nationality', 'Gender', 'Handedness', 'Age']}")
+    current_year = datetime.datetime.now().year
+    row_number = 0
+    for row in file:
+        row_number += 1
+        if len(row) != 6:
+            raise CSVError(f"Invalid number of columns in row {row_number}")
+        name, club, nationality, gender, handedness, age = row
+        if len(nationality) != 0 and (len(nationality) != 3 or not nationality.isalpha() or not nationality.isupper()):
+            raise CSVError(f"Nationality must be a valid alpha-3 format with all uppercase letters in row {row_number}")
+        if len(gender) != 0 and gender not in ['M', 'F', 'D']:
+            raise CSVError(f"Gender must be either 'M' or 'F' or 'D' in row {row_number}")
+        if len(handedness) != 0 and handedness not in ['R', 'L']:
+            raise CSVError(f"Handedness must be either 'R' or 'L' in row {row_number}")
+        if len(age) != 0:
+            if not age.isdigit():
+                raise CSVError(f"Age must be a positive integer not larger than 100 or a 4-digit integer representing the birth year between 1900 and the current year in row {row_number}")
+            age = int(age)
+            if age > 100 and (age < 1900 or age > current_year):
+                raise CSVError(f"Age must be a positive integer not larger than 100 or a 4-digit integer representing the birth year between 1900 and the current year in row {row_number}")
+        body.append(row)
+
+    if len(body) < 3:
+        raise CSVError(f"CSV file does not contain enough (or any) fencers")
+    
+    return body
+
 
 
 # ------- Flask -------
@@ -162,6 +227,15 @@ def index():
     Flask serves on GET request / the index.html file from the templates folder.
     """
     return render_template('index.html')
+
+@app.route('/csv-template')
+def csv_template_download():
+    """
+    """
+    try:
+        return send_file("static/template.csv", as_attachment=True)
+    except Exception as e:
+        return str(e)
 
 @app.route('/', methods=['POST'])
 def process_form():
@@ -204,6 +278,7 @@ def process_form():
     elimination_mode = request.form['elimination_mode']
     preliminary_rounds = request.form['number_of_preliminary_rounds']
     preliminary_groups = request.form['number_of_preliminary_groups']
+    password = request.form['master_password']
 
     # --- Process the data from the form
     # Process csv file
@@ -211,35 +286,54 @@ def process_form():
     fencers = []
     csv_contents = fencers_csv.read().decode('utf-8')
     reader = csv.reader(csv_contents.splitlines())
+    try:
+        fencer_data = check_csv(reader)
+    except CSVError as e:
+        return jsonify({'success': False, 'error': 'CSV Error', 'message': str(e)})
+
     i = 1
-
-
-    for row in reader:
-        if row[0] != 'Name':
+    try:
+        for row in fencer_data:
             fencer_name = row[0]
             fencer_club = row[1]
             fencer_nationality = row[2]
-            fencer_gender = row[3] if len(row) > 3 else None
-            fencer_handedness = row[4] if len(row) > 4 else None
+            fencer_gender = row[3] if row[3] != '' else None
+            fencer_handedness = row[4] if row[4] != '' else None
+            fencer_age = row[5] if row[5] != '' else None
 
-            fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality, fencer_gender, fencer_handedness, i, int(preliminary_rounds)))
+            fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality, fencer_gender, fencer_handedness, fencer_age, i, int(preliminary_rounds)))
             i += 1
 
-    # Generate and save the new tournament
 
-    random_id = random_generator.id(6)
+        # Generate and save the new tournament
+        tournament = Tournament(random_generator.id(6), password, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes)
+        tournament_cache.append(tournament)
+        save_tournament(tournament)
+
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': 'Server Error', 'message': str(e)})
+
+    response = make_response(jsonify({'success': True, 'tournament_id': tournament.id}))
+    return create_master_cookie(response, tournament.id)
     
-    tournament = Tournament(random_id, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes)
-    tournament_cache.append(tournament)
-    save_tournament(tournament)
 
-    return redirect(url_for('dashboard', tournament_id=random_id))
 
-@app.route('/login-manager', methods=['POST'])
-def login_manager():
+@app.route('/<tournament_id>/check-login')
+@app.route('/<tournament_id>/dashboard/check-login')
+def check_login(tournament_id):
+    """
+    Flask processes a GET request to check if the user is logged in.
+    """
+    if check_logged_in_as_master(request, tournament_id):
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 200
+
+@app.route('/master-login', methods=['POST'])
+def master_login():
     """
     Flask processes a POST request to login as a manager.
-    Note: This is not implemented fully yet.
 
     Returns
     -------
@@ -247,13 +341,29 @@ def login_manager():
         On success
     404
         On tournament not found
+    401
+        On wrong password
     """
-    global tournament_cache
-    tournament_id = request.form['tournament_id']
+    data = request.get_json()
+    tournament_id = data['tournament']
+    password = data['password']
+
+    print("Login attempt as master")
+    print(tournament_id)
+
     if not check_tournament_exists(tournament_id):
-        abort(404)
+        print("Tournament not found")
+        return jsonify({'error': 'Tournament not found'}), 404
     else:
-        return redirect(url_for('dashboard', tournament_id=tournament_id))
+        tournament = get_tournament(tournament_id)
+        print(tournament.password)
+        print(password)
+        if tournament.password == password:
+            response = make_response(redirect(url_for('dashboard', tournament_id=tournament_id)))
+            return create_master_cookie(response, tournament_id)
+        else:
+            return jsonify({'error': 'Wrong password'}), 401
+
 
 @app.route('/login-fencer', methods=['POST'])
 def login_fencer():
@@ -361,6 +471,7 @@ def get_dashboard_infos(tournament_id):
         tournament = get_tournament(tournament_id)
     return jsonify(tournament.get_dashboard_infos())
 
+
 @app.route('/<tournament_id>/matches')
 def matches(tournament_id):
     """
@@ -456,14 +567,19 @@ def push_score(tournament_id):
     """
     tournament = get_tournament(tournament_id)
     match_id = request.form['id']
+
+    # Check if logged in as referee or master
+    if not check_logged_in_as_referee(request, tournament_id) and not check_logged_in_as_master(request, tournament_id):
+        return jsonify({"success": False, "message": "User must be logged in as Master or Referee to input results!"}), 401
+
     green_score = int(request.form['green_score'])
     red_score = int(request.form['red_score'])
     tournament.push_score(match_id, green_score, red_score)
     save_tournament(tournament)
-    return '', 200
+    return jsonify({"success": True}), 200
 
-@app.route('/<tournament_id>/standings/<group>')
-def standings(tournament_id, group):
+@app.route('/<tournament_id>/standings')
+def standings(tournament_id):
     """
     Flask serves on a GET request /<tournament_id>/standings the standings.html file from the templates folder.
 
@@ -483,10 +599,14 @@ def standings(tournament_id, group):
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        return render_template('/dashboard/standings.html', group=group)
+        tournament = get_tournament(tournament_id)
+        group = request.args.get('group')
+        if group is None:
+            group = ""
+        return render_template('/dashboard/standings.html', requested_group=group, num_groups=tournament.get_num_groups())
 
-@app.route('/<tournament_id>/standings/update/<group>', methods=['GET'])
-def get_standings(tournament_id, group):
+@app.route('/<tournament_id>/standings/update')
+def get_standings(tournament_id):
     """
     Flask serves on a GET request /<tournament_id>/standings/update the standings of the current state as a json object.
 
@@ -502,10 +622,12 @@ def get_standings(tournament_id, group):
     json object (from tournament.get_standings()
     """
     tournament = get_tournament(tournament_id)
+    group = request.args.get('group')
+
     if tournament is None:
         return jsonify([])
 
-    return jsonify(tournament.get_standings(group))
+    return jsonify(tournament.get_standings(group=group))
 
 @app.route('/<tournament_id>/standings/fencer/<fencer_id>')
 def redirict_fencer_from_standings(tournament_id, fencer_id):
@@ -567,7 +689,10 @@ def next_stage(tournament_id):
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        get_tournament(tournament_id).next_stage()
+        tournament = get_tournament(tournament_id)
+        tournament.next_stage()
+        save_tournament(tournament)
+
         return '', 200
 
 
@@ -601,6 +726,8 @@ def fencer(tournament_id, fencer_id):
             return render_template('/fencer.html',
                 name=fencer.short_str,
                 club=fencer.club,
+                tournament_id=tournament.id,
+                fencer_id=fencer.id
                 )
 
 
@@ -624,32 +751,6 @@ def get_fencer(tournament_id, fencer_id):
     if tournament is None:
         return jsonify([])
     return jsonify(tournament.get_fencer_hub_information(fencer_id))
-
-@app.route('/<tournament_id>/fencer/standings/<group>', methods=['GET'])
-def redirect_standings(tournament_id, group):
-    """
-    Flask serves on a GET request /<tournament_id>/fencer/<fencer_id>/standings the standings.html file from the templates folder.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    fencer_id : str
-        The id of the fencer.
-    group : str
-        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
-
-    Returns
-    -------
-    standings.html, 200
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        return redirect(f'/{tournament_id}/standings/{group}')
 
 @app.route('/<tournament_id>/tableau/<round>/<group>')
 def tableau(tournament_id, round, group):
@@ -732,10 +833,26 @@ def approve_tableau(tournament_id, round, group):
     else:
         data = request.get_json()
         
-        response = get_tournament(tournament_id).approve_tableau(round, group, data['timestamp'], data['fencer_id'])
-        return response, 200
+        # Check if Cookie with device_id exists
+        if 'device_id' in request.cookies:
+            device_id = request.cookies['device_id']
+        else:
+            device_id = random_generator.id(16)
 
+        response = make_response(get_tournament(tournament_id).approve_tableau(round, group, data['timestamp'], data['fencer_id'], device_id), 200)
+        
+        if 'device_id' not in request.cookies:
+            response.set_cookie('device_id', device_id)
+        return response
 
+@app.route('/get-my-device-id', methods=['GET'])
+def get_my_device_id():
+    """
+    """
+    if 'device_id' in request.cookies:
+        return jsonify({"success": True, "device_id": request.cookies['device_id']})
+    else:
+        return jsonify({"success": False, "message": "No device_id cookie found"})
 
 
 @app.route('/<tournament_id>/simulate-current')

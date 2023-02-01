@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Fencing Tournament Matches</title>
+    <title>Matches</title>
     <link rel="stylesheet" href="/static/css/matches.css">
     <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
     <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
@@ -10,7 +10,10 @@
   </head>
   <body>
     <div id="header">
-      <h1 onclick="get_matches()" class="section_headline_reload">Current Matches</h1>
+      <h1>Matches</h1>
+      <i class="fa-solid fa-sync" id="reload" onclick="get_matches()"></i>
+      <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
+      <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
     </div>
     <div style="height: 70px;"></div>
     
@@ -20,10 +23,10 @@
           <th style="display: none;">#</th>
           <th>Group</th>
           <th>Piste</th>
-          <th style="text-align: right; background-color: #008000; padding-right: 10px;">Green</th>
-          <th width="40px" style="background: rgb(0,128,0); background: linear-gradient(90deg, rgba(0,128,0,1) 10%, rgba(255,0,0,1) 90%);"></th>
-          <th style="text-align: left; background-color: #ff0000; padding-left: 10px;">Red</th>
-          <th></th>
+          <th class="th-green"><div class="th-green-div">Green</div></th>
+          <th width="40px"></th>
+          <th class="th-red"><div class="th-red-div">Red</div></th>
+          <th width="100px">Options</th>
         </tr>
       </thead>
       <tbody id="matches">
@@ -41,7 +44,8 @@
         <button type="button" id="closePrompt" onclick="closePromptWindow()"><i class="fa-solid fa-xmark"></i></button>
       </form>
     </div>
-    <div style="height: 20px;"></div>
+    <div style="height: 60px;"></div>
+    <script src="/static/js/jspdf.js"></script>
     <script src="/static/js/matches.js"></script>
   </body>
   </html>

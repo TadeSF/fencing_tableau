@@ -13,15 +13,32 @@ table {
     border-collapse: collapse;
     width: 100%;
     position: sticky;
+    margin: 0 auto;
 }
 
 h1, h2 {
     text-align: center;
+    margin: 0 20px;
+}
+
+i {
+    font-size: 1.5em;
+    margin: 0 20px;
+    transition: 0.3s;
+}
+
+i:hover {
+    cursor: pointer;
+    color: rgb(151, 151, 151);
+    transform: translate(-2px, -2px);
 }
 
 #header {
     background-color: white;
     position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 70px;
     z-index: 1;
@@ -29,7 +46,15 @@ h1, h2 {
 
 } 
 
-  
+th {
+    position: sticky;
+    top: 70px;
+    background-color: #c8c8c8;
+    color: #000000;
+    z-index: 1;
+    width: 60px;
+}
+
 th, td {
     text-align: center;
     border-bottom: 0.5px solid #ddd;
@@ -153,22 +178,6 @@ thead {
 }
 
 
-
-.section_headline_reload {
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.section_headline_reload:hover {
-    cursor: pointer;
-    color: blue;
-    transition: 0.3s;
-}
-
-.section_headline_reload:active {
-    color: rgb(188, 188, 188);
-}
-
 .cell_button {
     color: rgb(255, 255, 255);
     border: none;
@@ -181,6 +190,7 @@ thead {
     cursor: pointer;
     transition: 0.3s;
     width: 100px;
+    border-radius: 5px;
 }
 
 .cell_button:hover {
@@ -193,22 +203,76 @@ thead {
     background-color: #333;
 }
 
+.cell_button-start:hover {
+    background-color: rgb(255, 145, 0);
+    color: white;
+    transition: 0.3s;
+}
+
+@keyframes loading {
+    0% {
+        background-position: left;
+    }
+
+    100% {
+        background-position: right;
+    }
+}
+
 .cell_button-ongoing {
-    background-color: rgb(255, 165, 0);
+    background: rgb(255,145,0);
+    background: linear-gradient(90deg, rgba(255,145,0,1) 30%, rgb(233, 105, 0) 50%, rgba(255,145,0,1) 70%);
+    background-repeat: no-repeat;
+    background-size: 600% 100%;
+    animation: loading 2s ease-in-out infinite;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.cell_button-ongoing:hover {
+    animation-play-state:paused;
+    background: red;
+    color: white;
 }
 
 .cell_button-finished {
     background-color: rgb(0, 126, 0);
 }
 
+.cell_button-finished:hover {
+    background-color: red;
+    color: white;
+}
+
 .cell-id {
     display: none;
 }
 
-.th-green {
-    background-color: rgb(0, 255, 0);
+.th-green, .th-red {
     width: var(--fencer-width);
+    height: 100%;
+    width: auto;
+}
+
+.th-green-div {
+    color: white;
     text-align: right;
+    background-color: green;
+    margin: 1px;
+    margin-left: 15px;
+    padding: 2px;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
+.th-red-div {
+    color: white;
+    text-align: left;
+    background-color: red;
+    margin: 1px;
+    margin-right: 15px;
+    padding: 2px;
+    padding-left: 10px;
+    border-radius: 5px;
 }
 
 .th-score {
@@ -217,11 +281,7 @@ thead {
     width: 70px;
 }
 
-.th-red {
-    background-color: rgb(255, 0, 0);
-    width: var(--fencer-width);
-    text-align: left;
-}
+
 
 .fencer-div {
     display: flex;

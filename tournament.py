@@ -8,6 +8,7 @@ from match import GroupMatch, EliminationMatch, Match
 from piste import Piste
 import random_generator
 from fuzzywuzzy import fuzz
+import csv
 
 from typing import Literal, List
 
@@ -252,23 +253,19 @@ def save_final_ranking(fencers_list: List[List[Fencer]], mode: Literal["ko", "pl
 
 # ------- Approval procedure and logging -------
 
-def register_approval(fencer_id, fencer_name, tournamnet_id, timestamp, round, group):
+def register_approval(fencer_id, fencer_name, tournamnet_id, timestamp, round, group, device_id):
     # Check if folder /approvals exists
     if not os.path.exists("approvals"):
         os.mkdir("approvals")
     # Check if approval file for tournament exists
-    if not os.path.exists(f"approvals/{tournamnet_id}.txt"):
-        with open(f"approvals/{tournamnet_id}.txt", "w") as file:
-            file.write("")
-    # Check if fencer is already approved
-    # with open(f"approvals/{tournamnet_id}.txt", "r") as file:
-    #     for line in file.readlines():
-    #         if fencer_id in line:
-    #             if f"round {round}" in line and f"group {group}" in line:
-    #                 return False
+    if not os.path.exists(f"approvals/{tournamnet_id}.csv"):
+        with open(f"approvals/{tournamnet_id}.csv", "w") as file:
+            csv.writer(file).writerow(["device_id", "fencer_id", "fencer_name", "timestamp", "round", "group"])
     # Add fencer to approval file
-    with open(f"approvals/{tournamnet_id}.txt", "a") as file:
-        file.write(f"Fencer {fencer_name} (ID: {fencer_id}) approved at {timestamp} (GMT) the tableau for group {group} in preliminary round {round}.")
+    with open(f"approvals/{tournamnet_id}.csv", "r") as file:
+        approvals = list(csv.reader(file))
+    with open(f"approvals/{tournamnet_id}.csv", "a") as file:
+        csv.writer(file).writerow([device_id, fencer_id, fencer_name, timestamp, round, group])
     return True
 
 
@@ -281,6 +278,7 @@ class Tournament:
     def __init__(
         self,
         id: str,
+        password: str,
         name: str,
         fencers: list[Fencer],
         location: str,
@@ -294,6 +292,7 @@ class Tournament:
         # Tournament information
         self.created_at = datetime.datetime.now()
         self.id = id
+        self.password = password
         self.name = name
         self.location = location
 
@@ -343,6 +342,22 @@ class Tournament:
         else:
             self.create_next_elimination_round()
 
+    
+    # --- Properties ---
+    
+    @property
+    def matches_of_current_preliminary_round(self) -> list[Match]:
+        return self.preliminary_matches[self.preliminary_stage - 1]
+
+    @property
+    def all_matches(self) -> list[Match]:
+        matches = []
+        for round in self.preliminary_matches:
+            matches.extend(round)
+        matches.extend(self.elimination_matches)
+
+        return matches
+
 
     # --- Creating Rounds ---
 
@@ -350,8 +365,8 @@ class Tournament:
         # Create preliminary round
         self.preliminary_fencers = self.fencers
         self.preliminary_matches[self.preliminary_stage - 1] = create_group_matches(self.preliminary_fencers, self.stage, groups=self.num_preliminary_groups, prelim_round=self.preliminary_stage - 1)
-        self.preliminary_matches[self.preliminary_stage - 1] = sort_matchups_in_preliminary_round(self.preliminary_fencers ,self.preliminary_matches[self.preliminary_stage - 1])
-        self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
+        self.preliminary_matches[self.preliminary_stage - 1] = sort_matchups_in_preliminary_round(self.preliminary_fencers , self.matches_of_current_preliminary_round)
+        self.assign_pistes(self.matches_of_current_preliminary_round)
 
 
     def create_next_elimination_round(self, final: bool = False) -> None:
@@ -379,12 +394,15 @@ class Tournament:
 
 
     def assign_pistes(self, matches: list[Match]):
-        for piste in self.pistes:
-            if not piste.staged:
-                for match in matches:
-                    if match.piste == None and match.wildcard == False:
+        for match in matches:
+            if match.piste == None and match.wildcard == False:
+                for piste in self.pistes:
+                    if not piste.staged:
                         match.assign_piste(piste)
+                        piste.staged = True
                         break
+                else:
+                    continue
 
 
     def generate_matches(self) -> None:
@@ -410,13 +428,17 @@ class Tournament:
         fencers = sorting_fencers(self.fencers)
 
 
+        if not group:
+            group = "all"
 
         # If a specific group is requested, only return the fencers of that group
-        if group != "all" and group != None and self.stage == Stage.PRELIMINARY_ROUND:
+        if group != "all" and self.stage == Stage.PRELIMINARY_ROUND:
+            filtered_fencers = []
             for fencer in fencers:
-                if fencer.prelim_group != group:
-                    fencers.remove(fencer)
-            
+                if fencer.prelim_group == int(group):
+                    filtered_fencers.append(fencer)
+
+            fencers = filtered_fencers
 
         for fencer in fencers:
             standings["standings"].append({
@@ -442,7 +464,7 @@ class Tournament:
                 "stage": self.stage.name.replace("_", " ") + f" {self.preliminary_stage}",
                 "matches": [],
             }
-            for match in self.preliminary_matches[self.preliminary_stage - 1]:
+            for match in self.matches_of_current_preliminary_round:
                 dictionary["matches"].append({
                     "id": match.id,
                     "group": match.group,
@@ -483,7 +505,7 @@ class Tournament:
 
     def get_matches_left(self) -> str:
         if self.stage == Stage.PRELIMINARY_ROUND:
-            return str(len([match for match in self.preliminary_matches[self.preliminary_stage - 1] if not match.match_completed]))
+            return str(len([match for match in self.matches_of_current_preliminary_round if not match.match_completed]))
         else:
             return str(len([match for match in self.elimination_matches if not match.match_completed]))
 
@@ -502,8 +524,8 @@ class Tournament:
             "first_elimination_round": self.elimination_first_stage.name.replace("_", " ").title(),
             "num_wildcards": self.num_wildcards,
             "num_pistes": len(self.pistes),
-            "num_matches": len(self.preliminary_matches[self.preliminary_stage - 1]) if self.stage == Stage.PRELIMINARY_ROUND else len(self.elimination_matches), # TODO Implement calculation for all matches
-            "num_matches_completed": len([match for match in self.preliminary_matches[self.preliminary_stage - 1] if match.match_completed]) if self.stage == Stage.PRELIMINARY_ROUND else len([match for match in self.elimination_matches if match.match_completed]), # TODO Implement calculation for all matches
+            "num_matches": len(self.matches_of_current_preliminary_round) if self.stage == Stage.PRELIMINARY_ROUND else len(self.elimination_matches), # TODO Implement calculation for all matches
+            "num_matches_completed": len([match for match in self.matches_of_current_preliminary_round if match.match_completed]) if self.stage == Stage.PRELIMINARY_ROUND else len([match for match in self.elimination_matches if match.match_completed]), # TODO Implement calculation for all matches
         }
 
 
@@ -544,7 +566,7 @@ class Tournament:
         fencer = self.get_fencer_object(fencer_id)
         if fencer:
             next_matches = []
-            for match in self.preliminary_matches[self.preliminary_stage - 1] if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
+            for match in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
                 if (match.green == fencer or match.red == fencer) and not match.match_completed:
                     next_matches.append({
                         "id": match.id,
@@ -574,26 +596,33 @@ class Tournament:
     # --- POST Request handling from client ---
 
     def push_score(self, match_id: int, green_score: int, red_score: int) -> None:
-        if self.stage == Stage.PRELIMINARY_ROUND:
-            for group in (self.preliminary_matches):
-                for match in group:
-                    if match.id == match_id:
-                        match.input_results(green_score, red_score)
-            self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
-                        
-        else:
-            for match in self.elimination_matches:
-                if match.id == match_id:
+        for match in self.all_matches:
+            if match.id == match_id:
+                if match.match_completed:
+                    self.correct_score(match, green_score, red_score)
+                else:
                     match.input_results(green_score, red_score)
-            self.assign_pistes(self.elimination_matches)
+
+        self.assign_pistes(self.elimination_matches)
+
+    
+    def correct_score(self, match: int, green_score: int, red_score: int) -> None:
+        green_fencer = match.green
+        old_green_score = match.green_score
+        red_fencer = match.red
+        old_red_score = match.red_score
+        match.input_results(green_score, red_score, skip_update_statistics=True)
+
+        green_fencer.correct_statistics(match, red_fencer, old_green_score, old_red_score, green_score, red_score, match.prelim_round if self.stage == Stage.PRELIMINARY_ROUND else 0)
+        red_fencer.correct_statistics(match, green_fencer, old_red_score, old_green_score, red_score, green_score, match.prelim_round if self.stage == Stage.PRELIMINARY_ROUND else 0)
 
 
     def set_active(self, match_id: int) -> None:
         if self.stage == Stage.PRELIMINARY_ROUND:
-            self.assign_pistes(self.preliminary_matches[self.preliminary_stage - 1])
-            for match in self.preliminary_matches[self.preliminary_stage - 1]:
+            for match in self.matches_of_current_preliminary_round:
                 if match.id == match_id:
                     match.set_active()
+            self.assign_pistes(self.matches_of_current_preliminary_round)
 
         else:
             self.assign_pistes(self.elimination_matches)
@@ -704,7 +733,7 @@ class Tournament:
                 
                 else:
                     # Search all matches of the match
-                    for match in self.preliminary_matches[self.preliminary_stage - 1]:
+                    for match in self.matches_of_current_preliminary_round:
                         if match.green.id == fencer.id and match.red.id == opponent.id:
                             tableau[-1].append({
                                 "cell_type": "result",
@@ -725,18 +754,28 @@ class Tournament:
         return tableau
 
 
-    def approve_tableau(self, round, group, timestamp, fencer_id):
+    def approve_tableau(self, round, group, timestamp, fencer_id, device_id):
         # TODO need to implement a check if all approvals are in before advancing to the next stage
         if self.stage == Stage.PRELIMINARY_ROUND:
             if self.preliminary_stage == int(round):
                 for fencer in self.fencers:
                     if fencer.id == fencer_id:
-                        if register_approval(fencer_id, fencer.short_str, self.id, timestamp, round, group) and fencer.approved_tableau == False:
+                        if register_approval(fencer_id, fencer.short_str, self.id, timestamp, round, group, device_id) and fencer.approved_tableau == False:
                             fencer.approved_tableau = True
                             return {"success": True, "message": "Tableau approved"}
         return {"success": False, "message": "Tableau not approved"}
 
 
+    # --- General Information ---
+    def get_num_groups(self) -> int:
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            num_groups = 0
+            for fencer in self.fencers:
+                if fencer.prelim_group > num_groups:
+                    num_groups = fencer.prelim_group
+            return num_groups
+        else:
+            return 0
 
 
 
@@ -746,21 +785,24 @@ class Tournament:
 
     def simulate_current(self) -> None:
         if self.stage == Stage.PRELIMINARY_ROUND:
-            length = len(self.preliminary_matches[self.preliminary_stage - 1])
-            for match in self.preliminary_matches[self.preliminary_stage - 1]:
+            length = len(self.matches_of_current_preliminary_round)
+            for match in self.matches_of_current_preliminary_round:
+
+                self.assign_pistes(self.matches_of_current_preliminary_round)
+
                 # Set match active
-                if match.match_ongoing != True:
+                if match.match_ongoing != True and match.match_completed != True:
                     self.set_active(match.id)
 
                 if match.match_completed != True:
                     if random.choice([True, False]) is True:
-                        self.push_score(match.id, 15, random.randint(0, 14))
+                        self.push_score(match.id, 5, random.randint(0, 4))
                     else:
-                        self.push_score(match.id, random.randint(0, 14), 15)
+                        self.push_score(match.id, random.randint(0, 4), 5)
 
                 time.sleep(0.01)
                 # Print status bar
-                progress = round(self.preliminary_matches[self.preliminary_stage - 1].index(match) / length * 20)
+                progress = round(self.matches_of_current_preliminary_round.index(match) / length * 20)
                 print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
 
             print(f"Simulating... |{'#' * 20}|")
@@ -770,6 +812,9 @@ class Tournament:
         else:
             length = len(self.elimination_matches)
             for match in self.elimination_matches:
+
+                self.assign_pistes(self.elimination_matches)
+
                 if match.match_ongoing != True:
                     self.set_active(match.id)
 

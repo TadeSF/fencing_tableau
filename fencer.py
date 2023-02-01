@@ -85,7 +85,7 @@ class Fencer:
     The fencer class is the main source for the fencer's hub-page, where every individual fencer can see his/her statistics and matches.
     """
 
-    def __init__(self, name: str, club: str = None, nationailty: str = None, gender: Literal["M", "F", "D"] = None, handedness: Literal["R", "L"] = None, start_number: int = None, num_prelim_rounds: int = 1):
+    def __init__(self, name: str, club: str = None, nationailty: str = None, gender: Literal["M", "F", "D"] = None, handedness: Literal["R", "L"] = None, age: int = None, start_number: int = None, num_prelim_rounds: int = 1):
         """
         Constructor for the Fencer class
 
@@ -196,6 +196,8 @@ class Fencer:
 
         self.handedness: Literal["R", "L"] = handedness
 
+        self.age: int = age
+
 
         # Grouping information
         self.prelim_group = None
@@ -288,9 +290,7 @@ class Fencer:
 
     @property
     def last_match_won(self):
-        print(self.last_matches)
         if len(self.last_matches) == 0:
-            print("No last match available")
             return None
         else:
             return self.last_matches[-1]["win"]
@@ -310,7 +310,7 @@ class Fencer:
 
 
     # statistics
-    def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0) -> None:
+    def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0, skip_last_matches: bool = False) -> None:
         """
         This function updates the statistics of the fencer and is called after every match is finished and the score has been pushed.
         The function updates the statistics for the current stage and the overall statistics.
@@ -335,13 +335,12 @@ class Fencer:
         else:
             stage = "elimination"
 
-        self.last_matches.append({
-            "win": win,
-            "opponent": opponent.id,
-            "match": match.id,
-        })
-
-        print(self.last_matches)
+        if not skip_last_matches:
+            self.last_matches.append({
+                "win": win,
+                "opponent": opponent.id,
+                "match": match.id,
+            })
 
         if win:
             self.statistics["overall"]["wins"] += 1
@@ -359,6 +358,40 @@ class Fencer:
         self.statistics[stage][round]["points_against"] += points_against
 
         self.group_opponents.append(opponent)
+
+
+    def correct_statistics(self, match, opponent, old_points_for: int, old_points_against: int, points_for: int, points_against: int, round: int = 0):
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            stage = self.stage.name.lower()
+        else:
+            stage = "elimination"
+
+        if old_points_for > old_points_against:
+            self.statistics["overall"]["wins"] -= 1
+            self.statistics[stage][round]["wins"] -= 1
+        else:
+            self.statistics["overall"]["losses"] -= 1
+            self.statistics[stage][round]["losses"] -= 1
+
+        self.statistics["overall"]["matches"] -= 1
+        self.statistics["overall"]["points_for"] -= old_points_for
+        self.statistics["overall"]["points_against"] -= old_points_against
+
+        self.statistics[stage][round]["matches"] -= 1
+        self.statistics[stage][round]["points_for"] -= old_points_for
+        self.statistics[stage][round]["points_against"] -= old_points_against
+
+        if points_for > points_against:
+            win = True
+        else:
+            win = False
+
+        for entry in self.last_matches:
+            if entry["match"] == match.id:
+                entry["win"] = win
+        
+        self.update_statistics(match, win, opponent, points_for, points_against, round, skip_last_matches=True)
+
 
     
     def update_statistics_wildcard_game(self, match):

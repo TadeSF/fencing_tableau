@@ -23,7 +23,8 @@
     <main>
         <h1>Easily organize and manage FENCING TOURNAMENTS</h1>
         <p>DuellingDynasty makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, repechage and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
-        
+        <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
+
         <h1>How it works</h1>
         <p>DuellingDynasty is a Python-based application that hosts a webserver in a local (wifi) network. This way, it is possible for everyone to see current standings and matches from their mobile devices. It just needs one person as a host with a computer.</p>
         <a href="https://github.com/TadeSF/fencing_tableau" class="cta-button">View Project on Github</a>
@@ -42,7 +43,7 @@
     </section>
     <footer>
         <ul>
-            <li>Contact: info@fencingtournamentwebapp.com</li>
+            <li>Contact: tade99@gmx.de</li>
             <li>Follow us on:
                 <ul>
                     <li><a href="#">Facebook</a></li>
@@ -55,7 +56,7 @@
     </footer>
     <div id="new_tournament_form">
       <div class="form_container">
-        <form method="POST" enctype="multipart/form-data" id="start_form">
+        <form id="start_form" onsubmit="submitStartForm(event)" method="POST">
           <input type="text" id="name" name="name" placeholder="Tournament Name" required><br>
           <input type="text" id="location" name="location" placeholder="Location"><br>
           <br>
@@ -136,11 +137,11 @@
     </div>
     <div id="login_manager_form">
       <div class="form_container">
-        <form method="POST" enctype="multipart/form-data" id="master_login_form" action="/login-manager">
+        <form id="master_login_form">
           <label for="tournament_id">Login with Tournament ID</label>
           <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
           <br>
-          <input type="password" id="manager_password" name="pw" placeholder="Password" required><br>
+          <input type="password" id="master_password_login" name="pw" placeholder="Password" required><br>
           <br>
           <button type="submit" value="submit">Login</button>
         </form>

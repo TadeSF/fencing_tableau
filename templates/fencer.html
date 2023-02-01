@@ -4,12 +4,13 @@
     <meta charset="utf-8">
     <title>{{ name }}</title>
     <link rel="stylesheet" href="/static/css/fencer.css">
+    <link rel="stylesheet" href="/static/css/loading_screen.css">
     <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
     <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
     <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
 </head>
-<body>
+<body id="body" data-tournament_id="{{ tournament_id }}" data-fencer_id="{{ fencer_id }}">
     <div class="Section">
         <h1>Fencer Hub</h1>
         <div class="Name-Banner" id="Name-Banner">
@@ -84,8 +85,9 @@
             </div>
         </div>
     </div>
-
-
+    <div id="loading-screen">
+        <div id="loading-icon"></div>
+    </div>
 
     <script src="/static/js/fencer.js"></script>
 </body>
