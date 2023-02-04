@@ -4,6 +4,22 @@ body {
     text-align: center;
 }
 
+h2 {
+    margin-top: 20px;
+}
+
+h2 + h3 {
+    margin-top: 0px;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+br {
+    height: 10px;
+}
+
 .Section {
     background-color: #f0f0f0;
     border-radius: 5px;
@@ -12,6 +28,8 @@ body {
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .Name-Banner,
@@ -29,7 +47,8 @@ body {
     margin-bottom: 10px;
 }
 
-#Main-Flag {
+#Main-Flag,
+#Information-Flag {
     width: 40px;
     height: 30px;
     background-color: black;
@@ -43,10 +62,14 @@ body {
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
+    margin-right: -10px;
+    margin-left: -10px;
 }
 
 .Standing-Block,
-.Next-Piste-Block {
+.Next-Piste-Block,
+.Statistics-Block,
+.Information-Block {
     background-color: #ffffff;
     border-radius: 10px;
     padding: 10px;
@@ -54,7 +77,7 @@ body {
     margin-right: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     transition: 0.5s ease-in-out;
 }
@@ -76,14 +99,26 @@ body {
     translate: 5px 5px;
 }
 
+.Statistics-Block,
+.Information-Block {
+    width: 100%;
+}
+
 .Standing-Block-Description,
-.Next-Piste-Block-Description {
+.Next-Piste-Block-Description,
+.Statistics-Block-Description,
+.Information-Block-Description {
     font-size: 12px;
 }
 
 .Standing-Block-Number,
 .Next-Piste-Block-Number {
     font-size: 40px;
+}
+
+.Statistics-Block-Number,
+.Information-Block-Number {
+    font-size: 30px;
 }
 
 .Title {
@@ -168,4 +203,13 @@ body {
 #approve_tableau {
     background-color: green;
     color: white;
+}
+
+.Chart-Wrapper {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
 }

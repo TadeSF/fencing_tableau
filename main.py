@@ -1,18 +1,25 @@
-import csv
-import datetime
-import os
-import traceback
+try:
+    import csv
+    import datetime
+    import importlib
+    import os
+    import traceback
+    import socket
 
-from flask import   (Flask, Request, Response, abort, jsonify, make_response,
-                    redirect, render_template, request, send_file,
-                    send_from_directory, url_for)
+    from flask import   (Flask, Request, Response, abort, jsonify, make_response,
+                        redirect, render_template, request, send_file,
+                        send_from_directory, url_for)
 
-import random_generator
-from exceptions import *
-from fencer import Fencer, Stage, Wildcard
-from match import EliminationMatch, GroupMatch
-from piste import Piste, PisteError
-from tournament import *
+    import random_generator
+    from exceptions import *
+    from fencer import Fencer, Stage, Wildcard
+    from match import EliminationMatch, GroupMatch
+    from piste import Piste, PisteError
+    from tournament import *
+
+except ModuleNotFoundError:
+    raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
+
 
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
@@ -125,16 +132,28 @@ def create_master_cookie(response: Response, tournament_id: str) -> Response:
     response.set_cookie('tournament', tournament_id, max_age=60*60*24)
     return response
 
-def check_logged_in_as_referee(request: Request, tournament_id: str) -> bool:
+def create_referee_cookie(response: Response, tournament_id: str) -> Response:
     """
     """
-    pass # TODO
-    
+    response.set_cookie('logged_in_referee', 'true', max_age=60*60*24)
+    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
+    return response
 
 def check_logged_in_as_master(request: Request, tournament_id: str) -> bool:
     """
     """
     if 'logged_in_master' in request.cookies:
+        if "tournament" in request.cookies:
+            if request.cookies['tournament'] == tournament_id:
+                print("Logged in")
+                return True
+    print("Not logged in")
+    return False
+
+def check_logged_in_as_referee(request: Request, tournament_id: str) -> bool:
+    """
+    """
+    if 'logged_in_referee' in request.cookies:
         if "tournament" in request.cookies:
             if request.cookies['tournament'] == tournament_id:
                 print("Logged in")
@@ -752,8 +771,8 @@ def get_fencer(tournament_id, fencer_id):
         return jsonify([])
     return jsonify(tournament.get_fencer_hub_information(fencer_id))
 
-@app.route('/<tournament_id>/tableau/<round>/<group>')
-def tableau(tournament_id, round, group):
+@app.route('/<tournament_id>/tableau')
+def tableau(tournament_id):
     """
     Flask serves on a GET request /<tournament_id>/tableau/<round>/<group> the tableau.html file from the templates folder.
 
@@ -777,12 +796,14 @@ def tableau(tournament_id, round, group):
         abort(404)
     else:
         return render_template('/tableau.html',
-            round=round,
-            group=group,
+            round=request.args.get('round') if request.args.get('round') is not None else get_tournament(tournament_id).preliminary_stage,
+            group=request.args.get('group'),
+            tournament_id=tournament_id,
+            num_groups=get_tournament(tournament_id).get_num_groups()
             )
 
-@app.route('/<tournament_id>/tableau/<round>/<group>/update', methods=['GET'])
-def get_tableau(tournament_id, round, group):
+@app.route('/<tournament_id>/tableau/update', methods=['GET'])
+def get_tableau(tournament_id):
     """
     Flask serves on a GET request /<tournament_id>/tableau/<round>/<group>/update the tableau object as a json object.
 
@@ -802,11 +823,11 @@ def get_tableau(tournament_id, round, group):
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify([]), 404
-    response = tournament.get_tableau_array(group)
+    response = tournament.get_tableau_array(request.args.get('group'))
     return jsonify(response), 200
 
-@app.route('/<tournament_id>/tableau/<round>/<group>/approve', methods=['POST'])
-def approve_tableau(tournament_id, round, group):
+@app.route('/<tournament_id>/tableau/approve', methods=['POST'])
+def approve_tableau(tournament_id):
     """
     Flask processes a POST request to approve the tableau by a certain Fencer.
 
@@ -832,6 +853,8 @@ def approve_tableau(tournament_id, round, group):
         abort(404)
     else:
         data = request.get_json()
+        prelim_round = request.args.get('round') if request.args.get('round') is not None else get_tournament(tournament_id).preliminary_stage,
+        group = request.args.get('group'),
         
         # Check if Cookie with device_id exists
         if 'device_id' in request.cookies:
@@ -839,7 +862,7 @@ def approve_tableau(tournament_id, round, group):
         else:
             device_id = random_generator.id(16)
 
-        response = make_response(get_tournament(tournament_id).approve_tableau(round, group, data['timestamp'], data['fencer_id'], device_id), 200)
+        response = make_response(get_tournament(tournament_id).approve_tableau(prelim_round, group, data['timestamp'], data['fencer_id'], device_id), 200)
         
         if 'device_id' not in request.cookies:
             response.set_cookie('device_id', device_id)
@@ -894,4 +917,14 @@ def page_not_found(e):
 if __name__ == '__main__':
     load_all_tournaments()
     delete_old_tournaments()
+
+    host_name = socket.gethostname()
+    host_ip = socket.gethostbyname(host_name)
+
+    print("\n\nStarting Flask Server")
+    print("---------------------")
+    print(host_name)
+    print(host_ip + ":8080")
+    print("---------------------\n\n")
+    
     app.run(debug=True, port=8080)

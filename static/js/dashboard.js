@@ -1,3 +1,5 @@
+const tournament_id = document.getElementById("body").dataset.tournament;
+
 window.onerror = function(error, url, line) {
     alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
   };
@@ -121,3 +123,7 @@ document.getElementById("overlay-form").addEventListener("submit", function(even
         }
     });
 });
+
+function openTableau() {
+    window.open("/" + tournament_id + "/tableau?group=1", "_blank");
+}

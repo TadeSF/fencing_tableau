@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="/static/css/loading_screen.css">
         <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
     </head>
-    <body>
+    <body id="body" data-tournament="{{ tournament_id }}">
         <div class="flex-container">
             <div class="flex-column-1">
                 <div id="options_frame" class="flex-item-options" width="100%" height="100%">
@@ -17,7 +17,7 @@
                         </div>
                         <div class="button-column">
                             <button id="Advance" onclick="advance()">Advance to next Stage</button>
-                            <button id="Update" onclick="update()">Update everything</button>
+                            <button id="Tableau" onclick="openTableau()">Tableau</button>
                             <button id="Simulate" onclick="simulate()">Simulate all</button>
                         </div>
                     </div>

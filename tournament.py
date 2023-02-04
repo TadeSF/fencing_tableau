@@ -1,17 +1,17 @@
+import csv
 import datetime
 import math
 import os
 import random
 import time
-from fencer import Fencer, Wildcard, Stage
-from match import GroupMatch, EliminationMatch, Match
-from piste import Piste
-import random_generator
+from typing import List, Literal
+
 from fuzzywuzzy import fuzz
-import csv
 
-from typing import Literal, List
-
+import random_generator
+from fencer import Fencer, Stage, Wildcard
+from match import EliminationMatch, GroupMatch, Match
+from piste import Piste
 
 # ------- Groups -------
 
@@ -359,6 +359,14 @@ class Tournament:
         return matches
 
 
+    # --- Misc ---
+    def get_fencer_rank(self, fencer_id: str) -> int:
+        fencers = sorting_fencers(self.fencers)
+        for i, fencer in enumerate(fencers):
+            if fencer.id == fencer_id:
+                return i + 1
+
+
     # --- Creating Rounds ---
 
     def create_preliminary_round(self) -> None:
@@ -386,11 +394,12 @@ class Tournament:
         else:
             self.elimination_fencers = next_tree_node(self.elimination_fencers, self.stage.value, self.elimination_mode, final = final)
 
-        
-
         if self.elimination_matches != []: self.elimination_matches_archive.append(self.elimination_matches)
         self.elimination_matches = matchmaker_elimination(self.elimination_fencers, self.elimination_mode, self.stage)
         self.assign_pistes(self.elimination_matches)
+
+        for fencer in self.fencers:
+            fencer.stage = self.stage
 
 
     def assign_pistes(self, matches: list[Match]):
@@ -582,6 +591,10 @@ class Tournament:
                 "name": fencer.short_str,
                 "club": fencer.club,
                 "nationality": fencer.nationality,
+                "start_number": fencer.start_number,
+                "gender": fencer.gender if fencer.gender else "–",
+                "age": fencer.age if fencer.age else "–",
+                "handedness": fencer.handedness if fencer.handedness else "–",
                 "approved_tableau": fencer.approved_tableau,
                 "next_matches": next_matches,
                 "outcome_last_matches": fencer.outcome_last_matches,
@@ -590,6 +603,24 @@ class Tournament:
                 "group": fencer.prelim_group if self.stage == Stage.PRELIMINARY_ROUND else None,
                 "current_group_rank": self.get_current_group_rank(fencer) if self.stage == Stage.PRELIMINARY_ROUND else None,
                 "group_stage": True if self.stage == Stage.PRELIMINARY_ROUND else False,
+                "statistics": fencer.statistics,
+                "win_percentage": fencer.win_percentage(),
+                "points_difference": fencer.points_difference(),
+                "points_per_match": fencer.points_per_game(),
+                "graph_data": {
+                    "standings": {
+                        "labels": fencer.game_lables,
+                        "data": fencer.standings_history,
+                        "y_max": len(self.fencers),
+                    },
+                    "points_difference": {
+                        "labels": fencer.game_lables,
+                        "data": fencer.difference_history
+                    },
+                    "points_difference_per_match": {
+                        "data": fencer.difference_per_match_history
+                    },
+                }
             }   
 
 
@@ -601,7 +632,9 @@ class Tournament:
                 if match.match_completed:
                     self.correct_score(match, green_score, red_score)
                 else:
-                    match.input_results(green_score, red_score)
+                    green_rank = self.get_fencer_rank(match.green.id)
+                    red_rank = self.get_fencer_rank(match.red.id)
+                    match.input_results(green_score, red_score, green_rank, red_rank)
 
         self.assign_pistes(self.elimination_matches)
 

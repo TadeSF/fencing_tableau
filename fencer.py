@@ -73,6 +73,39 @@ class Stage(Enum):
         if self.value >= 1:
             return Stage(self.value - 1)
 
+    @property
+    def short_stage_name(self):
+        """
+        Returns the name of the stage in a short format (e.g. "QF" instead of "QUARTER_FINALS")
+        """
+        if self.value == -1:
+            return "G"
+        elif self.value == -2:
+            return "P"
+
+        elif self.value == 10:
+            return "1024th"
+        elif self.value == 9:
+            return "512th"
+        elif self.value == 8:
+            return "256th"
+        elif self.value == 7:
+            return "128th"
+        elif self.value == 6:
+            return "64th"
+        elif self.value == 5:
+            return "32nd"
+        elif self.value == 4:
+            return "16th"
+        elif self.value == 3:
+            return "QF"
+        elif self.value == 2:
+            return "SF"
+        elif self.value == 1:
+            return "GF"
+        elif self.value == 0:
+            return "Finished"
+
 
 
 # Main Class for every individual fencer
@@ -242,6 +275,11 @@ class Fencer:
 
         self.last_matches: list[dict] = []
 
+        self.game_lables: list = ["Start"]
+        self.standings_history: list = [start_number]
+        self.difference_history: list = []
+        self.difference_per_match_history: list = []
+
         for _ in range(num_prelim_rounds):
             self.statistics["preliminary_round"].append({
                 "matches": 0,
@@ -309,8 +347,9 @@ class Fencer:
         return [match["win"] for match in self.last_matches][-8:]
 
 
+
     # statistics
-    def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0, skip_last_matches: bool = False) -> None:
+    def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, current_standing: int, round: int = 0, skip_last_matches: bool = False) -> None:
         """
         This function updates the statistics of the fencer and is called after every match is finished and the score has been pushed.
         The function updates the statistics for the current stage and the overall statistics.
@@ -358,6 +397,11 @@ class Fencer:
         self.statistics[stage][round]["points_against"] += points_against
 
         self.group_opponents.append(opponent)
+
+        self.game_lables.append("Group" if self.stage == Stage.PRELIMINARY_ROUND else self.stage.short_stage_name)
+        self.standings_history.append(current_standing)
+        self.difference_history.append(self.points_difference_int())
+        self.difference_per_match_history.append(points_for - points_against)
 
 
     def correct_statistics(self, match, opponent, old_points_for: int, old_points_against: int, points_for: int, points_against: int, round: int = 0):

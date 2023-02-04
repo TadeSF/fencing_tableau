@@ -1,7 +1,13 @@
+const tournament_id = document.getElementById("body").dataset.tournament;
+
+
 function formatTable(tableau) {
     var table = document.getElementById("tableau");
 
-
+    // Remove all children
+    while (table.firstChild) {
+        table.removeChild(table.firstChild);
+    }
 
     for (var i = 0; i < tableau.length; i++) {
         var row = document.createElement("tr");
@@ -36,11 +42,8 @@ function formatTable(tableau) {
                 }
                 
                 cell.onclick = function () {
-                    url = window.location.href;
-                    url = url.split("/");
-                    tournament = url[url.length - 4];
                     fencer = this.dataset.id;
-                    window.open("/" + tournament + "/fencer/" + fencer, "_blank")
+                    window.open("/" + tournament_id + "/fencer/" + fencer, "_blank");
                 }
 
             } else {
@@ -68,8 +71,8 @@ function formatTable(tableau) {
 
 
 function update() {
-    var url = window.location.href;
-    fetch(url + "/update")
+    let group = document.getElementById("group").innerHTML;
+    fetch("/" + tournament_id + "/tableau/update?group=" + group)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -81,12 +84,32 @@ window.onload = function () {
     update()
 }
 
-function print_page() {
+function savePDF() {
     // print the current window
     window.print();
 }
 
-function back() {
+function closeWindow() {
     //close the current window
     window.close();
+}
+
+function next() {
+    let group = document.getElementById("group").innerHTML;
+    let num_groups = document.getElementById("body").dataset.num_groups;
+    group = parseInt(group) + 1;
+    if (group > num_groups) {
+        group = 1;
+    }
+    window.open("/" + tournament_id + "/tableau?group=" + group, "_self");
+}
+
+function previous() {
+    let group = document.getElementById("group").innerHTML;
+    let num_groups = document.getElementById("body").dataset.num_groups;
+    group = parseInt(group) - 1;
+    if (group < 1) {
+        group = num_groups;
+    }
+    window.open("/" + tournament_id + "/tableau?group=" + group, "_self");
 }

@@ -127,12 +127,12 @@ class GroupMatch(Match):
         self.group = group
         self.prelim_round = prelim_round
 
-    def input_results(self, green_score: int, red_score: int, skip_update_statistics: bool = False) -> None:
+    def input_results(self, green_score: int, red_score: int, green_rank: int, red_rank: int, skip_update_statistics: bool = False) -> None:
         super().input_results(green_score, red_score)
 
         if not skip_update_statistics:
-            self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score, round=self.prelim_round)
-            self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score, round=self.prelim_round)
+            self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score, green_rank, round=self.prelim_round)
+            self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score, red_rank, round=self.prelim_round)
 
 
 
@@ -152,9 +152,9 @@ class EliminationMatch(Match):
             self.wildcard = True
             self.green.update_statistics_wildcard_game(self)
 
-    def input_results(self, green_score: int, red_score: int, skip_update_statistics: bool = False) -> None:
+    def input_results(self, green_score: int, red_score: int, green_rank: int, red_rank: int, skip_update_statistics: bool = False) -> None:
         super().input_results(green_score, red_score)
 
         if not skip_update_statistics:
-            self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score)
-            self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score)
+            self.green.update_statistics(self, True if self.winner == self.green else False, self.red, self.green_score, self.red_score, green_rank)
+            self.red.update_statistics(self, False if self.winner == self.green else True, self.green, self.red_score, self.green_score, red_rank)

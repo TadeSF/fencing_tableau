@@ -3,19 +3,25 @@
   <head>
     <title>Group Tableau</title>
     <link rel="stylesheet" href="/static/css/tableau.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
   </head>
-  <body>
+  <body data-tournament="{{ tournament_id }}" data-num_groups="{{ num_groups }}" id="body">
+    <h1>Tableau Round <span id="round">{{ round }}</span> [Group <span id="group">{{ group }}</span>]</h1>
     <div id="header">
-      <h1 class="section_headline_reload">Tableau Round <span id="round">{{ round }}</span> [Group <span id="group">{{ group }}</span>]</h1>
+      <!-- fa solid black icon back, save (floppy disc) and forward -->
+      <i class="fa solid fa-close" id="close" onclick="closeWindow()"></i>
+      <i></i>
+      <i class="fa solid fa-arrow-left" id="back" onclick="previous()"></i>
+      <i class="fa-solid fa-sync" id="reload" onclick="update()"></i>
+      <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
+      <i class="fa solid fa-arrow-right" id="forward" onclick="next()"></i>
     </div>
     <div class="tableau-wrapper">
         <table id="tableau">
         </table>
-    </div>
-    <div>
-        <button id="print" onclick="print_page()">Print</button>
-        <button id="back" onclick="back()">Back</button>
     </div>
     <script src="/static/js/tableau.js"></script>
   </body>
