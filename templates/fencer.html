@@ -54,7 +54,7 @@
             <div class="Match Information">
                 <div>
                     <div class="Title">Against:</div>
-                    <div class="Fencer-Banner" id="Next-Match-Fencer">
+                    <div class="Fencer-Banner-Opponent" id="Next-Match-Fencer">
                         <div class="Next-Match-Flag"></div>
                         <div class="Next-Match-Name"></div>
                     </div>
@@ -129,14 +129,17 @@
             </div>
         </div>
         <h3>Trends</h3>
-        <div class="Chart-Wrapper">
+        <div class="Chart-Wrapper" id="Standings-Chart-Wrapper">
             <canvas id="Standings-Chart"></canvas>
         </div>
-        <div class="Chart-Wrapper">
+        <div class="Chart-Wrapper" id="Difference-Chart-Wrapper">
             <canvas id="Difference-Chart"></canvas>
         </div>
-        <div class="Chart-Wrapper">
+        <div class="Chart-Wrapper" id="Difference-Match-Chart-Wrapper">
             <canvas id="Difference-Match-Chart"></canvas>
+        </div>
+        <div class="Chart-Wrapper" id="No-Data">
+            <p>There are currently no charts available.</p>
         </div>
     </div>
     <div class="Section">

@@ -403,6 +403,7 @@ class Tournament:
 
 
     def assign_pistes(self, matches: list[Match]):
+        print(self.preliminary_stage)
         for match in matches:
             if match.piste == None and match.wildcard == False:
                 for piste in self.pistes:
@@ -571,7 +572,7 @@ class Tournament:
             "current_group_rank": self.get_current_group_rank(match[opponent]) if self.stage == Stage.PRELIMINARY_ROUND else None,
         }
 
-    def get_fencer_hub_information(self, fencer_id: int) -> dict:
+    def get_fencer_hub_information(self, fencer_id: int, logged_in_as_fencer: bool = False) -> dict:
         fencer = self.get_fencer_object(fencer_id)
         if fencer:
             next_matches = []
@@ -620,7 +621,8 @@ class Tournament:
                     "points_difference_per_match": {
                         "data": fencer.difference_per_match_history
                     },
-                }
+                },
+                "logged_in_as_fencer": logged_in_as_fencer,
             }   
 
 
@@ -632,9 +634,11 @@ class Tournament:
                 if match.match_completed:
                     self.correct_score(match, green_score, red_score)
                 else:
+                    match.input_results(green_score, red_score)
                     green_rank = self.get_fencer_rank(match.green.id)
                     red_rank = self.get_fencer_rank(match.red.id)
-                    match.input_results(green_score, red_score, green_rank, red_rank)
+                    match.green.update_rank(green_rank)
+                    match.red.update_rank(red_rank)
 
         self.assign_pistes(self.elimination_matches)
 

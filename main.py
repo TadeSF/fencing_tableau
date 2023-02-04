@@ -139,6 +139,14 @@ def create_referee_cookie(response: Response, tournament_id: str) -> Response:
     response.set_cookie('tournament', tournament_id, max_age=60*60*24)
     return response
 
+def create_fencer_cookie(response: Response, tournament_id: str, fencer_id: str) -> Response:
+    """
+    """
+    response.set_cookie('logged_in_fencer', 'true', max_age=60*60*24)
+    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
+    response.set_cookie('fencer', fencer_id, max_age=60*60*24)
+    return response
+
 def check_logged_in_as_master(request: Request, tournament_id: str) -> bool:
     """
     """
@@ -159,6 +167,17 @@ def check_logged_in_as_referee(request: Request, tournament_id: str) -> bool:
                 print("Logged in")
                 return True
     print("Not logged in")
+    return False
+
+def check_logged_in_as_fencer(request: Request, tournament_id: str, fencer_id: str) -> bool:
+    """
+    """
+    if 'logged_in_fencer' in request.cookies:
+        if "tournament" in request.cookies:
+            if request.cookies['tournament'] == tournament_id:
+                if "fencer" in request.cookies:
+                    if request.cookies['fencer'] == fencer_id:
+                        return True
     return False
 
 
@@ -246,6 +265,18 @@ def index():
     Flask serves on GET request / the index.html file from the templates folder.
     """
     return render_template('index.html')
+
+@app.route('/imprint')
+def imprint():
+    """
+    """
+    return render_template('imprint.html')
+
+@app.route('/privacy')
+def privacy():
+    """
+    """
+    return render_template('privacy.html')
 
 @app.route('/csv-template')
 def csv_template_download():
@@ -423,12 +454,13 @@ def login_fencer():
             return jsonify({'error': 'Fencer not found'}), 404
         else:
             fencer = tournament.get_fencer_by_id(fencer_id)
-            return jsonify({
+            response = make_response(jsonify({
             'success': 'Fencer found',
             'tournament_id': tournament_id,
             'fencer_id': fencer.id,
             'description': str(fencer),
-            }), 200
+            }), 200)
+            return create_fencer_cookie(response, tournament_id, fencer.id)
 
 
 @app.route('/login-referee', methods=['POST'])
@@ -768,8 +800,13 @@ def get_fencer(tournament_id, fencer_id):
     """
     tournament = get_tournament(tournament_id)
     if tournament is None:
-        return jsonify([])
-    return jsonify(tournament.get_fencer_hub_information(fencer_id))
+        return jsonify({"success": False})
+
+    logged_in_as_fencer = False
+    if check_logged_in_as_fencer(request, tournament_id, fencer_id):
+        logged_in_as_fencer = True
+        
+    return jsonify(tournament.get_fencer_hub_information(fencer_id, logged_in_as_fencer=logged_in_as_fencer))
 
 @app.route('/<tournament_id>/tableau')
 def tableau(tournament_id):
@@ -853,8 +890,14 @@ def approve_tableau(tournament_id):
         abort(404)
     else:
         data = request.get_json()
-        prelim_round = request.args.get('round') if request.args.get('round') is not None else get_tournament(tournament_id).preliminary_stage,
-        group = request.args.get('group'),
+        prelim_round = request.args.get('round')
+        if prelim_round is None or prelim_round == (1,):
+            prelim_round = get_tournament(tournament_id).preliminary_stage
+        group = request.args.get('group')
+
+        # Check if Cookie for logged in fencer exists
+        if not check_logged_in_as_fencer(request, tournament_id, data['fencer_id']):
+            return jsonify({"success": False, "message": "You are not logged in as the correct fencer."}), 403
         
         # Check if Cookie with device_id exists
         if 'device_id' in request.cookies:

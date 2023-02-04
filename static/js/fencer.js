@@ -8,6 +8,10 @@ const ctx = document.getElementById('Standings-Chart').getContext('2d');
 const ctx2 = document.getElementById('Difference-Chart').getContext('2d');
 const ctx3 = document.getElementById('Difference-Match-Chart').getContext('2d');
 
+let StandingsChart;
+let DifferenceChart;
+let DifferenceMatchChart;
+
 function get_flag(country) {
     return new Promise((resolve, reject) => {
         // Check if the file is already in cache
@@ -119,6 +123,9 @@ async function update() {
                     opponent_fencer_box.innerHTML = "";
                     opponent_fencer_box.appendChild(flag);
                     opponent_fencer_box.appendChild(fencer_name);
+                    opponent_fencer_box.onclick = function () {
+                        window.open("/" + tournament_id + "/fencer/" + opponent["id"], "_blank")
+                    }
                 });
 
                 let opponent_wrapper = document.getElementById("Opponents-Wrapper");
@@ -129,7 +136,7 @@ async function update() {
                         continue;
                     }
                     let opponent = document.createElement("div");
-                    opponent.className = "Fencer-Banner";
+                    opponent.className = "Fencer-Banner-Opponent";
                     let opponent_flag = document.createElement("div");
                     opponent_flag.className = "Next-Match-Flag";
                     let opponent_name = document.createElement("div");
@@ -143,6 +150,9 @@ async function update() {
                     opponent.appendChild(opponent_flag);
                     opponent.appendChild(opponent_name);
                     opponent_wrapper.appendChild(opponent);
+                    opponent.onclick = function () {
+                        window.open("/" + tournament_id + "/fencer/" + element["opponent"]["id"], "_blank")
+                    }
                 }
 
                 let tableau_wrapper = document.getElementById("tableau-wrapper-matches");
@@ -208,7 +218,7 @@ async function update() {
                 document.getElementById("No-More-Matches").style.display = "block";
                 if (data["group_stage"] == true) {
                     document.getElementById("tableau-wrapper").style.display = "flex";
-                    if (data["approved_tableau"] == false) {
+                    if (data["approved_tableau"] == false && data["logged_in_as_fencer"] == true) {
                         document.getElementById("approval-needed").style.display = "block";
                     } else {
                         document.getElementById("approval-needed").style.display = "none";
@@ -247,9 +257,31 @@ async function update() {
 
             let standing_chart_data = data["graph_data"]["standings"]["data"];
             let standing_chart_labels = data["graph_data"]["standings"]["labels"];
-            let standing_chart_y_max = data["graph_data"]["standings"]["y_max"];
 
-            const StandingsChart = new Chart(ctx, {
+            let standings_chart_wrapper = document.getElementById("Standings-Chart-Wrapper");
+            let difference_chart_wrapper = document.getElementById("Difference-Chart-Wrapper");
+            let difference_match_chart_wrapper = document.getElementById("Difference-Match-Chart-Wrapper");
+            let no_data = document.getElementById("No-Data");
+
+            if (standing_chart_data.length < 2) {
+                standings_chart_wrapper.style.display = "none";
+                difference_chart_wrapper.style.display = "none";
+                difference_match_chart_wrapper.style.display = "none";
+                no_data.style.display = "block";
+            } else {
+                standings_chart_wrapper.style.display = "block";
+                difference_chart_wrapper.style.display = "block";
+                difference_match_chart_wrapper.style.display = "block";
+                no_data.style.display = "none";
+            }
+
+            const lineTension = 0.4;
+
+            if (StandingsChart) {
+                StandingsChart.destroy();
+            }
+
+            StandingsChart = new Chart(ctx, {
                 type: "line",
                 data: {
                     labels: standing_chart_labels,
@@ -262,11 +294,36 @@ async function update() {
                             borderWidth: 2,
                             yAxisID: "y1",
                             xAxisID: "x1",
-                            lineTension: 0.3,
+                            lineTension: lineTension,
+                            fill: {
+                                target: "start",
+                                above: function (context) {
+                                    const chart = context.chart;
+                                    const {ctx, chartArea, scales} = chart;
+
+                                    const chartWidth = chartArea.right - chartArea.left;
+                                    const chartHeight = chartArea.bottom - chartArea.top;
+
+                                        let gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartHeight + chartArea.top);
+                                        gradient.addColorStop(0, "rgba(0, 0, 255, 0.8)");
+                                        gradient.addColorStop(1, "rgba(0, 0, 255, 0.05)");
+
+                                    return gradient
+                                },
+                            }
                         }
                     ]
                 },
                 options: {
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: "Standings History",
+                        },
+                    },
                     scales: {
                         y1: {
                             reverse: true,
@@ -275,7 +332,7 @@ async function update() {
                             // display: false
                         },
                         x1: {
-                            gridLines: {
+                            grid: {
                                 display: false
                             },
                         }
@@ -286,6 +343,9 @@ async function update() {
                                 return tooltipItem.yLabel;
                             }
                         }
+                    },
+                    animation: {
+                        duration: 0
                     }
                 }  
             });
@@ -296,7 +356,30 @@ async function update() {
             difference_chart_labels.shift();
             let difference_chart_per_match_data = data["graph_data"]["points_difference_per_match"]["data"];
 
-            const DifferenceChart = new Chart(ctx2, {
+            if (DifferenceChart) {
+                DifferenceChart.destroy();
+            }
+
+            let width, height, gradient;
+            function getgradient(ctx, chartArea, scales) {
+                const chartWidth = chartArea.right - chartArea.left;
+                const chartHeight = chartArea.bottom - chartArea.top;
+
+                if (!width || width !== chartWidth || height !== chartHeight) {
+                    const point_zero = scales.y1.getPixelForValue(0);
+                    const point_zero_height = point_zero - chartArea.top;
+                    const point_zero_percentage = point_zero_height / chartHeight;
+
+                    width = chartWidth;
+                    height = chartHeight;
+                    gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartHeight + chartArea.top);
+                    gradient.addColorStop(point_zero_percentage, "rgba(0, 150, 0, 0.5)");
+                    gradient.addColorStop(point_zero_percentage, "rgba(255, 0, 0, 0.5)");
+                }
+                return gradient;
+            }
+
+            DifferenceChart = new Chart(ctx2, {
                 data: {
                     labels: difference_chart_labels,
                     datasets: [
@@ -304,20 +387,52 @@ async function update() {
                             type: "line",
                             label: "Points Difference Development",
                             data: difference_chart_data,
-                            backgroundColor: "#0000ff",
-                            borderColor: "#0000ff",
+                            // backgroundColor: "rgba(0, 150, 0, 0.2)",
+                            backgroundColor: function (context) {
+                                const chart = context.chart;
+                                const {ctx, chartArea, scales} = chart;
+
+                                if (!chartArea) {
+                                    return null;
+                                }
+                                return getgradient(ctx, chartArea, scales);
+                            },
+                            borderColor: "#000000",
                             borderWidth: 2,
-                            lineTension: 0.3,
+                            lineTension: lineTension,
+                            fill: true,
                             xAxisID: "x1",
                             yAxisID: "y1",
+                            pointBackgroundColor: "#000000"
                         },
                     ]
                 },
                 options: {
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: "Points Difference Development",
+                        },
+                    },
                     scales: {
                         x1: {
+                            grid: {
+                                display: false
+                            },
                         },
                         y1: {
+                            grid: {
+                                color: function(context) {
+                                    if (context.tick.value == 0) {
+                                        return "#000000";
+                                    } else {
+                                        return "#dddddd";
+                                    }
+                                }
+                            }, 
                         }
                     },
                     tooltips: {
@@ -326,20 +441,28 @@ async function update() {
                                 return tooltipItem.yLabel;
                             }
                         }
+                    },
+                    animation: {
+                        duration: 0
                     }
                 }
             });
+            
 
             let colors_for_difference_chart = [];
             for (let i = 0; i < difference_chart_per_match_data.length; i++) {
                 if (difference_chart_per_match_data[i] < 0) {
-                    colors_for_difference_chart[i] = "#ff0000";
+                    colors_for_difference_chart[i] = "rgba(255, 0, 0, 0.5)";
                 } else {
-                    colors_for_difference_chart[i] = "#05a100";
+                    colors_for_difference_chart[i] = "rgba(0, 150, 0, 0.5)";
                 }
             }
 
-            const DifferenceMatchChart = new Chart(ctx3, {
+            if (DifferenceMatchChart) {
+                DifferenceMatchChart.destroy();
+            }
+
+            DifferenceMatchChart = new Chart(ctx3, {
                 data: {
                     labels: difference_chart_labels,
                     datasets: [
@@ -348,18 +471,49 @@ async function update() {
                             label: "Points Difference per Match",
                             data: difference_chart_per_match_data,
                             backgroundColor: colors_for_difference_chart,
-                            borderColor: colors_for_difference_chart,
+                            borderColor: "#000000",
                             borderWidth: 2,
                             yAxisID: "y1",
                             xAxisID: "x1",
+                            borderRadius: 5,
                         }
                     ]
                 },
                 options: {
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: "Points Difference per Match",
+                        },
+                    },
                     scales: {
                         y1: {
+                            // min: -15,
+                            // max: 15,
+                            grid: {
+                                color: function(context) {
+                                    if (context.tick.value == 0) {
+                                        return "#000000";
+                                    } else {
+                                        return "#dddddd";
+                                    }
+                                },
+                                lineWidth: function(context) {
+                                    if (context.tick.value == 0) {
+                                        return 2;
+                                    } else {
+                                        return 1;
+                                    }
+                                }
+                            },
                         },
                         x1: {
+                            grid: {
+                                display: false
+                            },
                         }
                     },
                     tooltips: {
@@ -368,10 +522,12 @@ async function update() {
                                 return tooltipItem.yLabel;
                             }
                         }
+                    },
+                    animation: {
+                        duration: 0
                     }
                 }
             });
-
         });
 
 }
@@ -433,7 +589,7 @@ function approve_tableau() {
         "fencer_id": fencer_id
     }
     // POST request
-    fetch("/" + tournament + "/tableau/" + round + "/" + group + "/approve", {
+    fetch("/" + tournament + "/tableau/approve?group=" + group, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

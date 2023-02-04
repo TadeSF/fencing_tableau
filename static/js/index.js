@@ -141,6 +141,10 @@ document.addEventListener('click', (event) => {
   }
 });
 
+function openGithub() {
+  window.open('https://github.com/TadeSF/fencing_tableau', '_blank')
+}
+
 
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);

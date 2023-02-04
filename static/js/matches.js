@@ -1,5 +1,3 @@
-// import { jsPDF } from "jspdf";
-
 function get_matches() {
     fetch('matches/update')
     .then(response => response.json())

@@ -1,3 +1,11 @@
+@media only screen and (max-width: 480px) {
+    .Section {
+        width: 100%;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
 body {
     font-family: margin-mvb, sans-serif;
     font-size: 14px;
@@ -33,7 +41,8 @@ br {
 }
 
 .Name-Banner,
-.Fencer-Banner {
+.Fencer-Banner,
+.Fencer-Banner-Opponent {
     background-color: #ffffff;
     border-radius: 10px;
     padding: 10px;
@@ -45,6 +54,17 @@ br {
     align-items: center;
     font-size: 18px;
     margin-bottom: 10px;
+}
+
+.Fencer-Banner-Opponent {
+    box-shadow: 3px 3px 0px grey;
+    transition: 0.3s;
+}
+
+.Fencer-Banner-Opponent:hover {
+    box-shadow: 0px 0px 0px grey;
+    translate: 3px 3px;
+    cursor: pointer;
 }
 
 #Main-Flag,
