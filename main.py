@@ -970,4 +970,4 @@ if __name__ == '__main__':
     print(host_ip + ":8080")
     print("---------------------\n\n")
     
-    app.run(debug=True, port=433)
+    app.run(debug=True, port=80)
