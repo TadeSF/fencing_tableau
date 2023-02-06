@@ -24,7 +24,7 @@ except ModuleNotFoundError:
 # ------- Tournament Cache -------
 tournament_cache: list[Tournament] = []
 
-def get_tournament(tournament_id) -> Tournament | None:
+def get_tournament(tournament_id) -> Tournament:
     """
     This function returns a tournament from the tournament cache, given an id.
     If the tournament with the given id does not exist, it returns None.
@@ -182,7 +182,7 @@ def check_logged_in_as_fencer(request: Request, tournament_id: str, fencer_id: s
 
 
 # ------- Searches -------
-def search_fencer(tournament_id, fencer_id) -> Fencer | None:
+def search_fencer(tournament_id, fencer_id) -> Fencer:
     """
     This function searches for a fencer in a tournament, given the tournament id and the fencer id.
 

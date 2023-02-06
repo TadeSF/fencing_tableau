@@ -539,7 +539,7 @@ class Tournament:
         }
 
 
-    def get_fencer_object(self, fencer_id: int) -> Fencer | None:
+    def get_fencer_object(self, fencer_id: int) -> Fencer:
         for fencer in self.fencers:
             if fencer.id == fencer_id:
                 return fencer
@@ -708,7 +708,7 @@ class Tournament:
             if fencer.id == fencer_id:
                 return fencer
 
-    def get_fencer_id_by_name(self, fencer_name) -> str | None:
+    def get_fencer_id_by_name(self, fencer_name) -> str:
         best_match = None
         best_ratio = 0
         for fencer in self.fencers:
@@ -721,7 +721,7 @@ class Tournament:
         else:
             return None
     
-    def get_fencer_id_by_start_number(self, start_number) -> str | None:
+    def get_fencer_id_by_start_number(self, start_number) -> str:
         if start_number < len(self.fencers):
             for fencer in self.fencers:
                 if fencer.start_number == int(start_number):
