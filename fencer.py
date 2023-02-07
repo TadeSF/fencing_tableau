@@ -273,7 +273,7 @@ class Fencer:
             ]
         }
 
-        self.last_matches: list[dict] = []
+        self.last_matches: list = []
 
         self.game_lables: list = ["Start"]
         self.standings_history: list = [start_number]
@@ -334,7 +334,7 @@ class Fencer:
             return self.last_matches[-1]["win"]
 
     @property
-    def outcome_last_matches(self) -> list[bool]:
+    def outcome_last_matches(self) -> list:
         """
         ``@property``
 
