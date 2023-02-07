@@ -15,7 +15,7 @@ from piste import Piste
 
 # ------- Groups -------
 
-def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer]]:
+def assign_groups(fencers: List[Fencer], groups: int = None) -> List[List[Fencer]]:
 
     # TODO – Implement the following rules of the Deutscher Fechter-Bund for the preliminary tableau:
     ''' Eine aktuelle Landesrangliste oder deutsche Rangliste hilft uns,
@@ -62,7 +62,7 @@ def assign_groups(fencers: list[Fencer], groups: int = None) -> list[list[Fencer
 
 # ------- Matchmaking Logic -------
 
-def matchmaker_groups(fencers: list[Fencer], stage: Stage, prelim_round: int) -> list[Match]:
+def matchmaker_groups(fencers: List[Fencer], stage: Stage, prelim_round: int) -> List[Match]:
     # Create matchups
     matches = []
 
@@ -74,7 +74,7 @@ def matchmaker_groups(fencers: list[Fencer], stage: Stage, prelim_round: int) ->
     return matches
 
 
-def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "placement"], stage) -> list[Match]:
+def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "placement"], stage) -> List[Match]:
     # Create matchups
     matches = []
 
@@ -99,7 +99,7 @@ def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "plac
 
 # ------- Tournament Logic -------
 
-def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int = None, prelim_round: int = None) -> list[Match]:
+def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int = None, prelim_round: int = None) -> List[Match]:
     # Create groups
     groups = assign_groups(fencers, groups)
 
@@ -118,14 +118,14 @@ def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int 
 
 # ------- Sorting Algorithms -------
 
-def sorting_fencers(fencers: list[Fencer]) -> list[Fencer]:
+def sorting_fencers(fencers: List[Fencer]) -> List[Fencer]:
     # This method sorts fencers by overall score
     # sort by stage, win percentage, points difference, points for, points against
     fencers = sorted(fencers, key=lambda fencer: (-(fencer.final_rank if fencer.final_rank != None else float('0')), fencer.win_percentage(), fencer.points_difference_int(), fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"]), reverse=True)
     return fencers
 
 
-def sort_matchups_in_preliminary_round(fencers: list[Fencer], matches: list[Match]) -> list[Match]:
+def sort_matchups_in_preliminary_round(fencers: List[Fencer], matches: List[Match]) -> List[Match]:
     # The matches in the preliminary round are sorted in the most diverse way possible. Idealy, no fencer should have two matches back to back.
     # Initialize the dictionary of wait times
     wait_times = {}
@@ -280,7 +280,7 @@ class Tournament:
         id: str,
         password: str,
         name: str,
-        fencers: list[Fencer],
+        fencers: List[Fencer],
         location: str,
         num_preliminary_rounds: str,
         num_preliminary_groups: str,
@@ -308,7 +308,7 @@ class Tournament:
 
         # Pistes
         self.num_pistes: int = int(number_of_pistes)
-        self.pistes: list[Piste] = []
+        self.pistes: List[Piste] = []
         for i in range(self.num_pistes):
             self.pistes.append(Piste(i + 1))
 
@@ -346,11 +346,11 @@ class Tournament:
     # --- Properties ---
     
     @property
-    def matches_of_current_preliminary_round(self) -> list[Match]:
+    def matches_of_current_preliminary_round(self) -> List[Match]:
         return self.preliminary_matches[self.preliminary_stage - 1]
 
     @property
-    def all_matches(self) -> list[Match]:
+    def all_matches(self) -> List[Match]:
         matches = []
         for round in self.preliminary_matches:
             matches.extend(round)
@@ -402,7 +402,7 @@ class Tournament:
             fencer.stage = self.stage
 
 
-    def assign_pistes(self, matches: list[Match]):
+    def assign_pistes(self, matches: List[Match]):
         print(self.preliminary_stage)
         for match in matches:
             if match.piste == None and match.wildcard == False:

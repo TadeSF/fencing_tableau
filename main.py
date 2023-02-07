@@ -5,6 +5,7 @@ try:
     import os
     import traceback
     import socket
+    from typing import List, Literal
 
     from flask import   (Flask, Request, Response, abort, jsonify, make_response,
                         redirect, render_template, request, send_file,
@@ -22,7 +23,7 @@ except ModuleNotFoundError:
 
 
 # ------- Tournament Cache -------
-tournament_cache: list[Tournament] = []
+tournament_cache: List[Tournament] = []
 
 def get_tournament(tournament_id) -> Tournament:
     """
