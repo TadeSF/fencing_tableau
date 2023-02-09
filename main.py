@@ -76,6 +76,7 @@ def check_tournament_exists(tournament_id) -> bool:
 # Pickeling is an easy way to save data to a file, so that it stays persistent even if the server has to restart.
 
 import pickle
+import subprocess
 
 
 def create_local_tournament_folder():
@@ -945,6 +946,20 @@ def simulate_current(tournament_id):
     else:
         get_tournament(tournament_id).simulate_current()
         return '', 200
+
+
+@app.route("/server/update")
+def update():
+    subprocess.call(["update.sh"])
+    return "Updating..."
+
+@app.route('/server/quit')
+def quit():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return 'Server shutting down...'
 
 
 
