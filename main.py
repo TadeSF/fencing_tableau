@@ -950,7 +950,7 @@ def simulate_current(tournament_id):
 
 @app.route("/server/update")
 def update():
-    subprocess.call(["update.sh"])
+    subprocess.call(["sudo", "update.sh"])
     return "Updating..."
 
 @app.route('/server/quit')

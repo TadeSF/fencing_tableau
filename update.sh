@@ -7,4 +7,4 @@ curl http://fencewithfriends.online/server/quit
 git pull
 
 # Reopen the Flask server
-nohup python3 main.py &
+sudo nohup python3 main.py &
