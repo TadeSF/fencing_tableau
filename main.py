@@ -962,13 +962,9 @@ if __name__ == '__main__':
     load_all_tournaments()
     delete_old_tournaments()
 
-    host_name = socket.gethostname()
-    host_ip = socket.gethostbyname(host_name)
-
-    print("\n\nStarting Flask Server")
-    print("---------------------")
-    print(host_name)
-    print(host_ip + ":8080")
-    print("---------------------\n\n")
-    
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    fallback_port = 8080
+    try:
+        app.run(host='0.0.0.0', debug=True, port=80)
+    except OSError:
+        print(f"Port 80 is already in use. Trying port {fallback_port} instead.")
+        app.run(host='0.0.0.0', debug=True, port=fallback_port)
