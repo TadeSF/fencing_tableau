@@ -4,6 +4,7 @@ try:
     import os
     import traceback
     import logging
+    import threading
     from typing import List, Literal
 
     from flask import   (Flask, Request, Response, abort, jsonify, make_response,
@@ -23,6 +24,7 @@ except ModuleNotFoundError:
 
 # ------- Tournament Cache -------
 tournament_cache: List[Tournament] = []
+cache_lock = threading.Lock()
 
 def get_tournament(tournament_id) -> Tournament:
     """
@@ -42,11 +44,12 @@ def get_tournament(tournament_id) -> Tournament:
         if the tournament does not exist
     """
 
-    global tournament_cache
-    for tournament in tournament_cache:
-        if tournament.id == tournament_id:
-            return tournament
-    return None
+    global tournament_cache, cache_lock
+    with cache_lock:
+        for tournament in tournament_cache:
+            if tournament.id == tournament_id:
+                return tournament
+        return None
 
 def check_tournament_exists(tournament_id) -> bool:
     """
@@ -64,11 +67,12 @@ def check_tournament_exists(tournament_id) -> bool:
     False
         if the tournament does not exist
     """
-    global tournament_cache
-    for tournament in tournament_cache:
-        if tournament.id == tournament_id:
-            return True
-    return False
+    global tournament_cache, cache_lock
+    with cache_lock:
+        for tournament in tournament_cache:
+            if tournament.id == tournament_id:
+                return True
+        return False
 
 
 # ------- Pickeling -------
@@ -103,26 +107,28 @@ def load_all_tournaments():
     """
     This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.
     """
-    global tournament_cache
-    create_local_tournament_folder()
-    for file in os.listdir('tournament_cache'):
-        if file.endswith('.pickle'):
-            with open(f'tournament_cache/{file}', 'rb') as f:
-                tournament = pickle.load(f)
-                if tournament is not None:
-                    tournament_cache.append(tournament)
+    global tournament_cache, cache_lock
+    with cache_lock:
+        create_local_tournament_folder()
+        for file in os.listdir('tournament_cache'):
+            if file.endswith('.pickle'):
+                with open(f'tournament_cache/{file}', 'rb') as f:
+                    tournament = pickle.load(f)
+                    if tournament is not None:
+                        tournament_cache.append(tournament)
 
 def delete_old_tournaments():
     """
     This function deletes all tournament files that are older than 1 day from the /tournaments folder.
     """
-    global tournament_cache
-    create_local_tournament_folder()
-    for tournament in tournament_cache:
-        # Delete the tournament.pickle file if it is older than 1 day
-        if (datetime.datetime.now() - tournament.created_at).days > 1:
-            os.remove(f'tournament_cache/{tournament.id}.pickle')
-            tournament_cache.remove(tournament)
+    global tournament_cache, cache_lock
+    with cache_lock:
+        create_local_tournament_folder()
+        for tournament in tournament_cache:
+            # Delete the tournament.pickle file if it is older than 1 day
+            if (datetime.datetime.now() - tournament.created_at).days > 1:
+                os.remove(f'tournament_cache/{tournament.id}.pickle')
+                tournament_cache.remove(tournament)
 
 
 # ------- Credentials -------
