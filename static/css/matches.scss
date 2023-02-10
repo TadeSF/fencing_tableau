@@ -1,0 +1,310 @@
+:root {
+    --fencer-width: 150px;
+}
+
+body {
+    font-family: margin-mvb, sans-serif;
+    font-size: 14px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    position: sticky;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 0 20px;
+}
+
+i {
+    font-size: 1.5em;
+    margin: 0 20px;
+    transition: 0.3s;
+}
+
+i:hover {
+    cursor: pointer;
+    color: rgb(151, 151, 151);
+    transform: translate(-2px, -2px);
+}
+
+#header {
+    background-color: white;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70px;
+    z-index: 1;
+    top: 0;
+
+} 
+
+th {
+    position: sticky;
+    top: 70px;
+    background-color: #c8c8c8;
+    color: #000000;
+    z-index: 1;
+    width: 60px;
+}
+
+th, td {
+    text-align: center;
+    border-bottom: 0.5px solid #ddd;
+}
+
+tr {
+    height: 30px;
+}
+
+thead {
+    top: 0;
+    background-color: #aeaeae;
+    color: #ffffff;
+}
+
+#prompt {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    box-shadow: 5px 5px 0px grey;
+}
+
+
+#form_greenScore,
+#form_redScore {
+    width: 100%;
+    padding: 0.8em;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    outline: none;
+    text-align: center;
+    margin-right: 10px;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+#form_greenScore{
+    color:rgb(0, 126, 0);
+
+}
+#form_redScore{
+    color:rgb(255, 0, 0);
+}
+
+#form_greenScore:hover {
+    background-color: green;
+    color: white;
+    transition: 0.3s;
+}
+#form_redScore:hover {
+    background-color: red;
+    color: white;
+    transition: 0.3s;
+}
+
+#form_redScore:hover::placeholder,
+#form_greenScore:hover::placeholder {
+    color: white;
+}
+
+
+#form_greenScore:focus {
+    border-color: #2fa600;
+    box-shadow: 0 0 15px rgba(69, 180, 41, 1);
+    text-align: center;
+    transition: 0.3s;
+}
+#form_redScore:focus {
+    border-color: #e71818;
+    box-shadow: 0 0 15px rgba(219, 52, 52, 1);
+    text-align: center;
+    transition: 0.3s;
+}
+
+#submit_score {
+    width: 100%;
+    padding: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    margin-left: 10px;
+}
+#submit_score:hover {
+    background-color: #444;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+#closePrompt {
+    background-color: #ff0000;
+    color: #ffffff;
+    border: 1px solid red;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#closePrompt:hover {
+    background-color: rgb(156, 0, 0);
+    transition: 0.3s;
+}
+
+#closePrompt:active {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+.cell_button {
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100px;
+    border-radius: 5px;
+}
+
+.cell_button:hover {
+    background-color: rgb(158, 158, 158);
+    color: rgb(0, 0, 0);
+    transition: 0.3s;
+}
+
+.cell_button-start {
+    background-color: #333;
+}
+
+.cell_button-start:hover {
+    background-color: rgb(255, 145, 0);
+    color: white;
+    transition: 0.3s;
+}
+
+@keyframes loading {
+    0% {
+        background-position: left;
+    }
+
+    100% {
+        background-position: right;
+    }
+}
+
+.cell_button-ongoing {
+    background: rgb(255,145,0);
+    background: linear-gradient(90deg, rgba(255,145,0,1) 30%, rgb(233, 105, 0) 50%, rgba(255,145,0,1) 70%);
+    background-repeat: no-repeat;
+    background-size: 600% 100%;
+    animation: loading 2s ease-in-out infinite;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.cell_button-ongoing:hover {
+    animation-play-state:paused;
+    background: red;
+    color: white;
+}
+
+.cell_button-finished {
+    background-color: rgb(0, 126, 0);
+}
+
+.cell_button-finished:hover {
+    background-color: red;
+    color: white;
+}
+
+.cell-id {
+    display: none;
+}
+
+.th-green, .th-red {
+    width: var(--fencer-width);
+    height: 100%;
+    width: auto;
+}
+
+.th-green-div {
+    color: white;
+    text-align: right;
+    background-color: green;
+    margin: 1px;
+    margin-left: 15px;
+    padding: 2px;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
+.th-red-div {
+    color: white;
+    text-align: left;
+    background-color: red;
+    margin: 1px;
+    margin-right: 15px;
+    padding: 2px;
+    padding-left: 10px;
+    border-radius: 5px;
+}
+
+.th-score {
+    background: rgb(0,128,0);
+    background: linear-gradient(90deg, rgba(0,128,0,1) 10%, rgba(255,0,0,1) 90%);
+    width: 70px;
+}
+
+
+
+.fencer-div {
+    display: flex;
+    width: auto; /* or 100% */
+    height: auto; /* or 100% */
+}
+
+.fencer-div-green {
+    /* Inherit from fencer-div */
+    justify-content: flex-end;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.fencer-div-red {
+    /* Inherit from fencer-div */
+    justify-content: flex-start;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.flag {
+    width: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+}

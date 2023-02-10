@@ -1,0 +1,235 @@
+@media only screen and (max-width: 480px) {
+    .Section {
+        width: 100%;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+}
+
+body {
+    font-family: margin-mvb, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+h2 + h3 {
+    margin-top: 0px;
+}
+
+h3 {
+    margin-top: 20px;
+}
+
+br {
+    height: 10px;
+}
+
+.Section {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.Name-Banner,
+.Fencer-Banner,
+.Fencer-Banner-Opponent {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.Fencer-Banner-Opponent {
+    box-shadow: 3px 3px 0px grey;
+    transition: 0.3s;
+}
+
+.Fencer-Banner-Opponent:hover {
+    box-shadow: 0px 0px 0px grey;
+    translate: 3px 3px;
+    cursor: pointer;
+}
+
+#Main-Flag,
+#Information-Flag {
+    width: 40px;
+    height: 30px;
+    background-color: black;
+    margin-right: 20px;
+}
+
+.Standing-Wrapper,
+.Next-Piste-Wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: -10px;
+    margin-left: -10px;
+}
+
+.Standing-Block,
+.Next-Piste-Block,
+.Statistics-Block,
+.Information-Block {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    transition: 0.5s ease-in-out;
+}
+
+.Standing-Block {
+    width: 50%;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px grey;
+    transition: 0.3s;
+}
+
+.Standing-Block:hover {
+    box-shadow: 0px 0px 0px grey;
+    translate: 5px 5px;
+}
+
+.Standing-Block:active {
+    box-shadow: inset 2px 2px 0px grey;
+    translate: 5px 5px;
+}
+
+.Statistics-Block,
+.Information-Block {
+    width: 100%;
+}
+
+.Standing-Block-Description,
+.Next-Piste-Block-Description,
+.Statistics-Block-Description,
+.Information-Block-Description {
+    font-size: 12px;
+}
+
+.Standing-Block-Number,
+.Next-Piste-Block-Number {
+    font-size: 40px;
+}
+
+.Statistics-Block-Number,
+.Information-Block-Number {
+    font-size: 30px;
+}
+
+.Title {
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.Streak-Wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.Streak-Block {
+    background-color: #ffffff;
+    border-radius: 10px;
+    width: 50%;
+    padding: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#Next-Match-Fencer {
+    margin-bottom: 5px;
+}
+
+
+.Next-Match-Flag {
+    width: 40px;
+    height: 30px;
+    background-color: black;
+    margin-right: 20px;
+}
+
+
+
+.piste_helper {
+    background-color: white;
+    color: black;
+    border-radius: 10px;
+    margin: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 12px;
+    transition: all 0.5s;
+    max-height: 0;
+    padding:0;
+    overflow: hidden;
+}
+.hide{
+    max-height: 50vh;
+    padding:10px;
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow:auto;
+}
+
+
+#Next-Piste-Block {
+    cursor: help;
+    width: 100%;
+}
+
+#Next-Piste-Block:hover {
+    box-shadow: inset 2px 2px 0px grey;
+}
+
+
+#report_issue {
+    background-color: red;
+    color: white;
+}
+
+#approve_tableau {
+    background-color: green;
+    color: white;
+}
+
+.Chart-Wrapper {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}

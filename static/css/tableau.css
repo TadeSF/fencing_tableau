@@ -1,127 +1,126 @@
 body {
-    font-family: margin-mvb, sans-serif;
-    margin: 0;
-    text-align: center;
-
+  font-family: margin-mvb, sans-serif;
+  margin: 0;
+  text-align: center;
 }
 
 .tableau-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 table {
-    text-align: center;
+  text-align: center;
 }
 
 tr:hover {
-    background-color: #eaeaea;
+  background-color: #eaeaea;
 }
 
 h1 {
-    text-align: center;
-    margin: 0 20px;
+  text-align: center;
+  margin: 0 20px;
 }
 
 #header {
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 70px;
-    margin-bottom: 20px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+  margin-bottom: 20px;
 }
 
 i {
-    font-size: 1.5em;
-    margin: 0 20px;
-    transition: 0.3s;
+  font-size: 1.5em;
+  margin: 0 20px;
+  transition: 0.3s;
 }
 
 i:hover {
-    cursor: pointer;
-    color: rgb(151, 151, 151);
-    transform: translate(-2px, -2px);
+  cursor: pointer;
+  color: rgb(151, 151, 151);
+  transform: translate(-2px, -2px);
 }
 
 .rotate {
-    writing-mode:vertical-lr;
-    transform: rotate(180deg);
-    display: inline-block;
-    height: 200px;
-    vertical-align: bottom;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  display: inline-block;
+  height: 200px;
+  vertical-align: bottom;
 }
 
 .blank {
-    background-color: #cacaca;
-    border-radius: 5px;
+  background-color: #cacaca;
+  border-radius: 5px;
 }
 
 .corner {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .header {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-    text-align: left;
-    overflow: hidden;
-    border-radius: 5px;
+  background-color: #f2f2f2;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  text-align: left;
+  overflow: hidden;
+  border-radius: 5px;
 }
 
 .header:hover {
-    background-color: #eaeaea;
-    cursor: pointer;
+  background-color: #eaeaea;
+  cursor: pointer;
 }
 
 .win {
-    border-radius: 50%;
-    border: solid 1px #000000;
+  border-radius: 50%;
+  border: solid 1px #000000;
 }
 
 .win:hover {
-    background-color: green;
-    color: #ffffff;
+  background-color: green;
+  color: #ffffff;
 }
 
 .lose {
-    border-radius: 50%;
-    border: solid 1px #eaeaea;
+  border-radius: 50%;
+  border: solid 1px #eaeaea;
 }
 
 .lose:hover {
-    background-color: red;
-    color: #ffffff;
-    border-color: #000000;
+  background-color: red;
+  color: #ffffff;
+  border-color: #000000;
 }
 
 .result {
-    width: 35px;
-    height: 35px;
-    border-radius: 5px;
+  width: 35px;
+  height: 35px;
+  border-radius: 5px;
 }
 
 button {
-    background-color: #ebebeb;
-    border: none;
-    border-radius: 5px;
-    padding: 5px;
-    margin: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
+  background-color: #ebebeb;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
 }
 
 button:hover {
-    background-color: #b7b7b7;
+  background-color: #b7b7b7;
 }
 
 button:active {
-    background-color: #9c9c9c;
-}
+  background-color: #9c9c9c;
+}/*# sourceMappingURL=tableau.css.map */
