@@ -50,7 +50,7 @@ function submitStartForm(event) {
     .then(response => response.json())
     .then(data => {
       if (data.success == true) {
-        window.open(data.tournament_id + "/dashboard", null)
+        window.open(data.tournament_id + "/dashboard", "_self")
       } else {
         console.log(data.error)
         alert(data.error + "\n" + data.message)
