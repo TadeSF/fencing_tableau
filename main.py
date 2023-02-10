@@ -1,10 +1,9 @@
 try:
     import csv
     import datetime
-    import importlib
     import os
     import traceback
-    import socket
+    import logging
     from typing import List, Literal
 
     from flask import   (Flask, Request, Response, abort, jsonify, make_response,
@@ -961,6 +960,13 @@ def simulate_current(tournament_id):
         get_tournament(tournament_id).simulate_current()
         return '', 200
 
+@app.route('/logs/flask')
+def get_flask_logs():
+    """
+    Flask serves on a GET request /logs/flask the flask.log file from the logs folder.
+    """
+    return send_from_directory('logs', 'flask.log')
+
 
 @app.route("/server/update")
 def update():
@@ -997,8 +1003,16 @@ if __name__ == '__main__':
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
     debug_flask = False
+
+
+    handler = logging.FileHandler('flask.log')
+    handler.setLevel(logging.DEBUG)
+    app.logger.addHandler(handler)
     
+
     if port_flask:
         app.run(host='0.0.0.0', port=8080, debug=debug_flask)
     else:
         app.run(host='0.0.0.0', debug=debug_flask)
+    
+    
