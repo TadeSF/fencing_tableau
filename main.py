@@ -977,9 +977,14 @@ if __name__ == '__main__':
     load_all_tournaments()
     delete_old_tournaments()
 
-    fallback_port = 8080
-    try:
-        app.run(host='0.0.0.0', debug=True, port=80)
-    except OSError:
-        print(f"Port 80 is already in use. Trying port {fallback_port} instead.")
-        app.run(host='0.0.0.0', debug=True, port=fallback_port)
+
+    # ---------- Activate the following boolean to run the server on port 8080 locally ---------- #
+    port_flask = False
+
+    # ---------- Activate the following boolean to run the server in debug mode ---------- #
+    debug_flask = False
+    
+    if port_flask:
+        app.run(host='0.0.0.0', port=8080, debug=debug_flask)
+    else:
+        app.run(host='0.0.0.0', debug=debug_flask)
