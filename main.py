@@ -141,7 +141,7 @@ def save_master_credentials(tournament_id: str, password: str):
             f.write('')
     # if txt file "credentials.txt" exists, append the new credentials
     with open('credentials.txt', 'a') as f:
-        f.write(f'{tournament_id}:{password}')
+        f.write(f'{tournament_id}:{password}\n')
 
 
 # ------- Login-Cookies -------
