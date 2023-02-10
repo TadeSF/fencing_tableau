@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Quit the Flask server
-curl http://fencewithfriends.online/server/quit
+sudo killall python
 
 # Pull the latest changes from Git
 git pull
 
 # Reopen the Flask server
-sudo nohup python3 main.py &
+sudo nohup python main.py &

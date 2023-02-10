@@ -50,7 +50,7 @@ function submitStartForm(event) {
     .then(response => response.json())
     .then(data => {
       if (data.success == true) {
-        window.open(data.tournament_id + "/dashboard", null)
+        window.replace(data.tournament_id + "/dashboard")
       } else {
         console.log(data.error)
         alert(data.error + "\n" + data.message)
@@ -92,7 +92,7 @@ function submitFencerForm(event) {
         // redirect to the fencer page according to the fencer_id
         url = data.tournament_id + "/fencer/" + data.fencer_id;
         error_div.style.display = "none";
-        window.open(url, null)
+        window.replace(url)
       }, 2000);
 
     }
