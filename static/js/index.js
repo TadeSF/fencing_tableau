@@ -1,10 +1,3 @@
-async function hashPassword(password) {
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return hashedPassword;
-}
-
-
 // When button "Start Tournament" is clicked, this function is called
 function new_tournament() {
   // Show the new_tournament_form div
@@ -48,11 +41,8 @@ function submitStartForm(event) {
   formData.append('number_of_preliminary_groups', document.getElementById('number_of_preliminary_groups').value);
   formData.append('first_elimination_round', document.getElementById('first_elimination_round').value);
   formData.append('elimination_mode', document.getElementById('elimination_mode').value);
+  formData.append('master_password', document.getElementById('master_password').value);
 
-  let master_pwd = document.getElementById('master_password').value;
-  hashPassword(master_pwd).then(hash => {
-    formData.append('master_password', hash);
-  });
 
   fetch('/', {
     method: 'POST',
@@ -117,15 +107,10 @@ function submitFencerForm(event) {
 document.getElementById("master_login_form").addEventListener("submit", function(event) {
   event.preventDefault();
   let password = document.getElementById("master_password_login").value;
-  let master_pwd;
-  hashPassword(password).then(hash => {
-    master_pwd = hash;
-  });
-
   let tournament_id = document.getElementById("tournament_id").value;
   let data = {
       tournament: tournament_id,
-      password: master_pwd
+      password: password
   };
   console.log(data)
   let response = fetch("/master-login", {

@@ -1,10 +1,3 @@
-async function hashPassword(password) {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-}
-
-
 const tournament_id = document.getElementById("body").dataset.tournament;
 
 window.onerror = function(error, url, line) {
@@ -111,14 +104,10 @@ window.onload = async function() {
 document.getElementById("overlay-form").addEventListener("submit", function(event) {
     event.preventDefault();
     let password = document.getElementById("password-input").value;
-    let master_pwd;
-    hashPassword(password).then(hash => {
-        master_pwd = hash;
-    });
     let tournament_id = document.getElementById("main_id_text").innerHTML;
     let data = {
         tournament: tournament_id,
-        password: master_pwd
+        password: password
     };
     let response = fetch("/master-login", {
         method: "POST",
