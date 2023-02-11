@@ -998,7 +998,9 @@ def simulate_current(tournament_id):
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        get_tournament(tournament_id).simulate_current()
+        tournament = get_tournament(tournament_id)
+        tournament.simulate_current()
+        save_tournament(tournament)
         return '', 200
 
 @app.route('/logs/flask')
