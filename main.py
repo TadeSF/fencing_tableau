@@ -515,7 +515,7 @@ def dashboard(tournament_id):
         On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        abort(404)
+        abort(500)
     else:
         return render_template('dashboard.html', tournament_id=tournament_id)
 
@@ -995,6 +995,13 @@ def page_not_found(e):
     404 Error handler: Flask serves on a 404 Error the 404.html file from the templates folder.
     """
     return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    """
+    500 Error handler: Flask serves on a 500 Error the 500.html file from the templates folder.
+    """
+    return render_template('500.html'), 500
 
 
 
