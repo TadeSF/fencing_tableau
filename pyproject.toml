@@ -1,8 +1,11 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
+requires = ["flit_core >=3.2,<4", "setuptools>=45", "setuptools_scm[toml]>=6.2"]
 build-backend = "flit_core.buildapi"
 
 [project]
 name = "duellingdynasty"
 authors = [{name = "Tade Strehk", email = "tade99@gmx.de"}, {name = "Moritz Hellmich"}]
 dynamic = ["version", "description"]
+
+[tool.setuptools_scm]
+write_to = "_version.py"
