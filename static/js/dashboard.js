@@ -1,4 +1,9 @@
-const bcrypt = require('bcrypt');
+async function hashPassword(password) {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    return hashedPassword;
+}
+
 
 const tournament_id = document.getElementById("body").dataset.tournament;
 
@@ -107,11 +112,8 @@ document.getElementById("overlay-form").addEventListener("submit", function(even
     event.preventDefault();
     let password = document.getElementById("password-input").value;
     let master_pwd;
-    bcrypt.hash(password, 10, function(err, hash) {
-    if (err) {
-        throw err;
-    }
-    master_pwd = hash;
+    hashPassword(password).then(hash => {
+        master_pwd = hash;
     });
     let tournament_id = document.getElementById("main_id_text").innerHTML;
     let data = {

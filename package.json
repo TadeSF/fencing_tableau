@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "bcrypt": "^5.1.0",
-    "chart.js": "^4.2.0"
-  }
-}

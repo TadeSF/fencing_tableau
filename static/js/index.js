@@ -1,4 +1,9 @@
-const bcrypt = require('bcrypt');
+async function hashPassword(password) {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
+}
+
 
 // When button "Start Tournament" is clicked, this function is called
 function new_tournament() {
@@ -45,10 +50,7 @@ function submitStartForm(event) {
   formData.append('elimination_mode', document.getElementById('elimination_mode').value);
 
   let master_pwd = document.getElementById('master_password').value;
-  bcrypt.hash(master_pwd, 10, function(err, hash) {
-    if (err) {
-      throw err;
-    }
+  hashPassword(master_pwd).then(hash => {
     formData.append('master_password', hash);
   });
 
@@ -116,10 +118,7 @@ document.getElementById("master_login_form").addEventListener("submit", function
   event.preventDefault();
   let password = document.getElementById("master_password_login").value;
   let master_pwd;
-  bcrypt.hash(password, 10, function(err, hash) {
-    if (err) {
-      throw err;
-    }
+  hashPassword(password).then(hash => {
     master_pwd = hash;
   });
 
