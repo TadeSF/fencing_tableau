@@ -22,7 +22,8 @@ except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
 
 # ------- Versioning -------
-# TODO Versioning
+import _version
+app_version = _version.__version__
 
 
 # ------- Tournament Cache -------
@@ -322,7 +323,7 @@ def index():
     """
     Flask serves on GET request / the index.html file from the templates folder.
     """
-    return render_template('index.html')
+    return render_template('index.html', version=app_version)
 
 @app.route('/imprint')
 def imprint():
@@ -1052,7 +1053,7 @@ if __name__ == '__main__':
 
 
     # ---------- Activate the following boolean to run the server on port 8080 locally ---------- #
-    port_flask = False
+    port_flask = True
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
     debug_flask = False

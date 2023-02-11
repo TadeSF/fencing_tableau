@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const tournament_id = document.getElementById("body").dataset.tournament;
 
 window.onerror = function(error, url, line) {

@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 // When button "Start Tournament" is clicked, this function is called
 function new_tournament() {
   // Show the new_tournament_form div
