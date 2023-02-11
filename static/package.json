@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "bcrypt": "^5.1.0",
-    "chartjs": "^0.3.24"
-  },
-  "devDependencies": {
-    "webpack-cli": "^5.0.1"
-  }
-}
