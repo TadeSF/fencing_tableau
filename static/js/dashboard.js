@@ -104,10 +104,17 @@ window.onload = async function() {
 document.getElementById("overlay-form").addEventListener("submit", function(event) {
     event.preventDefault();
     let password = document.getElementById("password-input").value;
+    let master_pwd;
+    bcrypt.hash(password, 10, function(err, hash) {
+    if (err) {
+        throw err;
+    }
+    master_pwd = hash;
+    });
     let tournament_id = document.getElementById("main_id_text").innerHTML;
     let data = {
         tournament: tournament_id,
-        password: password
+        password: master_pwd
     };
     let response = fetch("/master-login", {
         method: "POST",

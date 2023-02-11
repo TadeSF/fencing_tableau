@@ -41,7 +41,14 @@ function submitStartForm(event) {
   formData.append('number_of_preliminary_groups', document.getElementById('number_of_preliminary_groups').value);
   formData.append('first_elimination_round', document.getElementById('first_elimination_round').value);
   formData.append('elimination_mode', document.getElementById('elimination_mode').value);
-  formData.append('master_password', document.getElementById('master_password').value);
+
+  let master_pwd = document.getElementById('master_password').value;
+  bcrypt.hash(master_pwd, 10, function(err, hash) {
+    if (err) {
+      throw err;
+    }
+    formData.append('master_password', hash);
+  });
 
   fetch('/', {
     method: 'POST',
@@ -106,10 +113,18 @@ function submitFencerForm(event) {
 document.getElementById("master_login_form").addEventListener("submit", function(event) {
   event.preventDefault();
   let password = document.getElementById("master_password_login").value;
+  let master_pwd;
+  bcrypt.hash(password, 10, function(err, hash) {
+    if (err) {
+      throw err;
+    }
+    master_pwd = hash;
+  });
+
   let tournament_id = document.getElementById("tournament_id").value;
   let data = {
       tournament: tournament_id,
-      password: password
+      password: master_pwd
   };
   console.log(data)
   let response = fetch("/master-login", {

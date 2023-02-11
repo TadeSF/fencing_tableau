@@ -21,6 +21,9 @@ try:
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
 
+# ------- Versioning -------
+# TODO Versioning
+
 
 # ------- Tournament Cache -------
 enable_tournament_cache = False
