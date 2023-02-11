@@ -23,6 +23,8 @@ except ModuleNotFoundError:
 
 
 # ------- Tournament Cache -------
+enable_tournament_cache = False
+
 tournament_cache: List[Tournament] = []
 cache_lock = threading.Lock()
 
@@ -43,13 +45,17 @@ def get_tournament(tournament_id) -> Tournament:
     None
         if the tournament does not exist
     """
+    global tournament_cache, cache_lock, enable_tournament_cache
 
-    global tournament_cache, cache_lock
-    with cache_lock:
-        for tournament in tournament_cache:
-            if tournament.id == tournament_id:
-                return tournament
-        return None
+    if enable_tournament_cache:
+        with cache_lock:
+            for tournament in tournament_cache:
+                if tournament.id == tournament_id:
+                    return tournament
+            return None
+    else:
+        return load_tournament(tournament_id)
+
 
 def check_tournament_exists(tournament_id) -> bool:
     """
@@ -67,12 +73,16 @@ def check_tournament_exists(tournament_id) -> bool:
     False
         if the tournament does not exist
     """
-    global tournament_cache, cache_lock
-    with cache_lock:
-        for tournament in tournament_cache:
-            if tournament.id == tournament_id:
-                return True
-        return False
+    global tournament_cache, cache_lock, enable_tournament_cache
+
+    if enable_tournament_cache:
+        with cache_lock:
+            for tournament in tournament_cache:
+                if tournament.id == tournament_id:
+                    return True
+            return False
+    else:
+        return os.path.exists(f'tournament_cache/{tournament_id}.pickle')
 
 
 # ------- Pickeling -------
@@ -102,6 +112,31 @@ def save_tournament(tournament: Tournament):
     create_local_tournament_folder()
     with open(f'tournament_cache/{tournament.id}.pickle', 'wb') as f:
         pickle.dump(tournament, f)
+
+def load_tournament(tournament_id: str) -> Tournament:
+    """
+    This function loads a tournament from a file, given an id.
+    This is done by pickeling a tournament object. The file is saved in the /tournaments folder and is named after the tournament id.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament to be loaded.
+
+    Returns
+    -------
+    Tournament object
+        if the tournament exists
+    None
+        if the tournament does not exist
+    """
+    create_local_tournament_folder()
+    if os.path.exists(f'tournament_cache/{tournament_id}.pickle'):
+        with open(f'tournament_cache/{tournament_id}.pickle', 'rb') as f:
+            tournament = pickle.load(f)
+            return tournament
+    else:
+        return None
 
 def load_all_tournaments():
     """
