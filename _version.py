@@ -14,4 +14,4 @@ with open('VERSION.txt') as f:
 
 version_tuple = (version_stage, version_major, version_count, version_commit, version_date)
 
-version = version_stage + '-' + version_major + '.' + version_count + '-' + version_commit + '.' + version_date
+VERSION = version_stage + '-' + version_major + '.' + version_count + '-' + version_commit + '.' + version_date

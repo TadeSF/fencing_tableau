@@ -23,7 +23,7 @@ except ModuleNotFoundError:
 
 # ------- Versioning -------
 import _version
-APP_VERSION = _version.__version__
+APP_VERSION = _version.VERSION
 
 
 # ------- Tournament Cache -------
