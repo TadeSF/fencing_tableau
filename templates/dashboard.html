@@ -5,6 +5,9 @@
         <link rel="stylesheet" href="/static/css/dashboard.css">
         <link rel="stylesheet" href="/static/css/loading_screen.css">
         <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+        <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
     </head>
     <body id="body" data-tournament="{{ tournament_id }}">
         <div class="flex-container">
@@ -16,15 +19,16 @@
                             <div id="main_id_description">Tournament ID</div>
                         </div>
                         <div class="button-column">
-                            <button id="Advance" onclick="advance()">Advance to next Stage</button>
-                            <button id="Tableau" onclick="openTableau()">Tableau</button>
-                            <button id="Simulate" onclick="simulate()">Simulate all</button>
+                            <button id="Advance" onclick="advance()"><i class="fa-solid fa-diagram-next"></i></button>
+                            <button id="QR" onclick="openQR()"><i class="fa-solid fa-qrcode"></i></button>
+                            <button id="Tableau" onclick="openTableau()"><i class="fa-solid fa-table-cells"></i></button>
+                            <button id="Simulate" onclick="simulate()"><i class="fa-solid fa-gears"></i></button>
                         </div>
                     </div>
                     <div class="options_column">
-                        <div id="Tournament_Name">!Tournament!</div>
-                        <div id="Tournament_Location">!Location!</div>
-                        <div id="Tournament_Stage">!Round!</div>
+                        <div id="Tournament_Name">–</div>
+                        <div id="Tournament_Location">–</div>
+                        <div id="Tournament_Stage">–</div>
                         <div id="elimination_mode">Elimination Mode:<br></div>
                     </div>
                     <div id="statistics_table_container">

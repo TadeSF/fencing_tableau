@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>DuellingDynasty</title>
+    <title>FenceWithFriends</title>
     <link rel="stylesheet" href="static/css/index.css">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -146,20 +146,6 @@
           <input type="password" id="master_password_login" name="pw" placeholder="Password" required><br>
           <br>
           <button type="submit" value="submit">Login</button>
-        </form>
-      </div>
-    </div>
-    <div id="login_fencer_form">
-      <div class="form_container">
-        <form method="POST" enctype="multipart/form-data" id="fencer_login_form" onsubmit="submitFencerForm(event)">
-          <label for="tournament_id">Login with Tournament ID</label>
-          <input type="text" id="fencer_tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
-          <br>
-          <label for="fencer_name">Input Name or Start_Number</label>
-          <input type="text" id="fencer_search" name="fencer_search" placeholder="Name or #"><br>
-          <br>
-          <button type="submit" value="submit">Login</button>
-          <div id="fencer-error-message"></div>
         </form>
       </div>
     </div>

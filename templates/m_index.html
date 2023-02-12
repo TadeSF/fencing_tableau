@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>FenceWithFriends</title>
+        <link rel="stylesheet" href="static/css/m_index.css">
+        <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="section">
+                <h1>FenceWithFriends</h1>
+                <h2>Fencer Login</h2>
+                <div class="Form-Wrapper">
+                    <form method="POST" enctype="multipart/form-data" id="fencer_login_form" onsubmit="submitFencerForm(event)">
+                        <label for="tournament_id">Login with Tournament ID</label>
+                        <input type="text" id="fencer_tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
+                        <br>
+                        <label for="fencer_name">Input Name or Start Number</label>
+                        <input type="text" id="fencer_search" name="fencer_search" placeholder="Name or #" required><br>
+                        <br><br>
+                        <button type="submit" value="submit">Login</button>
+                    </form>
+                    <div id="fencer-error-message"></div>
+                </div>
+            </div>
+            <div class="Section" id="bug_wrapper" style="background-color: white;">
+                <h2>Report a Bug</h2>
+                <div class="Button-Wrapper">
+                    <div class="Button-Block" style="background-color: rgb(229, 229, 229);" onclick="report_github()">Report on Github</div>
+                    <div class="Button-Block" style="background-color: rgb(229, 229, 229);" onclick="report_email()">Report via Email</div>
+                </div>
+                <br>
+                <p>Version:<br>{{ version }}</p>
+            </div>
+        </div>
+        <script src="/static/js/m_index.js"></script>
+    </body>
+</html>

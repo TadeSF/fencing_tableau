@@ -23,7 +23,7 @@ except ModuleNotFoundError:
 
 # ------- Versioning -------
 import _version
-app_version = _version.__version__
+APP_VERSION = _version.__version__
 
 
 # ------- Tournament Cache -------
@@ -323,7 +323,17 @@ def index():
     """
     Flask serves on GET request / the index.html file from the templates folder.
     """
-    return render_template('index.html', version=app_version)
+    user_agent = request.headers.get("User-Agent")
+    if "mobile" in user_agent.lower():
+        return redirect(url_for('mobile_index'))
+    return render_template('index.html', version=APP_VERSION)
+
+@app.route('/m')
+def mobile_index():
+    """
+    Flask serves on GET request / the index.html file from the templates folder.
+    """
+    return render_template('m_index.html', version=APP_VERSION)
 
 @app.route('/imprint')
 def imprint():
@@ -557,6 +567,20 @@ def dashboard(tournament_id):
         abort(500)
     else:
         return render_template('dashboard.html', tournament_id=tournament_id)
+
+@app.route('/qr')
+def qr():
+    """
+    Flask serves on GET request /qr the qr.html file from the templates folder.
+    This is the page where the QR code is displayed.
+
+    Returns
+    -------
+    qr.html 200
+        On success
+    """
+    tournament_id = request.args.get('tournament')
+    return render_template('qr.html', tournament_id=tournament_id)
 
 @app.route('/<tournament_id>/dashboard/update', methods=['GET'])
 def get_dashboard_infos(tournament_id):
@@ -838,7 +862,8 @@ def fencer(tournament_id, fencer_id):
                 name=fencer.short_str,
                 club=fencer.club,
                 tournament_id=tournament.id,
-                fencer_id=fencer.id
+                fencer_id=fencer.id,
+                version=APP_VERSION
                 )
 
 

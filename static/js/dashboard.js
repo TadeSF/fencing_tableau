@@ -35,6 +35,16 @@ function update() {
         var iframe2 = document.getElementById('standings_frame');
         var iframeWindow2 = iframe2.contentWindow; // Get a reference to the window object of the iframe
         iframeWindow2.postMessage('update', '*'); // Send a message to the iframe
+
+        // if Stage does not contain Preliminary Round (it always has a number afterwards), hide the "Tableau" button 
+        if (response["stage"].split(" ")[0] !== "Preliminary") {
+            document.getElementById("Tableau").style.display = "none";
+        }
+
+        if (response["stage"] === "Finished") {
+            document.getElementById("Simulate").style.display = "none";
+            document.getElementById("Advance").style.display = "none";
+        }
     })
 }
 
@@ -60,19 +70,22 @@ function advance() {
 }
 
 function simulate() {
-    document.getElementById("loading-screen").style.display = "flex";
-    fetch('simulate-current')
-    .then(response => {
-        if (response.status === 200) {
-            setTimeout(function() {
-                update();
+    let confirm = window.confirm("Are you sure you want to simulate this stage of the tournament?");
+    if (confirm) {
+        document.getElementById("loading-screen").style.display = "flex";
+        fetch('simulate-current')
+        .then(response => {
+            if (response.status === 200) {
+                setTimeout(function() {
+                    update();
+                    document.getElementById("loading-screen").style.display = "none";
+            }, 1000);
+            } else {
+                alert("There are no matches left to be simulated!")
                 document.getElementById("loading-screen").style.display = "none";
-        }, 1000);
-        } else {
-            alert("There are no matches left to be simulated!")
-            document.getElementById("loading-screen").style.display = "none";
-        }
-    })
+            }
+        })
+    }
 }
 
 async function checkLogin() {
@@ -126,4 +139,9 @@ document.getElementById("overlay-form").addEventListener("submit", function(even
 
 function openTableau() {
     window.open("/" + tournament_id + "/tableau?group=1", "_blank");
+}
+
+function openQR() {
+    // open a new window (width 500px, heigth 800px) with a QR Code for the path /m?tournament=<tournament_id>
+    window.open("/qr?tournament=" + tournament_id, "_blank", "width=400,height=480");
 }

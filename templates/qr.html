@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>QR Code</title>
+        <link rel="stylesheet" href="/static/css/qr.css">
+        <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+        <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    </head>
+    <body data-tournament_id="{{ tournament_id }}" id="body">
+        <div class="wrapper">
+            <div class="section">
+                <h1>Fencer Login</h1>
+                <div class="qr_code-box">
+                    <div id="qr_code"></div>
+                </div>
+                <div class="link-box">
+                    <form>
+                        <input id="link" readonly></input>
+                    </form>
+                    <div id="copy-icon" onclick="copy_link()"><i class="fa-solid fa-clipboard"></i></div>
+                </div>
+            </div>
+        </div>
+        <script src="static/js/qrcode/qrcode.min.js"></script>
+        <script src="/static/js/qr.js"></script>
+    </body>
+</html>

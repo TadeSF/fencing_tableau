@@ -18,6 +18,12 @@ iframe {
   max-height: 65vh;
 }
 
+i {
+  font-size: 1.5em;
+  margin: 0 20px;
+  transition: 0.3s;
+}
+
 button {
   align-self: left;
   width: auto;
@@ -90,16 +96,15 @@ button:hover {
 }
 
 .button-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-gap: 10px;
 }
-
 .button-column button {
-  width: 200px;
+  width: 100%;
   margin: 0px;
-  margin-top: 10px;
 }
 
 #Tournament_Name {
@@ -216,6 +221,16 @@ td {
 
 #Advance:hover {
   background-color: #007b00;
+  color: #ffffff;
+}
+
+#Simulate {
+  background-color: #b90000;
+  color: #ffffff;
+}
+
+#Simulate:hover {
+  background-color: #7b0000;
   color: #ffffff;
 }
 
