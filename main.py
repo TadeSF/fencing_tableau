@@ -1,15 +1,15 @@
 try:
     import csv
     import datetime
-    import os
-    import traceback
     import logging
+    import os
     import threading
+    import traceback
     from typing import List, Literal
 
-    from flask import   (Flask, Request, Response, abort, jsonify, make_response,
-                        redirect, render_template, request, send_file,
-                        send_from_directory, url_for)
+    from flask import (Flask, Request, Response, abort, jsonify, make_response,
+                       redirect, render_template, request, send_file,
+                       send_from_directory, url_for)
 
     import random_generator
     from exceptions import *
@@ -23,6 +23,7 @@ except ModuleNotFoundError:
 
 # ------- Versioning -------
 import _version
+
 APP_VERSION = _version.VERSION
 
 
