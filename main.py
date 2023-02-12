@@ -1087,11 +1087,8 @@ if __name__ == '__main__':
     handler = logging.FileHandler('flask.log')
     handler.setLevel(logging.DEBUG)
     app.logger.addHandler(handler)
-    
 
     if port_flask:
         app.run(host='0.0.0.0', port=8080, debug=debug_flask)
     else:
         app.run(host='0.0.0.0', debug=debug_flask)
-    
-    

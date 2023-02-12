@@ -6,6 +6,3 @@ build-backend = "flit_core.buildapi"
 name = "duellingdynasty"
 authors = [{name = "Tade Strehk", email = "tade99@gmx.de"}, {name = "Moritz Hellmich"}]
 dynamic = ["version", "description"]
-
-[tool.setuptools_scm]
-write_to = "_version.py"
