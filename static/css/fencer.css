@@ -1,14 +1,8 @@
-@media only screen and (max-width: 480px) {
-  .Section {
-    width: 100%;
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-}
 body {
   font-family: margin-mvb, sans-serif;
   font-size: 14px;
   text-align: center;
+  margin: 0;
 }
 
 h2 {
@@ -27,16 +21,22 @@ br {
   height: 10px;
 }
 
+.Wrapper {
+  width: 100%;
+  padding: 10px;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .Section {
   background-color: #f0f0f0;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 10px 20px;
   margin-bottom: 10px;
   max-width: 400px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 .Name-Banner,
@@ -85,6 +85,14 @@ br {
   margin-left: -10px;
 }
 
+.Statistics-Wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-gap: 10px;
+  margin-bottom: 10px;
+}
+
 .Standing-Block,
 .Next-Piste-Block,
 .Statistics-Block,
@@ -118,7 +126,10 @@ br {
   translate: 5px 5px;
 }
 
-.Statistics-Block,
+.Statistics-Block {
+  margin: unset;
+}
+
 .Information-Block {
   width: 100%;
 }
@@ -227,4 +238,11 @@ br {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 410px) {
+  .Statistics-Wrapper {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
 }/*# sourceMappingURL=fencer.css.map */
