@@ -6,3 +6,4 @@ credentials.json
 flask.log
 tournaments/*
 tournament_cache/*
+approvals/*
