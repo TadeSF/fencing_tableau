@@ -2,6 +2,7 @@ function get_matches() {
     fetch('matches/update')
     .then(response => response.json())
     .then(response => {
+        console.log(response)
         let matches = response["matches"]
         update_matches(matches)
     })

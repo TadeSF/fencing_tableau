@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Active Tournaments</title>
+    <link rel="stylesheet" href="/static/css/tournaments.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="Wrapper">
+        <div class="Section">
+            <h1>Active Tournaments</h1>
+            <div class="grid" id="grid">
+                {{ cards|safe }}
+            </div>
+        </div>
+    </div>
+    <script>
+        // window.onload = function() {
+        //     document.getElementById("Card-Wrapper").innerHTML = ;
+        // }
+    </script>
+    <script src="/static/js/tournaments.js"></script>
+</body>

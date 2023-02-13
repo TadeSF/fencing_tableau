@@ -286,7 +286,8 @@ class Tournament:
         num_preliminary_groups: str,
         first_elimination_round: str,
         elimination_mode: Literal["ko", "repechage", "placement"],
-        number_of_pistes: str
+        number_of_pistes: str,
+        simulation_active: bool = False,
         ):
 
         # Tournament information
@@ -341,6 +342,10 @@ class Tournament:
             self.create_preliminary_round()
         else:
             self.create_next_elimination_round()
+
+        # --------------------
+        # Simulation
+        self.simulation_active = simulation_active
 
     
     # --- Properties ---
@@ -529,9 +534,11 @@ class Tournament:
                     "group": match.stage.name.replace("_", " ").title(),
                     "piste": match.piste_str,
                     "green": match.green.short_str,
+                    "green_id": match.green.id,
                     "green_nationality": match.green.nationality,
                     "green_score": match.green_score,
                     "red": match.red.short_str,
+                    "red_id": match.red.id,
                     "red_nationality": match.red.nationality,
                     "red_score": match.red_score,
                     "ongoing": match.match_ongoing,
@@ -564,6 +571,7 @@ class Tournament:
             "num_pistes": len(self.pistes),
             "num_matches": len(self.matches_of_current_preliminary_round) if self.stage == Stage.PRELIMINARY_ROUND else len(self.elimination_matches), # TODO Implement calculation for all matches
             "num_matches_completed": len([match for match in self.matches_of_current_preliminary_round if match.match_completed]) if self.stage == Stage.PRELIMINARY_ROUND else len([match for match in self.elimination_matches if match.match_completed]), # TODO Implement calculation for all matches
+            "simulation_active": self.simulation_active,
         }
 
 
@@ -849,54 +857,55 @@ class Tournament:
     # --- Simulation ---
 
     def simulate_current(self) -> None:
-        if self.stage == Stage.PRELIMINARY_ROUND:
-            length = len(self.matches_of_current_preliminary_round)
-            for match in self.matches_of_current_preliminary_round:
+        if self.simulation_active:
+            if self.stage == Stage.PRELIMINARY_ROUND:
+                length = len(self.matches_of_current_preliminary_round)
+                for match in self.matches_of_current_preliminary_round:
 
-                self.assign_pistes(self.matches_of_current_preliminary_round)
+                    self.assign_pistes(self.matches_of_current_preliminary_round)
 
-                # Set match active
-                if match.match_ongoing != True and match.match_completed != True:
-                    self.set_active(match.id)
+                    # Set match active
+                    if match.match_ongoing != True and match.match_completed != True:
+                        self.set_active(match.id)
 
-                if match.match_completed != True:
-                    if random.choice([True, False]) is True:
-                        self.push_score(match.id, 5, random.randint(0, 4))
-                    else:
-                        self.push_score(match.id, random.randint(0, 4), 5)
+                    if match.match_completed != True:
+                        if random.choice([True, False]) is True:
+                            self.push_score(match.id, 5, random.randint(0, 4))
+                        else:
+                            self.push_score(match.id, random.randint(0, 4), 5)
 
-                time.sleep(0.01)
-                # Print status bar
-                progress = round(self.matches_of_current_preliminary_round.index(match) / length * 20)
-                print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
+                    time.sleep(0.01)
+                    # Print status bar
+                    progress = round(self.matches_of_current_preliminary_round.index(match) / length * 20)
+                    print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
 
-            print(f"Simulating... |{'#' * 20}|")
-            print("Simulation Done.")
+                print(f"Simulating... |{'#' * 20}|")
+                print("Simulation Done.")
 
 
-        else:
-            length = len(self.elimination_matches)
-            for match in self.elimination_matches:
+            else:
+                length = len(self.elimination_matches)
+                for match in self.elimination_matches:
 
-                self.assign_pistes(self.elimination_matches)
+                    self.assign_pistes(self.elimination_matches)
 
-                if match.match_ongoing != True:
-                    self.set_active(match.id)
+                    if match.match_ongoing != True:
+                        self.set_active(match.id)
 
-                if match.match_completed != True:
-                    if match.wildcard is True:
-                        continue
-                    if random.choice([True, False]) is True:
-                        self.push_score(match.id, 15, random.randint(0, 14))
-                    else:
-                        self.push_score(match.id, random.randint(0, 14), 15)
-                
-                # Print status bar
-                progress = round(self.elimination_matches.index(match) / length * 20)
-                print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
+                    if match.match_completed != True:
+                        if match.wildcard is True:
+                            continue
+                        if random.choice([True, False]) is True:
+                            self.push_score(match.id, 15, random.randint(0, 14))
+                        else:
+                            self.push_score(match.id, random.randint(0, 14), 15)
+                    
+                    # Print status bar
+                    progress = round(self.elimination_matches.index(match) / length * 20)
+                    print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
 
-            print(f"Simulating... |{'#' * 20}|")
-            print("Simulation Done.")
+                print(f"Simulating... |{'#' * 20}|")
+                print("Simulation Done.")
 
 
 

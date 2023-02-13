@@ -28,13 +28,13 @@ function update() {
         
 
         // Update the "Matches" table
-        var iframe1 = document.getElementById('matches_frame');
-        var iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
+        let iframe1 = document.getElementById('matches_frame');
+        let iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
         iframeWindow1.postMessage('update', '*'); // Send a message to the iframe
 
         // Update the "Standings" table
-        var iframe2 = document.getElementById('standings_frame');
-        var iframeWindow2 = iframe2.contentWindow; // Get a reference to the window object of the iframe
+        let iframe2 = document.getElementById('standings_frame');
+        let iframeWindow2 = iframe2.contentWindow; // Get a reference to the window object of the iframe
         iframeWindow2.postMessage('update', '*'); // Send a message to the iframe
 
         // if Stage does not contain Preliminary Round (it always has a number afterwards), hide the "Tableau" button 
@@ -45,6 +45,11 @@ function update() {
         if (response["stage"] === "Finished") {
             document.getElementById("Simulate").style.display = "none";
             document.getElementById("Advance").style.display = "none";
+        }
+
+        // if Simulation is disabled, hide the "Simulate" button
+        if (response["simulation_active"] === false) {
+            document.getElementById("Simulate").style.display = "none";
         }
     })
 }

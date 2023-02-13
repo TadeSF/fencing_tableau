@@ -143,11 +143,12 @@ def load_tournament(tournament_id: str) -> Tournament:
     else:
         return None
 
-def load_all_tournaments():
+def load_all_tournaments(return_values: bool = False):
     """
     This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.
     """
     global tournament_cache, cache_lock
+    tournaments = []
     with cache_lock:
         create_local_tournament_folder()
         for file in os.listdir('tournament_cache'):
@@ -155,7 +156,12 @@ def load_all_tournaments():
                 with open(f'tournament_cache/{file}', 'rb') as f:
                     tournament = pickle.load(f)
                     if tournament is not None:
-                        tournament_cache.append(tournament)
+                        tournaments.append(tournament)
+    if return_values:
+        return tournaments
+    else:
+        tournament_cache = tournaments
+
 
 def delete_old_tournaments():
     """
@@ -354,6 +360,26 @@ def example_startlist_download():
     except Exception as e:
         return str(e)
 
+@app.route('/tournaments')
+def tournaments():
+    """
+    Flask serves on GET request /tournaments the tournaments.html file from the templates folder.
+    """
+
+    cards = []
+    i = 0
+    for tournament in load_all_tournaments(return_values=True):
+        i += 1
+        tournament_id = tournament.id
+        tournament_id_with_parenthesies = f"'{tournament_id}'"
+        name = tournament.name
+        date = tournament.created_at.strftime("%d.%m.%Y %H:%M")
+        cards.append(f'<div class="grid-item"><div class="ID-Block"><div class="ID-Block-Number">{tournament_id}</div><div class="ID-Block-Description">Tournament ID</div></div><div class="Name">{name}</div><div class="date">{date}</div><div class="button-box"><div class="button" onclick="ManageTournament({tournament_id_with_parenthesies})">Manage Tournament</div><div class="button" onclick="LoginAsFencer({tournament_id_with_parenthesies})">Login as Fencer</div></div></div>')
+
+    if i == 0:
+        cards.append('<div class="grid-item" style="grid-column: span 3;"><div class="Name">No Tournaments</div></div>')
+    return render_template('tournaments.html', cards=''.join(cards))
+
 @app.route('/', methods=['POST'])
 def process_form():
     """
@@ -395,6 +421,9 @@ def process_form():
     elimination_mode = request.form['elimination_mode']
     preliminary_rounds = request.form['number_of_preliminary_rounds']
     preliminary_groups = request.form['number_of_preliminary_groups']
+    simulation_active = request.form['simulation_active']
+    print(simulation_active)
+    print(bool(simulation_active == 'true'))
     password = request.form['master_password']
 
     # --- Process the data from the form
@@ -423,7 +452,7 @@ def process_form():
 
 
         # Generate and save the new tournament
-        tournament = Tournament(random_generator.id(6), password, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes)
+        tournament = Tournament(random_generator.id(6), password, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes, bool(simulation_active == 'true'))
         tournament_cache.append(tournament)
         save_tournament(tournament)
 
@@ -1082,7 +1111,7 @@ if __name__ == '__main__':
     port_flask = True
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
-    debug_flask = False
+    debug_flask = True
 
 
     handler = logging.FileHandler('flask.log')

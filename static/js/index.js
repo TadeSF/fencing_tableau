@@ -13,7 +13,7 @@ document.addEventListener('click', (event) => {
 // When button "Manage existing Tournament" is clicked, this function is called
 function login_manager() {
   // Show the new_tournament_form div
-  document.getElementById("login_manager_form").style.display = "block";
+  window.open("/tournaments", "_self")
 }
 
 document.addEventListener('click', (event) => {
@@ -41,6 +41,7 @@ function submitStartForm(event) {
   formData.append('number_of_preliminary_groups', document.getElementById('number_of_preliminary_groups').value);
   formData.append('first_elimination_round', document.getElementById('first_elimination_round').value);
   formData.append('elimination_mode', document.getElementById('elimination_mode').value);
+  formData.append('simulation_active', document.getElementById('simulation_active').checked);
   formData.append('master_password', document.getElementById('master_password').value);
 
 

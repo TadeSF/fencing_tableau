@@ -23,58 +23,65 @@
             <button class="cta-button" id="start_tournament" onclick="new_tournament()"
                 style="background-color: red">Start Tournament</button>
             <div class="button-flex">
-                <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
+                <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing
+                    Tournament</button>
                 <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
-                <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
+                <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as
+                    Participant</button>
             </div>
         </div>
     </header>
     <main>
         <h1>Easily organize and manage FENCING TOURNAMENTS</h1>
         <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including
-            (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates standings
+            (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates
+            standings
             and results in real-time. Save time and focus on what matters most - the competition.</p>
         <p>It is free and open-source. There is no registration required.</p>
-        <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
-        
+        <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read
+            the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
+
         <h1 id="Startlist-Instructions">The Startlist File</h1>
         <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following
             columns (with one header line) are required:</p>
-            <ul>
-                <li><b>Name</b>: The name of the fencer</li>
-                <li><b>Club</b>: The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT "Turngemeinde in Berlin 1848 e.V.", but "TIB")</li>
-                <li><b>Nationality</b>: The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)</li>
-                <li><b>Gender</b> (optional): The gender of the fencer. Must be either 
-                    <ul>
-                        <li>"M"</li>
-                        <li>"F"</li>
-                        <li>"D" for divers</li>
-                    </ul>
-                </li>
-                <li><b>Handedness</b> (optional): The handedness of the fencer. Must be either
-                    <ul>
-                        <li>"R"</li>
-                        <li>"L"</li>
-                    </ul>
-                </li>
-                <li><b>Age</b> (optional): The age of the fencer. Must be a positiv integer, either
-                    <ul>
-                        <li>(preferably) the age (e.g. 23)</li>
-                        <li>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday information)</li>
-                        <li>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</li>
-                    </ul>
-                </li>
-            </ul>
+        <ul>
+            <li><b>Name</b>: The name of the fencer</li>
+            <li><b>Club</b>: The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT
+                "Turngemeinde in Berlin 1848 e.V.", but "TIB")</li>
+            <li><b>Nationality</b>: The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g.
+                "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)</li>
+            <li><b>Gender</b> (optional): The gender of the fencer. Must be either
+                <ul>
+                    <li>"M"</li>
+                    <li>"F"</li>
+                    <li>"D" for divers</li>
+                </ul>
+            </li>
+            <li><b>Handedness</b> (optional): The handedness of the fencer. Must be either
+                <ul>
+                    <li>"R"</li>
+                    <li>"L"</li>
+                </ul>
+            </li>
+            <li><b>Age</b> (optional): The age of the fencer. Must be a positiv integer, either
+                <ul>
+                    <li>(preferably) the age (e.g. 23)</li>
+                    <li>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday
+                        information)</li>
+                    <li>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</li>
+                </ul>
+            </li>
+        </ul>
         </p>
         <div class="button-flex" style="justify-content: center;">
             <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
             <a href="example-startlist" class="cta-button">Download Example File (CSV)</a>
         </div>
-        
+
         <h1>How it Works</h1>
         <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
-        is possible for everyone to see current standings and matches from their mobile devices. It just needs one
-        person as a tournament manager with a computer.</p>
+            is possible for everyone to see current standings and matches from their mobile devices. It just needs one
+            person as a tournament manager with a computer.</p>
         <div class="button-flex" style="justify-content: center;">
             <a onclick="openGithub()" class="cta-button">View Project on Github</a>
             <a onclick="openDocumentation()" class="cta-button"><del>View Documentation</del></a>
@@ -170,34 +177,21 @@
                     <option value="Placement">Placement</option>
                 </select><br>
                 <br>
-                <!-- <div class="checkbox_container">
-            <div class="form_flex">
-              <input type="checkbox" id="only_elimination" name="only_elimination">
-              <label for="only_elimination">Dummy</label><br>
-            </div>
-            <div class="form_flex">
-              <input type="checkbox" id="no_intermediate" name="no_intermediate">
-              <label for="no_intermediate">Dummy2</label><br>
-            </div>
-          </div>
-          <br> -->
+                <div class="checkbox_container">
+                    <div class="form_flex">
+                        <input type="checkbox" id="simulation_active" name="simulation_active">
+                        <label for="simulation_active">Simulation (for testing)</label><br>
+                    </div>
+                    <!-- <div class="form_flex">
+                        <input type="checkbox" id="no_intermediate" name="no_intermediate">
+                        <label for="no_intermediate">Dummy2</label><br>
+                    </div> -->
+                </div>
+                <br>
                 <label for="pw">Master Password</label>
                 <input type="password" id="master_password" name="master_password" placeholder="Password" required><br>
                 <br>
                 <button type="submit" value="submit">Create Tournament</button>
-            </form>
-        </div>
-    </div>
-    <div id="login_manager_form">
-        <div class="form_container">
-            <form id="master_login_form">
-                <label for="tournament_id">Login with Tournament ID</label>
-                <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required
-                    pattern="^[A-Z0-9]{6}$"><br>
-                <br>
-                <input type="password" id="master_password_login" name="pw" placeholder="Password" required><br>
-                <br>
-                <button type="submit" value="submit">Login</button>
             </form>
         </div>
     </div>
