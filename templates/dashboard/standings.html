@@ -1,46 +1,73 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Standings</title>
-    <link rel="stylesheet" href="/static/css/standings.css">
-    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
-    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
-    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
-  </head>
-  <body>
-    <div id="header">
+
+<head>
+  <title>Standings</title>
+  <link rel="stylesheet" href="/static/css/standings.css">
+  <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+  <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+  <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+</head>
+
+<body>
+  <div id="header">
+    <div class="header-wrapper">
       <h1>Standings</h1>
       <i class="fa-solid fa-sync" id="reload" onclick="get_standings()"></i>
       <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
       <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
+    </div>
+    <div class="header-wrapper">
       <form id="filter_form">
-        <select id="filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}" onchange="get_standings()">
+        <select id="group_filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}"
+          onchange="get_standings()">
           <option value="">All Groups</option>
+        </select>
+        <select id="gender_filter" onchange="get_standings()">
+          <option value="">All Genders</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+          <option value="D">Diverse</option>
+        </select>
+        <select id="handedness_filter" onchange="get_standings()">
+          <option value="">All Handedness</option>
+          <option value="R">Right</option>
+          <option value="L">Left</option>
+        </select>
+        <select id="age_filter" onchange="get_standings()">
+          <option value="">All Ages</option>
+          <option value="0-17">Under 18</option>
+          <option value="18-23">18-23</option>
+          <option value="24-30">24-30</option>
+          <option value="31-40">31-40</option>
+          <option value="41-50">41-50</option>
+          <option value="51-100">Over 50</option>
         </select>
       </form>
     </div>
-    <div style="height: 70px;"></div>
-    
-    <table id="standings_table">
-      <thead>
-        <tr>
-          <th style="display: none;"></th>
-          <th style="text-align: right;">#</th>
-          <th></th>
-          <th style="text-align: left;">Name</th>
-          <th>Club</th>
-          <th>W%</th>
-          <th>W - L</th>
-          <th>PD</th>
-          <th>P+</th>
-          <th>P-</th>
-        </tr>
-      </thead>
-      <tbody id="main_standings">
-      </tbody>
-    </table>
-    <div style="height: 40px;"></div>
-    <script src="/static/js/standings.js"></script>
-  </body>
+  </div>
+
+  <table id="standings_table">
+    <thead>
+      <tr>
+        <th style="display: none;"></th>
+        <th style="text-align: right;">#</th>
+        <th></th>
+        <th style="text-align: left;">Name</th>
+        <th>Club</th>
+        <th>W%</th>
+        <th>W - L</th>
+        <th>PD</th>
+        <th>P+</th>
+        <th>P-</th>
+      </tr>
+    </thead>
+    <tbody id="main_standings">
+    </tbody>
+  </table>
+  <div style="height: 40px;"></div>
+  <script src="/static/js/standings.js"></script>
+</body>
+
 </html>

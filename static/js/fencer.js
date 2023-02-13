@@ -76,22 +76,25 @@ async function update() {
             document.getElementById("Group_Number").innerHTML = data["group"];
 
             let streak_wrapper = document.getElementById("Streak");
-            if (data["outcome_last_matches"].length > 0) {
-                streak_wrapper.innerHTML = "";
-            }
-            for (const element of data["outcome_last_matches"]) {
-                let box = document.createElement("div");
-                box.className = "Streak-Block";
-                if (element == true) {
+            let i = 1;
+            let outcome_last_matches = data["outcome_last_matches"].slice(-5);
+            console.log(outcome_last_matches);
+            for (const element of outcome_last_matches) {
+                if (i == 6) {
+                    break;
+                }
+                let box = document.getElementById("Streak-" + i);
+                if (element === true) {
                     box.style.backgroundColor = "green";
                     box.style.color = "white";
                     box.innerHTML = "W";
-                } else if (element == false) {
+                } else if (element === false) {
                     box.style.backgroundColor = "red";
                     box.style.color = "white";
                     box.innerHTML = "L";
                 }
                 streak_wrapper.appendChild(box);
+                i++;
             }
 
             let next_match = data["next_matches"][0];
@@ -280,6 +283,16 @@ async function update() {
             if (StandingsChart) {
                 StandingsChart.destroy();
             }
+            if (DifferenceChart) {
+                DifferenceChart.destroy();
+            }
+            if (DifferenceMatchChart) {
+                DifferenceMatchChart.destroy();
+            }
+
+            document.getElementById("Standings-Chart").innerHTML = "";
+            document.getElementById("Difference-Chart").innerHTML = "";
+            document.getElementById("Difference-Match-Chart").innerHTML = "";
 
             StandingsChart = new Chart(ctx, {
                 type: "line",
@@ -327,8 +340,8 @@ async function update() {
                     scales: {
                         y1: {
                             reverse: true,
-                            // min: -5,
-                            // max: standing_chart_y_max,
+                            min: 1,
+                            max: data["graph_data"]["standings"]["y_max"],
                             // display: false
                         },
                         x1: {
@@ -356,10 +369,6 @@ async function update() {
             difference_chart_labels.shift();
             let difference_chart_per_match_data = data["graph_data"]["points_difference_per_match"]["data"];
 
-            if (DifferenceChart) {
-                DifferenceChart.destroy();
-            }
-
             let width, height, gradient;
             function getgradient(ctx, chartArea, scales) {
                 const chartWidth = chartArea.right - chartArea.left;
@@ -368,7 +377,12 @@ async function update() {
                 if (!width || width !== chartWidth || height !== chartHeight) {
                     const point_zero = scales.y1.getPixelForValue(0);
                     const point_zero_height = point_zero - chartArea.top;
-                    const point_zero_percentage = point_zero_height / chartHeight;
+                    let point_zero_percentage = point_zero_height / chartHeight;
+                    if (point_zero_percentage > 1) {
+                        point_zero_percentage = 1;
+                    } else if (point_zero_percentage < 0) {
+                        point_zero_percentage = 0;
+                    }
 
                     width = chartWidth;
                     height = chartHeight;
@@ -431,6 +445,13 @@ async function update() {
                                     } else {
                                         return "#dddddd";
                                     }
+                                },
+                                lineWidth: function(context) {
+                                    if (context.tick.value == 0) {
+                                        return 2;
+                                    } else {
+                                        return 1;
+                                    }
                                 }
                             }, 
                         }
@@ -447,6 +468,15 @@ async function update() {
                     }
                 }
             });
+
+            // If all values are positive, the 0 line is the lowest value
+            // If all values are negative, the 0 line is the highest value
+            if (Math.min(...difference_chart_per_match_data) >= 0) {
+                DifferenceChart.options.scales.y1.min = 0;
+            } else if (Math.max(...difference_chart_per_match_data) <= 0) {
+                DifferenceChart.options.scales.y1.max = 0;
+            }
+
             
 
             let colors_for_difference_chart = [];

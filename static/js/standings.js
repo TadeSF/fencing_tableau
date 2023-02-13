@@ -1,11 +1,61 @@
 function get_standings() {
-    group_query = document.getElementById("filter").value
+    let group_query = document.getElementById("group_filter").value
+    let gender_query = document.getElementById("gender_filter").value
+    let handedness_query = document.getElementById("handedness_filter").value
+    let age_query= document.getElementById("age_filter").value
+    
     if (group_query === "all" || group_query === "") {
         group_query = ""
     } else {
-        group_query = "?group=" + group_query
+        group_query = "group=" + group_query
     }
-    fetch('standings/update' + group_query)
+
+    if (gender_query != "") {
+        gender_query = "gender=" + gender_query
+    }
+
+    if (handedness_query != "") {
+        handedness_query = "handedness=" + handedness_query
+    }
+
+    if (age_query != "") {
+        age_query = "age=" + age_query
+    }
+
+    full_query = ""
+    if (group_query != "" || gender_query != "" || handedness_query != "" || age_query != "") {
+        full_query = "?"
+    }
+
+    if (group_query != "") {
+        full_query += group_query
+    }
+
+    if (gender_query != "") {
+        if (full_query != "?") {
+            full_query += "&"
+        }
+        full_query += gender_query
+    }
+
+    if (handedness_query != "") {
+        if (full_query != "?") {
+            full_query += "&"
+        }
+        full_query += handedness_query
+    }
+
+    if (age_query != "") {
+        if (full_query != "?") {
+            full_query += "&"
+        }
+        full_query += age_query
+    }
+
+    console.log(full_query)
+
+
+    fetch('standings/update' + full_query)
     .then(response => response.json())
     .then(response => {
         let standings = response["standings"]
@@ -161,23 +211,23 @@ async function update_standings(rankings, stage, max_elimination_ranks) {
 }
 
 function updateFilter() {
-    let num_groups = document.getElementById("filter").dataset.num_groups
-    let filter = document.getElementById("filter")
-    filter.innerHTML = ""
+    let num_groups = document.getElementById("group_filter").dataset.num_groups
+    let group_filter = document.getElementById("group_filter")
+    group_filter.innerHTML = ""
     let all_option = document.createElement("option")
     all_option.value = ""
-    all_option.text = "All Fencers"
-    filter.appendChild(all_option)
+    all_option.text = "All Groups"
+    group_filter.appendChild(all_option)
     for (let i = 1; i <= num_groups; i++) {
         let option = document.createElement("option")
         option.value = i
         option.text = "Group " + i
-        filter.appendChild(option)
+        group_filter.appendChild(option)
     }
-    if (filter.dataset.requested_group === "all") {
-        filter.value = ""
+    if (group_filter.dataset.requested_group === "all") {
+        group_filter.value = ""
     } else {
-        filter.value = filter.dataset.requested_group
+        group_filter.value = group_filter.dataset.requested_group
     }
 }
 
@@ -192,6 +242,14 @@ window.onload = function() {
         document.getElementById("open_in_new_tab").style.display = "none"
         get_standings()
     }
+
+    // adjust the top position for the sticky table header
+    let headers = document.getElementsByTagName("th")
+    for (let i = 0; i < headers.length; i++) {
+        headers[i].style.top = header.offsetHeight + "px"
+    }
+    console.log(headers)
+
 }
 
 // loop to update the standings every 90 seconds
@@ -208,9 +266,16 @@ window.addEventListener('message', function(event) {
 
 function savePDF() {
     header = document.getElementById("header")
-    header.style.display = "none"
+    header.position = "static"
+    tableheaders = document.getElementsByTagName("th")
+    for (let i = 0; i < tableheaders.length; i++) {
+        tableheaders[i].style.position = "static"
+    }
     window.print()
-    header.style.display = "flex"
+    header.position = "sticky"
+    for (let i = 0; i < tableheaders.length; i++) {
+        tableheaders[i].style.position = "sticky"
+    }
 }
 
 window.onerror = function(error, url, line) {

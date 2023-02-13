@@ -426,7 +426,7 @@ class Tournament:
 
     # --- GET Requests handling from client ---
 
-    def get_standings(self, group) -> dict:
+    def get_standings(self, group, gender=None, handedness=None, age_group=None) -> dict:
         # Get current standings and return them as a dictionary for the GUI
         standings = {
             "stage": str(self.stage),
@@ -447,8 +447,30 @@ class Tournament:
             for fencer in fencers:
                 if fencer.prelim_group == int(group):
                     filtered_fencers.append(fencer)
-
             fencers = filtered_fencers
+        
+        if gender != None:
+            filtered_fencers = []
+            for fencer in fencers:
+                if fencer.gender == gender:
+                    filtered_fencers.append(fencer)
+            fencers = filtered_fencers
+
+        if handedness != None:
+            filtered_fencers = []
+            for fencer in fencers:
+                if fencer.handedness == handedness:
+                    filtered_fencers.append(fencer)
+            fencers = filtered_fencers
+        
+        if age_group != None:
+            filtered_fencers = []
+            age_range = age_group.split("-")
+            for fencer in fencers:
+                if int(fencer.age) >= int(age_range[0]) and int(fencer.age) <= int(age_range[1]):
+                    filtered_fencers.append(fencer)
+            fencers = filtered_fencers
+
 
         for fencer in fencers:
             standings["standings"].append({
@@ -457,6 +479,9 @@ class Tournament:
                 "name": fencer.short_str,
                 "club": fencer.club,
                 "nationality": fencer.nationality,
+                "gender": fencer.gender,
+                "age": fencer.age,
+                "handedness": fencer.handedness,
                 "win_percentage": fencer.win_percentage(),
                 "win_lose": f"{fencer.statistics['overall']['wins']} - {fencer.statistics['overall']['losses']}",
                 "points_difference": fencer.points_difference(),

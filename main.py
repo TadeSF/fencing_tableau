@@ -768,11 +768,15 @@ def get_standings(tournament_id):
     """
     tournament = get_tournament(tournament_id)
     group = request.args.get('group')
+    gender = request.args.get('gender')
+    handedness = request.args.get('handedness')
+    age_group = request.args.get('age')
+
 
     if tournament is None:
         return jsonify([])
 
-    return jsonify(tournament.get_standings(group=group))
+    return jsonify(tournament.get_standings(group, gender, handedness, age_group))
 
 @app.route('/<tournament_id>/standings/fencer/<fencer_id>')
 def redirict_fencer_from_standings(tournament_id, fencer_id):
