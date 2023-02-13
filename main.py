@@ -285,12 +285,21 @@ def check_csv(file) -> list:
         if len(handedness) != 0 and handedness not in ['R', 'L']:
             raise CSVError(f"Handedness must be either 'R' or 'L' in row {row_number}")
         if len(age) != 0:
-            if not age.isdigit():
-                raise CSVError(f"Age must be a positive integer not larger than 100 or a 4-digit integer representing the birth year between 1900 and the current year in row {row_number}")
-            age = int(age)
-            if age > 100 and (age < 1900 or age > current_year):
-                raise CSVError(f"Age must be a positive integer not larger than 100 or a 4-digit integer representing the birth year between 1900 and the current year in row {row_number}")
-        body.append(row)
+            # Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and datetime.datetime.now().strftime(%Y) or a string of the format 'YYYY-MM-DD'
+            if age.isdigit() and len(age) == 2:
+                if not (0 <= int(age) <= 99):
+                    raise CSVError(f"Age must be a positiv integer between 0 and 99 in row {row_number}")
+            elif age.isdigit() and len(age) == 4:
+                if not (1900 <= int(age) <= current_year):
+                    raise CSVError(f"Age must be a 4-digit positiv integer between 1900 and {current_year} in row {row_number}")
+                age = f"{int(current_year) - int(age)}"
+            else:
+                try:
+                    birthday = datetime.datetime.strptime(age, '%Y-%m-%d')
+                    age = f"{current_year - birthday.year - ((current_year, birthday.month, birthday.day) < (birthday.year, birthday.month, birthday.day))}"
+                except ValueError:
+                    raise CSVError(f"Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and {current_year} or a string of the format 'YYYY-MM-DD' in row {row_number}")
+        body.append([name, club, nationality, gender, handedness, age])
 
     if len(body) < 3:
         raise CSVError(f"CSV file does not contain enough (or any) fencers")
