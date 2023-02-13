@@ -1,3 +1,9 @@
+import os
+
+if not os.path.exists('Versionhistory.txt'):
+    with open('Versionhistory.txt', 'w') as f:
+        f.write('')
+
 # Get version from VERSION.txt
 with open('VERSION.txt') as f:
     for line in f:
