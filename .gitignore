@@ -4,6 +4,7 @@ test.py
 notes.py
 credentials.json
 flask.log
+Versionhistory.txt
 tournaments/*
 tournament_cache/*
 approvals/*

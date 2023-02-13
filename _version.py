@@ -1,3 +1,4 @@
+# Get version from VERSION.txt
 with open('VERSION.txt') as f:
     for line in f:
         if line.startswith('stage:'):
@@ -16,3 +17,13 @@ with open('VERSION.txt') as f:
 version_tuple = (version_stage, version_major, version_count, version_commit_short, version_date)
 
 VERSION = version_stage + '-' + version_major + '.' + version_count + '-' + version_commit_short + '.' + version_date
+
+
+# Append new version to Versionhistory.txt if not already there
+with open('Versionhistory.txt') as f:
+    for line in f:
+        if line.startswith(VERSION):
+            break
+    else:
+        with open('Versionhistory.txt', 'a') as f:
+            f.write(VERSION + '\n')
