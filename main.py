@@ -1,5 +1,5 @@
 try:
-    import csv 
+    import csv
     import datetime
     import logging
     import os
