@@ -1,44 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>FenceWithFriends</title>
     <link rel="stylesheet" href="static/css/index.css">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body>
+</head>
+
+<body>
     <header>
-      <img src="/static/img/landing_hero.jpg" alt="Fencer">
-      <div class="copyright_text">Foto von <a href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a> auf <a href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></div>
-      <div class="hero_text">
-        <h1>Focus on FENCING,<br>not on organizing</h1>
-        <p class="header-text">DuellingDynasty helps you create and manage the fencing tournament of your dreams.</p>
-        <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">Start Tournament</button>
-        <div class="button-flex">
-          <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
-          <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
-          <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
+        <img src="/static/img/landing_hero.jpg" alt="Fencer">
+        <div class="copyright_text">Foto von <a
+                href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a>
+            auf <a
+                href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
         </div>
-      </div>
+        <div class="hero_text">
+            <h1>Focus on FENCING,<br>not on organizing</h1>
+            <p class="header-text">FenceWithFriends helps you create and manage the fencing tournament of your dreams.
+            </p>
+            <button class="cta-button" id="start_tournament" onclick="new_tournament()"
+                style="background-color: red">Start Tournament</button>
+            <div class="button-flex">
+                <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing Tournament</button>
+                <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
+                <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as Participant</button>
+            </div>
+        </div>
     </header>
     <main>
         <h1>Easily organize and manage FENCING TOURNAMENTS</h1>
-        <p>DuellingDynasty makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, repechage and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
-        <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
-
-        <h1>How it works</h1>
-        <p>DuellingDynasty is a Python-based application that hosts a webserver in a local (wifi) network. This way, it is possible for everyone to see current standings and matches from their mobile devices. It just needs one person as a host with a computer.</p>
-        <a onclick="openGithub()" class="cta-button">View Project on Github</a>
+        <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including
+            (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates standings
+            and results in real-time. Save time and focus on what matters most - the competition.</p>
+        <p>It is free and open-source. There is no registration required.</p>
+        <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
         
-      </main>
+        <h1 id="Startlist-Instructions">The Startlist File</h1>
+        <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following
+            columns (with one header line) are required:</p>
+            <ul>
+                <li><b>Name</b>: The name of the fencer</li>
+                <li><b>Club</b>: The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT "Turngemeinde in Berlin 1848 e.V.", but "TIB")</li>
+                <li><b>Nationality</b>: The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)</li>
+                <li><b>Gender</b> (optional): The gender of the fencer. Must be either 
+                    <ul>
+                        <li>"M"</li>
+                        <li>"F"</li>
+                        <li>"D" for divers</li>
+                    </ul>
+                </li>
+                <li><b>Handedness</b> (optional): The handedness of the fencer. Must be either
+                    <ul>
+                        <li>"R"</li>
+                        <li>"L"</li>
+                    </ul>
+                </li>
+                <li><b>Age</b> (optional): The age of the fencer. Must be a positiv integer, either
+                    <ul>
+                        <li>(preferably) the age (e.g. 23)</li>
+                        <li>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday information)</li>
+                        <li>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+        <div class="button-flex" style="justify-content: center;">
+            <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
+            <a href="example-startlist" class="cta-button">Download Example File (CSV)</a>
+        </div>
+        
+        <h1>How it Works</h1>
+        <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
+        is possible for everyone to see current standings and matches from their mobile devices. It just needs one
+        person as a tournament manager with a computer.</p>
+        <div class="button-flex" style="justify-content: center;">
+            <a onclick="openGithub()" class="cta-button">View Project on Github</a>
+            <a onclick="openDocumentation()" class="cta-button"><del>View Documentation</del></a>
+        </div>
+    </main>
     <section>
         <h2>What people are saying</h2>
         <blockquote>
-            <p>"This web app has revolutionized the way we run our tournaments. It's user-friendly, reliable, and has saved us countless hours of work."</p>
+            <p>"This web app has revolutionized the way we run our tournaments. It's user-friendly and has saved us
+                countless hours of paperwork."</p>
             <cite>- John Doe, Tournament Director</cite>
         </blockquote>
         <blockquote>
-            <p>"As a fencer, I love the real-time score updates and being able to see my results immediately after my match. This web app has definitely improved the tournament experience for all of us."</p>
+            <p>"As a fencer, I love the real-time standings updates and being able to see my results immediately after
+                my match. This web app has definitely improved the tournament experience for all of us."</p>
             <cite>- Jane Doe, Competitive Fencer</cite>
         </blockquote>
     </section>
@@ -57,69 +108,69 @@
         </ul>
     </footer>
     <div id="new_tournament_form">
-      <div class="form_container">
-        <form id="start_form" onsubmit="submitStartForm(event)" method="POST">
-          <input type="text" id="name" name="name" placeholder="Tournament Name" required><br>
-          <input type="text" id="location" name="location" placeholder="Location"><br>
-          <br>
-          <label for="fencers">Fencers:</label>
-          <input type="file" id="fencers" name="fencers" accept=".csv" required><br>
-          <br>
-          <lable for="pistes">Number of Fencing Pistes:</lable>
-          <input type="number" id="pistes" name="pistes" min="1" max="20" required><br>
-          <br>
-          <div class="form_flex">
-            <div class="number_container">
-              <label for="number_of_preliminary_rounds">Preliminary Rounds:</label>
-              <select id="number_of_preliminary_rounds" name="number_of_preliminary_rounds">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="0">None</option>
-              </select>
-            </div>
-            <div class="number_container">
-              <label for="number_of_preliminary_groups">Preliminary Groups:</label>
-              <select id="number_of_preliminary_groups" name="number_of_preliminary_groups">
-                <option value="0">Auto</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-            </div>
-            <div class="number_container">
-              <label for="first_elimination_round">First Elimination Round:</label>
-              <select id="first_elimination_round" name="first_elimination_round">
-                <option value="0">Auto</option>
-                <option value="128">Round of 128</option>
-                <option value="64">Round of 64</option>
-                <option value="32">Round of 32</option>
-                <option value="16">Round of 16</option>
-                <option value="8">Quarter Finals</option>
-                <option value="4">Semi Finals</option>
-                <option value="2">Final</option>
-              </select>
-            </div>
-          </div>
-          <br>
-          <label for="elimination_mode">Elimination Mode:</label>
-          <select id="elimination_mode" name="elimination_mode">
-            <option value="KO">KO</option>
-            <option value="Repechage">Repechage</option>
-            <option value="Placement">Placement</option>
-          </select><br>
-          <br>
-          <!-- <div class="checkbox_container">
+        <div class="form_container">
+            <form id="start_form" onsubmit="submitStartForm(event)" method="POST">
+                <input type="text" id="name" name="name" placeholder="Tournament Name" required><br>
+                <input type="text" id="location" name="location" placeholder="Location"><br>
+                <br>
+                <label for="fencers">Fencers:</label>
+                <input type="file" id="fencers" name="fencers" accept=".csv" required><br>
+                <br>
+                <lable for="pistes">Number of Fencing Pistes:</lable>
+                <input type="number" id="pistes" name="pistes" min="1" max="20" required><br>
+                <br>
+                <div class="form_flex">
+                    <div class="number_container">
+                        <label for="number_of_preliminary_rounds">Preliminary Rounds:</label>
+                        <select id="number_of_preliminary_rounds" name="number_of_preliminary_rounds">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="0">None</option>
+                        </select>
+                    </div>
+                    <div class="number_container">
+                        <label for="number_of_preliminary_groups">Preliminary Groups:</label>
+                        <select id="number_of_preliminary_groups" name="number_of_preliminary_groups">
+                            <option value="0">Auto</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="number_container">
+                        <label for="first_elimination_round">First Elimination Round:</label>
+                        <select id="first_elimination_round" name="first_elimination_round">
+                            <option value="0">Auto</option>
+                            <option value="128">Round of 128</option>
+                            <option value="64">Round of 64</option>
+                            <option value="32">Round of 32</option>
+                            <option value="16">Round of 16</option>
+                            <option value="8">Quarter Finals</option>
+                            <option value="4">Semi Finals</option>
+                            <option value="2">Final</option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <label for="elimination_mode">Elimination Mode:</label>
+                <select id="elimination_mode" name="elimination_mode">
+                    <option value="KO">KO</option>
+                    <option value="Repechage" disabled>Repechage</option>
+                    <option value="Placement">Placement</option>
+                </select><br>
+                <br>
+                <!-- <div class="checkbox_container">
             <div class="form_flex">
               <input type="checkbox" id="only_elimination" name="only_elimination">
               <label for="only_elimination">Dummy</label><br>
@@ -130,26 +181,28 @@
             </div>
           </div>
           <br> -->
-          <label for="pw">Master Password</label>
-          <input type="password" id="master_password" name="master_password" placeholder="Password" required><br>
-          <br>
-          <button type="submit" value="submit">Create Tournament</button>
-        </form>
-      </div>
+                <label for="pw">Master Password</label>
+                <input type="password" id="master_password" name="master_password" placeholder="Password" required><br>
+                <br>
+                <button type="submit" value="submit">Create Tournament</button>
+            </form>
+        </div>
     </div>
     <div id="login_manager_form">
-      <div class="form_container">
-        <form id="master_login_form">
-          <label for="tournament_id">Login with Tournament ID</label>
-          <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required pattern="^[A-Z0-9]{6}$"><br>
-          <br>
-          <input type="password" id="master_password_login" name="pw" placeholder="Password" required><br>
-          <br>
-          <button type="submit" value="submit">Login</button>
-        </form>
-      </div>
+        <div class="form_container">
+            <form id="master_login_form">
+                <label for="tournament_id">Login with Tournament ID</label>
+                <input type="text" id="tournament_id" name="tournament_id" placeholder="XXXXXX" required
+                    pattern="^[A-Z0-9]{6}$"><br>
+                <br>
+                <input type="password" id="master_password_login" name="pw" placeholder="Password" required><br>
+                <br>
+                <button type="submit" value="submit">Login</button>
+            </form>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <script src="/static/js/index.js"></script>
-  </body>
+</body>
+
 </html>

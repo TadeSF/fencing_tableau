@@ -357,6 +357,15 @@ def csv_template_download():
     except Exception as e:
         return str(e)
 
+@app.route('/example-startlist')
+def example_startlist_download():
+    """
+    """
+    try:
+        return send_file("static/example_startlist.csv", as_attachment=True)
+    except Exception as e:
+        return str(e)
+
 @app.route('/', methods=['POST'])
 def process_form():
     """
@@ -1082,7 +1091,7 @@ if __name__ == '__main__':
     port_flask = True
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
-    debug_flask = False
+    debug_flask = True
 
 
     handler = logging.FileHandler('flask.log')

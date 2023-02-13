@@ -97,6 +97,10 @@ function openGithub() {
   window.open('https://github.com/TadeSF/fencing_tableau', '_blank')
 }
 
+function openDocumentation() {
+  alert("We are still working on the documentation. Please check back later.")
+}
+
 
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
