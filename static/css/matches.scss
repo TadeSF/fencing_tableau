@@ -291,26 +291,42 @@ thead {
 
 .fencer-div {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     width: auto; /* or 100% */
     height: auto; /* or 100% */
+    border-radius: 5px;
+    padding: 3px 10px;
+}
+
+.fencer-div:hover {
+    color: rgb(0, 0, 0);
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
 }
 
 .fencer-div-green {
-    /* Inherit from fencer-div */
     justify-content: flex-end;
-    padding-right: 10px;
-    padding-left: 10px;
+    margin-left: 15px;
+}
+
+.fencer-div-green:hover {
+    background-color: rgba(0, 142, 0, 0.2);
 }
 
 .fencer-div-red {
     /* Inherit from fencer-div */
     justify-content: flex-start;
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-right: 15px;
+}
+
+.fencer-div-red:hover {
+    background-color: rgba(255, 0, 0, 0.2);
 }
 
 .flag {
     width: 20px;
+    height: 15px;
     margin-right: 10px;
     margin-left: 10px;
 }

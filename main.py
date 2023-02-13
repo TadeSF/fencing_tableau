@@ -1095,7 +1095,7 @@ if __name__ == '__main__':
     port_flask = True
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
-    debug_flask = True
+    debug_flask = False
 
 
     handler = logging.FileHandler('flask.log')

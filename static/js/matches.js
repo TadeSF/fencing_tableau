@@ -147,6 +147,10 @@ async function update_matches(matches) {
         green_fencer_div.classList.add("fencer-div")
         green_fencer_div.appendChild(green_fencer_text)
         green_fencer_div.appendChild(green_flag)
+        green_fencer_div.dataset.id = element["green_id"]
+        green_fencer_div.onclick = function() {
+            openFencerWindow(this.dataset.id)
+        }
         green_fencer.appendChild(green_fencer_div)
         
         let red_fencer_text = document.createTextNode(element["red"])
@@ -160,6 +164,10 @@ async function update_matches(matches) {
         red_fencer_div.classList.add("fencer-div")
         red_fencer_div.appendChild(red_flag)
         red_fencer_div.appendChild(red_fencer_text)
+        red_fencer_div.dataset.id = element["red_id"]
+        red_fencer_div.onclick = function() {
+            openFencerWindow(this.dataset.id)
+        }
         red_fencer.appendChild(red_fencer_div)
 
         
@@ -297,6 +305,10 @@ function match_set_active(id) {
     .catch(error => {
         console.log(error)
     })
+}
+
+function openFencerWindow(id) {
+    window.open("fencer/" + id, "_blank")
 }
 
 function open_in_new_tab() {
