@@ -16,12 +16,6 @@ function login_manager() {
   window.open("/tournaments", "_self")
 }
 
-document.addEventListener('click', (event) => {
-  if (!document.getElementById("master_login_form").contains(event.target) && !document.getElementById("button_manage").contains(event.target)) {
-    document.getElementById("login_manager_form").style.display = 'none';
-  }
-});
-
 
 // When button "Log in as Participant" is clicked, this function is called
 function login_fencer() {
@@ -63,31 +57,6 @@ function submitStartForm(event) {
     });
 }
 
-document.getElementById("master_login_form").addEventListener("submit", function(event) {
-  event.preventDefault();
-  let password = document.getElementById("master_password_login").value;
-  let tournament_id = document.getElementById("tournament_id").value;
-  let data = {
-      tournament: tournament_id,
-      password: password
-  };
-  console.log(data)
-  let response = fetch("/master-login", {
-      method: "POST",
-      body: JSON.stringify(data), 
-      headers: {
-          "Content-Type": "application/json"
-      }
-  }).then(response => {
-      if (response.status === 200) {
-          window.location.href = tournament_id + "/dashboard";
-      } else {
-          alert("Invalid username or password!");
-      }
-  });
-});
-
-
 
 function login_referee() {
   // Show the new_tournament_form div
@@ -108,3 +77,17 @@ window.onerror = function(error, url, line) {
 };
 
 
+window.onload = function() {
+  const cookieBanner = document.getElementById("cookieBanner");
+  console.log(document.cookie)
+  if (document.cookie.indexOf("cookieConsent=true") === -1) {
+    cookieBanner.style.display = "block";
+  } else {
+    cookieBanner.style.display = "none";
+  }
+};
+
+function acceptCookies() {
+  cookieBanner.style.display = "none";
+  document.cookie = "cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/";
+}

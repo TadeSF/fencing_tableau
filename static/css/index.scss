@@ -414,3 +414,35 @@ form input[type="date"] {
   display: none;
   border-radius: 4px;
 }
+
+
+/* Cookie Consent Banner Styles */
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cookie-banner a {
+  color: #fff;
+}
+
+#cookieConsentButton {
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#cookieConsentButton:hover {
+  background-color: #3e8e41;
+}
