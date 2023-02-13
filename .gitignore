@@ -2,7 +2,7 @@ __pycache__
 .DS_Store
 test.py
 notes.py
-credentials.json
+credentials.txt
 flask.log
 Versionhistory.txt
 tournaments/*

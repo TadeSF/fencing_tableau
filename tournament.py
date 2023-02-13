@@ -553,6 +553,7 @@ class Tournament:
             "stage": self.stage.name.replace("_", " ").replace("Top ", "").title() + (f" {self.preliminary_stage}" if self.stage == Stage.PRELIMINARY_ROUND else ""),
             "num_fencers": len(self.fencers),
             "num_clubs": len(set([fencer.club for fencer in self.fencers])),
+            "num_nationalities": len(set([fencer.nationality for fencer in self.fencers])),
             "num_prelim_groups": self.num_preliminary_groups if self.num_preliminary_groups != None else len(set([match.group for match in self.preliminary_matches[0]])),
             "num_prelim_rounds": self.num_preliminary_rounds,
             "elimination_mode": self.elimination_mode.upper(),

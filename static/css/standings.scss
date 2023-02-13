@@ -135,7 +135,12 @@ thead {
 
 
 form {
-    margin: 0 20px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 1em;
+    background-color: #e2e2e2;
+    border-radius: 5px;
 }
 
 form select {
@@ -145,21 +150,30 @@ form select {
     outline: none;
     width: 100%;
     padding: 0.6em;
-    font-size: 1em;
-    border: 1px solid #ccc;
+    font-size: 0.8em;
+    border: 1px solid #000000;
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #fff;
     text-align: center;
-  }
-  form select:focus {
+    font-weight: bold;
+    color: #333;
+    transition: 0.3s ease-in-out;
+}
+
+form select:hover {
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+    transform: translate(-3px, -3px);
+    cursor: pointer;
+}
+
+form select:focus {
     border-color: #db3434;
-    box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
     text-align: center;
 }
 
-/* Breakpoint 400px */
-@media screen and (max-width: 800px) {
+/* Breakpoint 800px */
+@media screen and (max-width: 1000px) {
     #header {
         grid-template-columns: 1fr;
     }

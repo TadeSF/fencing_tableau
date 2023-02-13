@@ -13,68 +13,73 @@
         <div class="flex-container">
             <div class="flex-column-1">
                 <div id="options_frame" class="flex-item-options" width="100%" height="100%">
-                    <div>
-                        <div id="main_id_container">
+                    <div class="options-column">
+                        <div id="main_id_container" onclick="copyID()" title="Copy the Tournament ID">
                             <div id="main_id_text">XXXXXX</div>
                             <div id="main_id_description">Tournament ID</div>
                         </div>
                         <div class="button-column">
-                            <button id="Advance" onclick="advance()"><i class="fa-solid fa-forward-fast"></i></button>
-                            <button id="QR" onclick="openQR()"><i class="fa-solid fa-qrcode"></i></button>
-                            <button id="Tableau" onclick="openTableau()"><i class="fa-solid fa-table-cells"></i></button>
-                            <button id="Simulate" onclick="simulate()"><i class="fa-solid fa-gears"></i></button>
+                            <button id="Advance" onclick="advance()" title="Advance to next Stage"><i class="fa-solid fa-forward-fast"></i></button>
+                            <button id="QR" onclick="openQR()" title="Display a QR Code and generate a Link for the fencers' login"><i class="fa-solid fa-qrcode"></i></button>
+                            <button id="Tableau" onclick="openTableau()" title="Open the Tableau View of the current Preliminary Stage"><i class="fa-solid fa-table-cells"></i></button>
+                            <button id="Simulate" onclick="simulate()" title="Simulate Matches. For Testing only."><i class="fa-solid fa-gears"></i></button>
                         </div>
                     </div>
-                    <div class="options_column">
-                        <div id="Tournament_Name">–</div>
-                        <div id="Tournament_Location">–</div>
-                        <div id="Tournament_Stage">–</div>
-                        <div id="elimination_mode">Elimination Mode:<br></div>
-                    </div>
-                    <div id="statistics_table_container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th colspan="2">Tournament Statistics</th>
-                                </tr>
-                            </thead>
-                            <tr>
-                                <td>Fencers</td>
-                                <td id="num_fencers">0</td>
-                            </tr>
-                            <tr>
-                                <td>Clubs</td>
-                                <td id="num_clubs">0</td>
-                            </tr>
-                            <tr class="divider">
-                                <td>Preliminary Groups</td>
-                                <td id="num_prelim_groups">0</td>
-                            </tr>
-                            <tr>
-                                <td>Preliminary Rounds</td>
-                                <td id="num_prelim_rounds">0</td>
-                            </tr>
-                            <tr class="devider">
-                                <td>First Elimination Round</td>
-                                <td id="first_elimination_round">0</td>
-                            </tr> 
-                            <tr>
-                                <td>Wildcards</td>
-                                <td id="num_wildcards">0</td>
-                            </tr>
-                            <tr class="divider">
-                                <td>Pistes</td>
-                                <td id="num_pistes">0</td>
-                            </tr>
-                            <tr class="divider">
-                                <td>Matches</td>
-                                <td id="num_matches">0</td>
-                            </tr>
-                            <tr>
-                                <td>Matches Completed</td>
-                                <td id="num_matches_completed">0</td>
-                            </tr>
-                        </table>
+                    <div class="options-column" style="flex-grow: 1; margin-left: 10px;">
+                        <div class="options-header">
+                            <div id="Tournament_Name">–</div>
+                            <div id="Tournament_Location">–</div>
+                        </div>
+                        <div class="Information-Wrapper">
+                            <div class="Information-Block span-3">
+                                <div class="Information-Block-Description">Current Stage</div>
+                                <div class="Information-Block-Number" id="Tournament_Stage">–</div>
+                            </div>
+                            <div class="Information-Block span-3">
+                                <div class="Information-Block-Description">Elimination Mode</div>
+                                <div class="Information-Block-Number" id="elimination_mode">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Pre. Groups</div>
+                                <div class="Information-Block-Number" id="num_prelim_groups">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Pre. Rounds</div>
+                                <div class="Information-Block-Number" id="num_prelim_rounds">–</div>
+                            </div>
+                            <div class="Information-Block span-3">
+                                <div class="Information-Block-Description">First Elimination Round</div>
+                                <div class="Information-Block-Number" id="first_elimination_round">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Wildcards</div>
+                                <div class="Information-Block-Number" id="num_wildcards">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Fencers</div>
+                                <div class="Information-Block-Number" id="num_fencers">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Clubs</div>
+                                <div class="Information-Block-Number" id="num_clubs">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Nationalities</div>
+                                <div class="Information-Block-Number" id="num_nationalities">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Pistes</div>
+                                <div class="Information-Block-Number" id="num_pistes">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Matches</div>
+                                <div class="Information-Block-Number" id="num_matches">–</div>
+                            </div>
+                            <div class="Information-Block">
+                                <div class="Information-Block-Description">Completed</div>
+                                <div class="Information-Block-Number" id="num_matches_completed">–</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <iframe src="matches" id="matches_frame" class="flex-item-matches" width="100%"></iframe>
@@ -88,7 +93,7 @@
             <div class="overlay-flex-wrapper">
                 <div class="overlay_description">
                     <h1>Management Dashboard</h1>
-                    <div id="main_id_container_pw" style="margin: auto">
+                    <div id="main_id_container_pw" style="margin: auto" onclick="copyID()">
                         <div id="main_id_text_pw">XXXXXX</div>
                         <div id="main_id_description_pw">Tournament ID</div>
                     </div>

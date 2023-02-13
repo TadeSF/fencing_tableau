@@ -13,10 +13,11 @@ function update() {
         document.getElementById("Tournament_Name").innerHTML = response["name"]
         document.getElementById("Tournament_Location").innerHTML = response["location"]
         document.getElementById("Tournament_Stage").innerHTML = response["stage"]
-        document.getElementById("elimination_mode").innerHTML = "Elimination Mode:<br>" + response["elimination_mode"]
+        document.getElementById("elimination_mode").innerHTML = response["elimination_mode"]
 
         document.getElementById("num_fencers").innerHTML = response["num_fencers"]
         document.getElementById("num_clubs").innerHTML = response["num_clubs"]
+        document.getElementById("num_nationalities").innerHTML = response["num_nationalities"]
         document.getElementById("num_prelim_groups").innerHTML = response["num_prelim_groups"]
         document.getElementById("num_prelim_rounds").innerHTML = response["num_prelim_rounds"]
         document.getElementById("first_elimination_round").innerHTML = response["first_elimination_round"]
@@ -144,4 +145,11 @@ function openTableau() {
 function openQR() {
     // open a new window (width 500px, heigth 800px) with a QR Code for the path /m?tournament=<tournament_id>
     window.open("/qr?tournament=" + tournament_id, "_blank", "width=400,height=480");
+}
+
+function copyID() {
+    let id = document.getElementById("main_id_text").innerHTML;
+    console.log(id);
+    navigator.clipboard.writeText(id);
+    alert('Copied ID "' + id + '" to clipboard!');
 }
