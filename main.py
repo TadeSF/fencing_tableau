@@ -171,18 +171,6 @@ def delete_old_tournaments():
                 tournament_cache.remove(tournament)
 
 
-# ------- Credentials -------
-def save_master_credentials(tournament_id: str, password: str):
-    """
-    """
-    # if txt file "credentials.txt" does not exist, create it
-    if not os.path.exists('credentials.txt'):
-        with open('credentials.txt', 'w') as f:
-            f.write('')
-    # if txt file "credentials.txt" exists, append the new credentials
-    with open('credentials.txt', 'a') as f:
-        f.write(f'{tournament_id}:{password}\n')
-
 
 # ------- Login-Cookies -------
 def create_master_cookie(response: Response, tournament_id: str) -> Response:
@@ -436,7 +424,6 @@ def process_form():
 
         # Generate and save the new tournament
         tournament = Tournament(random_generator.id(6), password, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes)
-        save_master_credentials(tournament.id, password)
         tournament_cache.append(tournament)
         save_tournament(tournament)
 
