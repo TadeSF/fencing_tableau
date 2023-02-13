@@ -147,9 +147,11 @@ async function update_matches(matches) {
         green_fencer_div.classList.add("fencer-div")
         green_fencer_div.appendChild(green_fencer_text)
         green_fencer_div.appendChild(green_flag)
-        green_fencer_div.dataset.id = element["green_id"]
-        green_fencer_div.onclick = function() {
-            openFencerWindow(this.dataset.id)
+        if (element["green"] != "0 Wildcard") {
+            green_fencer_div.dataset.id = element["green_id"]
+            green_fencer_div.onclick = function() {
+                openFencerWindow(this.dataset.id)
+            }
         }
         green_fencer.appendChild(green_fencer_div)
         
@@ -164,9 +166,11 @@ async function update_matches(matches) {
         red_fencer_div.classList.add("fencer-div")
         red_fencer_div.appendChild(red_flag)
         red_fencer_div.appendChild(red_fencer_text)
-        red_fencer_div.dataset.id = element["red_id"]
-        red_fencer_div.onclick = function() {
-            openFencerWindow(this.dataset.id)
+        if (element["red"] != "0 Wildcard") {
+            red_fencer_div.dataset.id = element["red_id"]
+            red_fencer_div.onclick = function() {
+                openFencerWindow(this.dataset.id)
+            }
         }
         red_fencer.appendChild(red_fencer_div)
 
