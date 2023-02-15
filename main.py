@@ -275,15 +275,24 @@ def check_csv(file) -> list:
     row_number = 0
     for row in file:
         row_number += 1
+
         if len(row) != 6:
             raise CSVError(f"Invalid number of columns in row {row_number}")
         name, club, nationality, gender, handedness, age = row
+
         if len(nationality) != 0 and (len(nationality) != 3 or not nationality.isalpha() or not nationality.isupper()):
             raise CSVError(f"Nationality must be a valid alpha-3 format with all uppercase letters in row {row_number}")
+        else:
+            # Check if Flag exists
+            if (nationality.lower() + ".svg") not in os.listdir("static/flags"):
+                raise CSVError(f"Invalid flag in row {row_number} (Flag '{nationality}' does not exist in our database).\nPlease make sure that you use the right alpha-3 country code. For example: 'DEU' for Germany.\n\nIf the error persists, please use 'XXX' or 'UNO' as a placeholder (this will show the flag of the United Nations) and please report the missing flag.")
+
         if len(gender) != 0 and gender not in ['M', 'F', 'D']:
             raise CSVError(f"Gender must be either 'M' or 'F' or 'D' in row {row_number}")
+
         if len(handedness) != 0 and handedness not in ['R', 'L']:
             raise CSVError(f"Handedness must be either 'R' or 'L' in row {row_number}")
+
         if len(age) != 0:
             # Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and datetime.datetime.now().strftime(%Y) or a string of the format 'YYYY-MM-DD'
             if age.isdigit() and len(age) == 2:
@@ -299,6 +308,7 @@ def check_csv(file) -> list:
                     age = f"{current_year - birthday.year - ((current_year, birthday.month, birthday.day) < (birthday.year, birthday.month, birthday.day))}"
                 except ValueError:
                     raise CSVError(f"Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and {current_year} or a string of the format 'YYYY-MM-DD' in row {row_number}")
+
         body.append([name, club, nationality, gender, handedness, age])
 
     if len(body) < 3:

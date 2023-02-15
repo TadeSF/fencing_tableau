@@ -4,6 +4,7 @@ test.py
 notes.py
 flask.log
 Versionhistory.txt
+update_server.sh
 tournaments/*
 tournament_cache/*
 approvals/*
