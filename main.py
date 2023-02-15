@@ -17,6 +17,7 @@ try:
     from match import EliminationMatch, GroupMatch
     from piste import Piste, PisteError
     from tournament import *
+    import attr_checker
 
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
@@ -266,12 +267,32 @@ def search_fencer(tournament_id, fencer_id) -> Fencer:
 # ------- CSV -------
 
 def check_csv(file) -> list:
+    """
+    This function checks if a csv file is valid and returns a list of fencers.
+
+    Parameters
+    ----------
+    file : csv file
+        The csv file to be checked.
+
+    Returns
+    -------
+    list of Fencer objects
+        if the csv file is valid
+    None
+        if the csv file is not valid
+
+    Raises
+    ------
+    CSVError
+        if the csv file is not valid and provides a description of the error
+    """
     headers = next(file)
     body = []
     if headers != ['Name', 'Club', 'Nationality', 'Gender', 'Handedness', 'Age']:
         print(headers)
         raise CSVError(f"Invalid headers\n\nMust be {['Name', 'Club', 'Nationality', 'Gender', 'Handedness', 'Age']}")
-    current_year = datetime.datetime.now().year
+
     row_number = 0
     for row in file:
         row_number += 1
@@ -280,39 +301,20 @@ def check_csv(file) -> list:
             raise CSVError(f"Invalid number of columns in row {row_number}")
         name, club, nationality, gender, handedness, age = row
 
-        if len(nationality) != 0 and (len(nationality) != 3 or not nationality.isalpha() or not nationality.isupper()):
-            raise CSVError(f"Nationality must be a valid alpha-3 format with all uppercase letters in row {row_number}")
-        else:
-            # Check if Flag exists
-            if (nationality.lower() + ".svg") not in os.listdir("static/flags"):
-                raise CSVError(f"Invalid flag in row {row_number} (Flag '{nationality}' does not exist in our database).\nPlease make sure that you use the right alpha-3 country code. For example: 'DEU' for Germany.\n\nIf the error persists, please use 'XXX' or 'UNO' as a placeholder (this will show the flag of the United Nations) and please report the missing flag.")
-
-        if len(gender) != 0 and gender not in ['M', 'F', 'D']:
-            raise CSVError(f"Gender must be either 'M' or 'F' or 'D' in row {row_number}")
-
-        if len(handedness) != 0 and handedness not in ['R', 'L']:
-            raise CSVError(f"Handedness must be either 'R' or 'L' in row {row_number}")
-
-        if len(age) != 0:
-            # Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and datetime.datetime.now().strftime(%Y) or a string of the format 'YYYY-MM-DD'
-            if age.isdigit() and len(age) == 2:
-                if not (0 <= int(age) <= 99):
-                    raise CSVError(f"Age must be a positiv integer between 0 and 99 in row {row_number}")
-            elif age.isdigit() and len(age) == 4:
-                if not (1900 <= int(age) <= current_year):
-                    raise CSVError(f"Age must be a 4-digit positiv integer between 1900 and {current_year} in row {row_number}")
-                age = f"{int(current_year) - int(age)}"
-            else:
-                try:
-                    birthday = datetime.datetime.strptime(age, '%Y-%m-%d')
-                    age = f"{current_year - birthday.year - ((current_year, birthday.month, birthday.day) < (birthday.year, birthday.month, birthday.day))}"
-                except ValueError:
-                    raise CSVError(f"Age must be either a positiv integer between 0 and 99, a 4-digit positiv integer between 1900 and {current_year} or a string of the format 'YYYY-MM-DD' in row {row_number}")
-
+        try:
+            attr_checker.check_name(name)
+            attr_checker.check_club(club)
+            attr_checker.check_nationality(nationality)
+            attr_checker.check_gender(gender)
+            attr_checker.check_handedness(handedness)
+            age = attr_checker.check_age(age)
+        except Exception as e:
+            raise CSVError(f"Invalid attribute in row {row_number}: {e}")
+        
         body.append([name, club, nationality, gender, handedness, age])
 
     if len(body) < 3:
-        raise CSVError(f"CSV file does not contain enough (or any) fencers")
+        raise CSVError(f"CSV file does not contain enough (or any) fencers. Please add at least 3 fencers.")
     
     return body
 
@@ -941,6 +943,34 @@ def get_fencer(tournament_id, fencer_id):
         logged_in_as_fencer = True
         
     return jsonify(tournament.get_fencer_hub_information(fencer_id, logged_in_as_fencer=logged_in_as_fencer))
+
+@app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
+def change_fencer_attribute(tournament_id, fencer_id):
+    """
+    """
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return jsonify({"success": False})
+    
+    # TODO Check if logged in as fencer or manager
+
+    attribute = request.json.get('attribute')
+
+    if attribute not in ["name", "club", "nationality", "gender", "handedness", "age"]:
+        return jsonify({"success": False, "message": "Invalid attribute name"})
+    
+    value = request.json.get('value')
+    if value is None:
+        return jsonify({"success": False, "message": "Invalid value"})
+    
+    try:
+        tournament.get_fencer_by_id(fencer_id).change_attribute(attribute, value)
+        save_tournament(tournament)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)})
+    
+
 
 @app.route('/<tournament_id>/tableau')
 def tableau(tournament_id):

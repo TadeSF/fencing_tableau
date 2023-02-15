@@ -637,3 +637,28 @@ function approve_tableau() {
         }
     });
 }
+
+function changeInformationForm(event) {
+    event.preventDefault();
+    
+    fetch("/" + tournament_id + "/fencer/" + fencer_id + "/change_attribute", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "attribute": document.getElementById("Change-Attribute").value,
+            "value": document.getElementById("Change-Value").value,
+        })
+    }).then((response) => {
+        return response.json();
+    }
+    ).then((data) => {
+        if (data["success"] === true) {
+            alert("Attribute changed!\n\nAttribute: " + document.getElementById("Change-Attribute").value + "\nValue: " + document.getElementById("Change-Value").value);
+            window.location.reload();
+        } else {
+            alert(data["message"]);
+        }
+    });
+}

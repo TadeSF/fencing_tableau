@@ -1,6 +1,7 @@
 import json
 from typing import Literal
 from random_generator import id
+from attr_checker import check_attr
 
 from enum import Enum
 
@@ -532,6 +533,17 @@ class Fencer:
         """
         return (round(self.statistics[stage]["points_against"] / self.statistics[stage]["matches"], 2) if self.statistics[stage]["matches"] != 0 else 0)
 
+    
+    def change_attribute(self, attribute: Literal["name", "club", "nationality", "gender", "handedness", "age"], value):
+        # Assign the new value to the attribute of the Fencer class
+        check_attr(attribute, value)
+
+        try:
+            if getattr(self, attribute) == value:
+                raise ValueError(f"Attribute {attribute} already has the value {value}")
+            setattr(self, attribute, value)
+        except AttributeError:
+            raise AttributeError(f"Attribute {attribute} does not exist")
 
 
 

@@ -163,6 +163,21 @@
                     <div class="Information-Block-Number" id="Information_Age"></div>
                 </div>
             </div>
+            <div id="Change-Information-Wrapper">
+                <h2>Change Information</h2>
+                <form id="Change-Information-Form">
+                    <select id="Change-Attribute">
+                        <option id="Change-Name" value="name">Name</option>
+                        <option id="Change-Club" value="club">Club</option>
+                        <option id="Change-Nationality" value="nationality">Nationality</option>
+                        <option id="Change-Gender" value="gender">Gender</option>
+                        <option id="Change-Handedness" value="handedness">Handedness</option>
+                        <option id="Change-Age" value="age">Age</option>
+                    </select>
+                    <input type="text" id="Change-Value" placeholder="New Value">
+                    <input type="submit" id="Change-Submit" value="Change" onclick="changeInformationForm(event)">
+                </form>
+            </div>
         </div>
         <div class="Section" id="bug_wrapper" style="background-color: white;">
             <h2>Report a Bug</h2>

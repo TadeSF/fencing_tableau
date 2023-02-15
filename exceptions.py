@@ -3,3 +3,6 @@ class CSVError(Exception):
 
 class RequiredLibraryError(Exception):
     pass
+
+class SearchError(Exception):
+    pass

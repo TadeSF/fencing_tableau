@@ -12,6 +12,7 @@ import random_generator
 from fencer import Fencer, Stage, Wildcard
 from match import EliminationMatch, GroupMatch, Match
 from piste import Piste
+from exceptions import *
 
 # ------- Groups -------
 
@@ -743,6 +744,7 @@ class Tournament:
         for fencer in self.fencers:
             if fencer.id == fencer_id:
                 return fencer
+        raise SearchError(f"Fencer with id {fencer_id} not found.")
 
     def get_fencer_id_by_name(self, fencer_name) -> str:
         best_match = None
@@ -754,15 +756,20 @@ class Tournament:
                 best_match = fencer.id
         if best_ratio >= 70: # to be adjusted according to the desired threshold
             return best_match
-        else:
-            return None
+        raise SearchError(f"Could not match requested fencer name {fencer_name} to any fencer in the tournament.")
     
     def get_fencer_id_by_start_number(self, start_number) -> str:
         if start_number < len(self.fencers):
             for fencer in self.fencers:
                 if fencer.start_number == int(start_number):
                     return fencer.id
-        return None
+        raise SearchError(f"Could not match requested start number {start_number} to any fencer in the tournament.")
+
+    def get_match_by_id(self, match_id) -> Match:
+        for match in self.all_matches:
+            if match.id == match_id:
+                return match
+        raise SearchError(f"Match with id {match_id} not found.")
 
     def get_tableau_array(self, group) -> list:
         tableau = []
