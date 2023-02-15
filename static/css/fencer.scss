@@ -56,12 +56,12 @@ br {
 }
 
 .Fencer-Banner-Opponent {
-    box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
 
 .Fencer-Banner-Opponent:hover {
-    box-shadow: 0px 0px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
     translate: 3px 3px;
     cursor: pointer;
 }
@@ -112,17 +112,17 @@ br {
 .Standing-Block {
     width: 50%;
     cursor: pointer;
-    box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
 }
 
 .Standing-Block:hover {
-    box-shadow: 0px 0px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
     translate: 5px 5px;
 }
 
 .Standing-Block:active {
-    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2);
+    box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.2);
     translate: 5px 5px;
 }
 
@@ -182,15 +182,12 @@ br {
     margin-bottom: 5px;
 }
 
-
 .Next-Match-Flag {
     width: 40px;
     height: 30px;
     background-color: black;
     margin-right: 20px;
 }
-
-
 
 .piste_helper {
     background-color: white;
@@ -202,18 +199,17 @@ br {
     font-size: 12px;
     transition: all 0.5s;
     max-height: 0;
-    padding:0;
+    padding: 0;
     overflow: hidden;
 }
 .hide {
     max-height: 50vh;
-    padding:10px;
+    padding: 10px;
     margin-top: 15px;
     margin-left: 10px;
     margin-right: 10px;
-    overflow:auto;
+    overflow: auto;
 }
-
 
 #Next-Piste-Block {
     cursor: help;
@@ -221,9 +217,8 @@ br {
 }
 
 #Next-Piste-Block:hover {
-    box-shadow: inset 2px 2px 0px rgba(0,0,0,0.2);
+    box-shadow: inset 2px 2px 0px rgba(0, 0, 0, 0.2);
 }
-
 
 #report_issue {
     background-color: red;
@@ -242,6 +237,89 @@ br {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+form * {
+    margin-bottom: 0.5em;
+}
+
+form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    width: 100%;
+    padding: 0.6em;
+    font-size: 0.8em;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    transition: 0.3s ease-in-out;
+}
+
+form select:hover {
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+    transform: translate(-3px, -3px);
+    cursor: pointer;
+}
+
+form select:focus {
+    border-color: #db3434;
+    text-align: center;
+}
+
+
+form input[type="text"] {
+    width: 100%;
+    padding: 0.6em;
+    font-size: 0.8em;
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    outline: none;
+    text-align: center;
+    transition: 0.3s ease-in-out;
+    cursor: text;
+}
+
+form input[type="text"]:hover {
+    border-color: #e71818;
+}
+
+form input[type="text"]:focus {
+    border-color: #e71818;
+    box-shadow: inset 3px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+form input[type="submit"] {
+    width: 100%;
+    font-weight: bold;
+    padding: 0.6em;
+    font-size: 0.8em;
+    color: #fff;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+form input[type="submit"]:hover {
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+    transform: translate(-3px, -3px);
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 410px) {

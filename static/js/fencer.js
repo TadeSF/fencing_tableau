@@ -662,3 +662,12 @@ function changeInformationForm(event) {
         }
     });
 }
+
+function displayChangeInformationForm() {
+    let changeInformationWrapper = document.getElementById("Change-Information-Wrapper");
+    if (changeInformationWrapper.style.display === "block") {
+        changeInformationWrapper.style.display = "none";
+    } else {
+        changeInformationWrapper.style.display = "block";
+    }
+}

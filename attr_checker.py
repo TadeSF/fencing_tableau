@@ -27,7 +27,7 @@ def check_nationality(value):
     else:
         # Check if Flag exists
         if (value.lower() + ".svg") not in os.listdir("static/flags"):
-            raise CSVError(f"Invalid flag (Flag '{value}' does not exist)")
+            raise CSVError(f"Invalid flag (Flag '{value}' does not exist).\nMust be a valid alpha-3 format with all uppercase letters (e.g. 'DEU' for Germany).\n\nIf the issue persists, please use 'XXX' or 'UNO' (United Nations Flag) as a placeholder and please report the missing flag to the developers.")
 
 def check_gender(value):
     if len(value) != 0 and value not in ['M', 'F', 'D']:
