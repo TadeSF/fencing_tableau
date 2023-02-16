@@ -1,4 +1,5 @@
 try:
+    import bcrypt
     import csv
     import datetime
     import logging
@@ -11,20 +12,19 @@ try:
                        redirect, render_template, request, send_file,
                        send_from_directory, url_for)
 
+    import _version
+    import attr_checker
     import random_generator
     from exceptions import *
     from fencer import Fencer, Stage, Wildcard
     from match import EliminationMatch, GroupMatch
     from piste import Piste, PisteError
     from tournament import *
-    import attr_checker
 
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
 
 # ------- Versioning -------
-import _version
-
 APP_VERSION = _version.VERSION
 
 
@@ -303,6 +303,43 @@ def check_csv(file) -> list:
     
     return body
 
+# ------- Passwords -------
+def hash_password(password: str) -> str:
+    """
+    This function hashes a password using the bcrypt algorithm.
+
+    Parameters
+    ----------
+    password : str
+        The password to be hashed.
+
+    Returns
+    -------
+    str
+        The hashed password.
+    """
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password.decode('utf-8')
+
+def check_password(password: str, hashed_password: str) -> bool:
+    """
+    This function checks if a password matches a hashed password.
+
+    Parameters
+    ----------
+    password : str
+        The password to be checked.
+    hashed_password : str
+        The hashed password to be checked against.
+
+    Returns
+    -------
+    bool
+        True if the password matches the hashed password.
+        False if the password does not match the hashed password.
+    """
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
 # ------- Flask -------
@@ -431,6 +468,7 @@ def process_form():
     print(simulation_active)
     print(bool(simulation_active == 'true'))
     password = request.form['master_password']
+    password = hash_password(password)
 
     # --- Process the data from the form
     # Process csv file
@@ -508,9 +546,7 @@ def master_login():
         return jsonify({'error': 'Tournament not found'}), 404
     else:
         tournament = get_tournament(tournament_id)
-        print(tournament.password)
-        print(password)
-        if tournament.password == password:
+        if check_password(password, tournament.password):
             response = make_response(redirect(url_for('dashboard', tournament_id=tournament_id)))
             return create_cookie(response, tournament_id, "master")
         else:
