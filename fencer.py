@@ -290,6 +290,10 @@ class Fencer:
                 "points_against": 0
             })
 
+        # Cookies
+        self.cookies = []
+
+
 
 
     def __str__(self) -> str:

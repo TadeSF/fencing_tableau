@@ -348,6 +348,11 @@ class Tournament:
         # Simulation
         self.simulation_active = simulation_active
 
+        # --------------------
+        # Cookies
+        self.master_cookies = []
+        self.referee_cookies = []
+
     
     # --- Properties ---
     
@@ -609,7 +614,7 @@ class Tournament:
             "current_group_rank": self.get_current_group_rank(match[opponent]) if self.stage == Stage.PRELIMINARY_ROUND else None,
         }
 
-    def get_fencer_hub_information(self, fencer_id: int, logged_in_as_fencer: bool = False) -> dict:
+    def get_fencer_hub_information(self, fencer_id: int) -> dict:
         fencer = self.get_fencer_object(fencer_id)
         if fencer:
             next_matches = []
@@ -659,7 +664,6 @@ class Tournament:
                         "data": fencer.difference_per_match_history
                     },
                 },
-                "logged_in_as_fencer": logged_in_as_fencer,
             }   
 
 

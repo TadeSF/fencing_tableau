@@ -180,59 +180,44 @@ def delete_old_tournaments():
 
 
 # ------- Login-Cookies -------
-def create_master_cookie(response: Response, tournament_id: str) -> Response:
+def create_cookie(response: Response, tournament_id: str, clearence: Literal["master", "referee", "fencer"], fencer_id: str = None) -> Response:
     """
     """
-    response.set_cookie('logged_in_master', 'true', max_age=60*60*24)
-    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
+    cookie_value = random_generator.cookie()
+    tournament = get_tournament(tournament_id)
+
+    if clearence == "master":
+        tournament.master_cookies.append(cookie_value)
+        response.set_cookie(tournament_id + "_master", cookie_value, max_age=60*60*24*7) # 7 days
+    if clearence == "referee":
+        tournament.referee_cookies.append(cookie_value)
+        response.set_cookie(tournament_id + "_referee", cookie_value, max_age=60*60*24*7) # 7 days
+    if clearence == "fencer":
+        tournament.get_fencer_by_id(fencer_id).cookies.append(cookie_value)
+        response.set_cookie(tournament_id + "_fencer_" + fencer_id, cookie_value, max_age=60*60*24*7) # 7 days
+
+    save_tournament(tournament)
+    print(f"Created {clearence} cookie for tournament {tournament_id} with value {cookie_value}")
     return response
 
-def create_referee_cookie(response: Response, tournament_id: str) -> Response:
+def check_logged_in(request: Request, tournament_id: str, clearence: Literal["master", "referee", "fencer"], fencer_id: str = None) -> bool:
     """
     """
-    response.set_cookie('logged_in_referee', 'true', max_age=60*60*24)
-    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
-    return response
+    if clearence == "master" or clearence == "referee":
+        for cookie_name, cookie_value in request.cookies.items():
+            if cookie_name == f"{tournament_id}_{clearence}":
+                if cookie_value in getattr(get_tournament(tournament_id), clearence + "_cookies"):
+                    print(f"Found {clearence} cookie for tournament {tournament_id} with value {cookie_value}")
+                    return True
+    
+    elif clearence == "fencer":
+        for cookie_name, cookie_value in request.cookies.items():
+            if cookie_name == f"{tournament_id}_{clearence}_{fencer_id}":
+                if cookie_value in get_tournament(tournament_id).get_fencer_by_id(fencer_id).cookies:
+                    print(f"Found {clearence} cookie for tournament {tournament_id} with value {cookie_value}")
+                    return True
 
-def create_fencer_cookie(response: Response, tournament_id: str, fencer_id: str) -> Response:
-    """
-    """
-    response.set_cookie('logged_in_fencer', 'true', max_age=60*60*24)
-    response.set_cookie('tournament', tournament_id, max_age=60*60*24)
-    response.set_cookie('fencer', fencer_id, max_age=60*60*24)
-    return response
-
-def check_logged_in_as_master(request: Request, tournament_id: str) -> bool:
-    """
-    """
-    if 'logged_in_master' in request.cookies:
-        if "tournament" in request.cookies:
-            if request.cookies['tournament'] == tournament_id:
-                print("Logged in")
-                return True
-    print("Not logged in")
-    return False
-
-def check_logged_in_as_referee(request: Request, tournament_id: str) -> bool:
-    """
-    """
-    if 'logged_in_referee' in request.cookies:
-        if "tournament" in request.cookies:
-            if request.cookies['tournament'] == tournament_id:
-                print("Logged in")
-                return True
-    print("Not logged in")
-    return False
-
-def check_logged_in_as_fencer(request: Request, tournament_id: str, fencer_id: str) -> bool:
-    """
-    """
-    if 'logged_in_fencer' in request.cookies:
-        if "tournament" in request.cookies:
-            if request.cookies['tournament'] == tournament_id:
-                if "fencer" in request.cookies:
-                    if request.cookies['fencer'] == fencer_id:
-                        return True
+    print(f"Did not find {clearence} cookie for tournament {tournament_id}")
     return False
 
 
@@ -483,7 +468,7 @@ def process_form():
         return jsonify({'success': False, 'error': 'Server Error', 'message': str(e)})
 
     response = make_response(jsonify({'success': True, 'tournament_id': tournament.id}))
-    return create_master_cookie(response, tournament.id)
+    return create_cookie(response, tournament.id, "master")
     
 
 
@@ -493,7 +478,7 @@ def check_login(tournament_id):
     """
     Flask processes a GET request to check if the user is logged in.
     """
-    if check_logged_in_as_master(request, tournament_id):
+    if check_logged_in(request, tournament_id, "master"):
         return jsonify({'success': True}), 200
     return jsonify({'success': False}), 200
 
@@ -527,7 +512,7 @@ def master_login():
         print(password)
         if tournament.password == password:
             response = make_response(redirect(url_for('dashboard', tournament_id=tournament_id)))
-            return create_master_cookie(response, tournament_id)
+            return create_cookie(response, tournament_id, "master")
         else:
             return jsonify({'error': 'Wrong password'}), 401
 
@@ -577,7 +562,18 @@ def login_fencer():
             'fencer_id': fencer.id,
             'description': str(fencer),
             }), 200)
-            return create_fencer_cookie(response, tournament_id, fencer.id)
+            return create_cookie(response, tournament_id, "fencer", fencer_id=fencer.id)
+
+@app.route('/<tournament_id>/check-fencer-login')
+def check_fencer_login(tournament_id):
+    """
+    Flask processes a GET request to check if the user is logged in.
+    """
+    fencer_id = request.args.get('fencer_id')
+    if check_logged_in(request, tournament_id, "fencer", fencer_id=fencer_id):
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 200
+
 
 
 @app.route('/login-referee', methods=['POST'])
@@ -751,7 +747,7 @@ def push_score(tournament_id):
     match_id = request.form['id']
 
     # Check if logged in as referee or master
-    if not check_logged_in_as_referee(request, tournament_id) and not check_logged_in_as_master(request, tournament_id):
+    if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master'):
         return jsonify({"success": False, "message": "User must be logged in as Master or Referee to input results!"}), 401
 
     green_score = int(request.form['green_score'])
@@ -937,12 +933,8 @@ def get_fencer(tournament_id, fencer_id):
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify({"success": False})
-
-    logged_in_as_fencer = False
-    if check_logged_in_as_fencer(request, tournament_id, fencer_id):
-        logged_in_as_fencer = True
         
-    return jsonify(tournament.get_fencer_hub_information(fencer_id, logged_in_as_fencer=logged_in_as_fencer))
+    return jsonify(tournament.get_fencer_hub_information(fencer_id))
 
 @app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
 def change_fencer_attribute(tournament_id, fencer_id):
@@ -1060,7 +1052,7 @@ def approve_tableau(tournament_id):
         group = request.args.get('group')
 
         # Check if Cookie for logged in fencer exists
-        if not check_logged_in_as_fencer(request, tournament_id, data['fencer_id']):
+        if not check_logged_in(request, tournament_id, "fencer", data['fencer_id']):
             return jsonify({"success": False, "message": "You are not logged in as the correct fencer."}), 403
         
         # Check if Cookie with device_id exists

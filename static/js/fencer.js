@@ -1,6 +1,9 @@
 const fencer_id = document.getElementById("body").dataset.fencer_id
 const tournament_id = document.getElementById("body").dataset.tournament_id
 
+let logged_in_fencer = false;
+let logged_in_master = false;
+
 
 // ---- Charts ----
 
@@ -221,7 +224,7 @@ async function update() {
                 document.getElementById("No-More-Matches").style.display = "block";
                 if (data["group_stage"] == true) {
                     document.getElementById("tableau-wrapper").style.display = "flex";
-                    if (data["approved_tableau"] == false && data["logged_in_as_fencer"] == true) {
+                    if (data["approved_tableau"] == false && logged_in_fencer == true) {
                         document.getElementById("approval-needed").style.display = "block";
                     } else {
                         document.getElementById("approval-needed").style.display = "none";
@@ -564,10 +567,44 @@ async function update() {
 
 
 window.onload = function () {
+    update();
     setTimeout(function () {
         document.getElementById('loading-screen').style.display = 'none';
     }, 1000);
-    update();
+
+    fetch("/" + tournament_id + "/check-fencer-login?fencer_id=" + fencer_id, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        if (data["success"] === true) {
+            document.getElementById("Button-ChangeInformationForm").style.display = "flex";
+            logged_in_fencer = true;
+            console.log("Logged in as fencer");
+        } else {
+            logged_in_fencer = false;
+        }
+    });
+
+    fetch("/" + tournament_id + "/check-login", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        if (data["success"] === true) {
+            document.getElementById("Button-ChangeInformationForm").style.display = "flex";
+            logged_in_master = true;
+            console.log("Logged in as master");
+        } else {
+            logged_in_master = false;
+        }
+    });
 }
 
 // Update every 10 seconds
