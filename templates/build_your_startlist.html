@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Startlist Builder</title>
+        <link rel="stylesheet" href="/static/css/build_your_startlist.css">
+        <link rel="stylesheet" href="/static/css/loading_screen.css">
+        <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+        <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    </head>
+    <body id="htmlbody" data-startlist_id="{{ startlist_id }}">
+        <div class="wrapper">
+            <div class="section">
+                <h1>Startlist Builder</h1>
+                <div class="container">
+                    <div class="head">
+                        <div class="head cell first-column index">#</div>
+                        <div class="head cell name">Name</div>
+                        <div class="head cell club">Club</div>
+                        <div class="head cell nationality">Nationality</div>
+                        <div class="head cell gender">Gender</div>
+                        <div class="head cell hand">Hand</div>
+                        <div class="head cell age">Age</div>
+                        <div class="head cell last-column delete"></div>
+                    </div>
+                    <div class="body"></div>
+                    <div class="footer">
+                        <div class="footer cell index first-column"></div>
+                        <div class="footer cell name">
+                            <input type="text" id="name" placeholder="Name">
+                        </div>
+                        <div class="footer cell club">
+                            <input type="text" id="club" placeholder="Club">
+                        </div>
+                        <div class="footer cell nationality">
+                            <input type="text" id="nationality-input" onkeyup="showSuggestions()" placeholder="Country-Code" oninput="this.value = this.value.toUpperCase()">
+                            <div id="nationality-dropdown" class="dropdown-content"></div>
+                        </div>
+                        <div class="footer cell gender">
+                            <select id="gender">
+                                <option value="">Select</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="D">Diverse</option>
+                            </select>
+                        </div>
+                        <div class="footer cell handedness">
+                            <select id="handedness">
+                                <option value="">Select</option>
+                                <option value="R">Right</option>
+                                <option value="L">Left</option>
+                            </select>
+                        </div>
+                        <div class="footer cell age">
+                            <input type="text" id="age" placeholder="Age">
+                        </div>
+                        <div class="footer cell last-column delete"><i class="fa-solid fa-plus" onclick="addFencer()"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button class="button" onclick="saveStartlist()">Save Startlist</button>
+        </div>
+        <p>Version: {{ version }}</p>
+        <script src="/static/js/build_your_startlist.js"></script>
+    </body>

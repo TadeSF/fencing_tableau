@@ -403,6 +403,95 @@ def example_startlist_download():
     except Exception as e:
         return str(e)
 
+@app.route('/build-your-startlist')
+def build_your_startlist():
+    """
+    """
+    startlist_id = request.args.get("id")
+    if startlist_id is None:
+        startlist_id = random_generator.id(10)
+        return redirect(url_for('build_your_startlist', id=startlist_id))
+
+    print(startlist_id)
+    if not os.path.exists("build_your_startlist"):
+        os.mkdir("build_your_startlist")
+        print("Created build_your_startlist folder")
+
+    if not os.path.exists(f"build_your_startlist/{startlist_id}.csv"):
+        with open(f"build_your_startlist/{startlist_id}.csv", "w") as f:
+            f.write("Name,Club,Nationality,Gender,Handedness,Age")
+
+    return render_template('build_your_startlist.html', version=APP_VERSION, startlist_id=startlist_id)
+
+@app.route('/build-your-startlist/get-startlist', methods=['GET'])
+def get_startlist():
+    """
+    """
+    startlist_id = request.args.get("id")
+
+    # try:
+    with open(f"build_your_startlist/{startlist_id}.csv", "r") as f:
+        data = csv.reader(f)
+        next(data)
+        return {"success": True, "startlist": [line for line in data]}
+
+    # except Exception as e:
+    #     return {"success": False, "message": str(e)}
+
+
+@app.route('/build-your-startlist/add-fencer', methods=['POST'])
+def add_fencer():
+    """
+    """
+    startlist_id = request.json.get("startlist_id")
+    name = request.json.get("name")
+    club = request.json.get("club")
+    nationality = request.json.get("nationality")
+    gender = request.json.get("gender")
+    handedness = request.json.get("handedness")
+    age = request.json.get("age")
+
+    try:
+        with open(f"build_your_startlist/{startlist_id}.csv", "a") as f:
+            f.write(f"\n{name},{club},{nationality},{gender},{handedness},{age}")
+            return {"success": True}
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+@app.route('/build-your-startlist/delete-fencer', methods=['POST'])
+def delete_fencer():
+    """
+    """
+    startlist_id = request.json.get("startlist_id")
+    row_number = request.json.get("row_number")
+
+    try:
+        with open(f"build_your_startlist/{startlist_id}.csv", "r") as f:
+            data = csv.reader(f)
+            lines = [",".join(line) + "\n" for line in data]
+            lines.pop(int(row_number))
+        with open(f"build_your_startlist/{startlist_id}.csv", "w") as f:
+            f.writelines(lines)
+            return {"success": True}
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+
+
+@app.route('/build-your-startlist/save-startlist', methods=['GET'])
+def save_startlist():
+    """
+    """
+    startlist_id = request.args.get("id")
+    try:
+        return send_file(f"build_your_startlist/{startlist_id}.csv", as_attachment=True)
+    except Exception as e:
+        return str(e)
+
+
 @app.route('/tournaments')
 def tournaments():
     """
