@@ -409,7 +409,7 @@ def build_your_startlist():
     """
     startlist_id = request.args.get("id")
     if startlist_id is None:
-        startlist_id = random_generator.id(10)
+        startlist_id = random_generator.id(20)
         return redirect(url_for('build_your_startlist', id=startlist_id))
 
     print(startlist_id)
@@ -472,6 +472,8 @@ def delete_fencer():
             data = csv.reader(f)
             lines = [",".join(line) + "\n" for line in data]
             lines.pop(int(row_number))
+            # remove the last "\n"
+            lines[-1] = lines[-1][:-1]
         with open(f"build_your_startlist/{startlist_id}.csv", "w") as f:
             f.writelines(lines)
             return {"success": True}
