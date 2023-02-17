@@ -226,9 +226,9 @@ svg {
 }
 @media screen and (max-width: 400px) {
   .container {
-    grid-template-columns: 3rem 40px 3fr 1fr repeat(2, 1fr);
+    grid-template-columns: 3rem 40px 3fr 1fr 1fr 1fr;
   }
-  .win-loose {
+  .win-lose {
     display: none;
   }
   #filter_form {
