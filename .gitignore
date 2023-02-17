@@ -8,3 +8,4 @@ update_server.sh
 tournaments/*
 tournament_cache/*
 approvals/*
+build_your_startlist/*
