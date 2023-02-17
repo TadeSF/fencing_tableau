@@ -209,11 +209,21 @@ svg {
 .header > .cell > i {
     font-size: 1.2em;
     margin: 0;
+    &:hover {
+        transform: translate(0, 0);
+        color: #000000;
+        cursor: auto;
+    }
 }
 
 .cell > i {
     font-size: 1em;
     margin: 0;
+    &:hover {
+        transform: translate(0, 0);
+        color: #000000;
+        cursor: inherit;
+    }
 }
 
 
