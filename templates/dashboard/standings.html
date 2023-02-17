@@ -8,65 +8,71 @@
   <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
   <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
   <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<body>
-  <div id="header">
-    <div class="header-wrapper">
-      <h1>Standings</h1>
-      <i class="fa-solid fa-sync" id="reload" onclick="get_standings()"></i>
-      <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
-      <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
-    </div>
-    <div class="header-wrapper">
-      <form id="filter_form">
-        <select id="group_filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}"
-          onchange="get_standings()">
-          <option value="">All Groups</option>
-        </select>
-        <select id="gender_filter" onchange="get_standings()">
-          <option value="">All Genders</option>
-          <option value="M">Male</option>
-          <option value="F">Female</option>
-          <option value="D">Diverse</option>
-        </select>
-        <select id="handedness_filter" onchange="get_standings()">
-          <option value="">All Handedness</option>
-          <option value="R">Right</option>
-          <option value="L">Left</option>
-        </select>
-        <select id="age_filter" onchange="get_standings()">
-          <option value="">All Ages</option>
-          <option value="0-17">Under 18</option>
-          <option value="18-23">18-23</option>
-          <option value="24-30">24-30</option>
-          <option value="31-40">31-40</option>
-          <option value="41-50">41-50</option>
-          <option value="51-100">Over 50</option>
-        </select>
-      </form>
+<body id="htmlbody" data-tournament_id="{{ tournament_id }}">
+  <div class="wrapper">
+    <div class="section">
+      <div id="header">
+        <div class="header-wrapper">
+          <h1>Standings</h1>
+          <i class="fa-solid fa-sync" id="reload" onclick="get_standings()"></i>
+          <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
+          <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
+        </div>
+        <div class="header-wrapper">
+          <form id="filter_form">
+            <select id="group_filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}"
+              onchange="get_standings()">
+              <option value="">All Groups</option>
+            </select>
+            <select id="gender_filter" onchange="get_standings()">
+              <option value="">All Genders</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="D">Diverse</option>
+            </select>
+            <select id="handedness_filter" onchange="get_standings()">
+              <option value="">All Handedness</option>
+              <option value="R">Right</option>
+              <option value="L">Left</option>
+            </select>
+            <select id="age_filter" onchange="get_standings()">
+              <option value="">All Ages</option>
+              <option value="0-17">Under 18</option>
+              <option value="18-23">18-23</option>
+              <option value="24-30">24-30</option>
+              <option value="31-40">31-40</option>
+              <option value="41-50">41-50</option>
+              <option value="51-100">Over 50</option>
+            </select>
+          </form>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="header">
+          <div class="cell first-column rank"><i class="fa-solid fa-arrow-down-1-9"></i></div>
+          <div class="cell flag"><i class="fa-solid fa-flag"></i></div>
+          <div class="cell name"><i class="fa-solid fa-signature"></i></div>
+          <div class="cell club"><i class="fa-solid fa-house-flag"></i></div>
+          <div class="cell win-percent"><i class="fa-solid fa-percent"></i></div>
+          <div class="cell win-lose"><i class="fa-solid fa-square-check"></i><div> | </div><i class="fa-solid fa-square-xmark"></i></div>
+          <div class="cell point-difference last-column-very-small"><i class="fa-solid fa-plus-minus"></i></div>
+          <div class="cell points-for"><i class="fa-solid fa-plus"></i></div>
+          <div class="cell points-against last-column-small"><i class="fa-solid fa-minus"></i></div>
+          <div class="cell gender"><i class="fa-solid fa-venus-mars"></i></div>
+          <div class="cell handedness"><i class="fa-solid fa-hand"></i></div>
+          <div class="cell last-column age"><i class="fa-solid fa-hourglass-half"></i></div>
+        </div>
+
+        <div class="body" id="tablebody">
+        </div>
+      </div>
+      <div style="height: 40px;"></div>
     </div>
   </div>
-
-  <table id="standings_table">
-    <thead>
-      <tr>
-        <th style="display: none;"></th>
-        <th style="text-align: right;">#</th>
-        <th></th>
-        <th style="text-align: left;">Name</th>
-        <th>Club</th>
-        <th>W%</th>
-        <th>W - L</th>
-        <th>PD</th>
-        <th>P+</th>
-        <th>P-</th>
-      </tr>
-    </thead>
-    <tbody id="main_standings">
-    </tbody>
-  </table>
-  <div style="height: 40px;"></div>
   <script src="/static/js/standings.js"></script>
 </body>
 

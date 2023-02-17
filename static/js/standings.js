@@ -52,8 +52,6 @@ function get_standings() {
         full_query += age_query
     }
 
-    console.log(full_query)
-
 
     fetch('standings/update' + full_query)
     .then(response => response.json())
@@ -88,14 +86,8 @@ function get_flag(country) {
 
 const flagCache = {};
 
-function clearTable(table) {
-    // Get the first row (the row that contains the headers)
-    var firstRow = table.rows[0];
-
-    // Clear the table, starting from the second row (the first row is the row that contains the headers)
-    while (table.rows.length > 1) {
-        table.deleteRow(1);
-    }
+function clearTable() {
+    document.getElementById('tablebody').innerHTML = "";
 }
 
 
@@ -108,105 +100,117 @@ async function update_standings(rankings, stage, max_elimination_ranks) {
 
     // Add the new, updated rows
     for (const element of rankings) {
-        let row = document.createElement('tr')
-        let id = document.createElement('td')
-        id.style.display = "none"
-        let rank = document.createElement('td')
-        let nationality = document.createElement('td')
-        let name = document.createElement('td')
-        let club = document.createElement('td')
-        let win_percentage = document.createElement('td')
-        let win_lose = document.createElement('td')
-        let point_difference = document.createElement('td')
-        let points_for = document.createElement('td')
-        let points_against = document.createElement('td')
+        let item = document.createElement('div')
+        item.classList.add("item")
+        item.dataset.fencer_id = element["id"]
 
-        let id_text = document.createTextNode(element["id"])
-        let rank_text = document.createTextNode(element["rank"])
-        let name_text = document.createTextNode(element["name"])
-        let club_text = document.createTextNode(element["club"])
-
-        if (element["nationality"].length == 3) {
-            let flag = document.createElement('div')
-            flag.className = "flag"
-            // Load the SVG string from the server
-            let svgString = await get_flag(element["nationality"]);
-
-            // Parse the SVG string into a DocumentFragment
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(svgString, 'image/svg+xml');
-            let svg = doc.querySelector('svg');
-
-            // Append the DocumentFragment to the flag element
-            flag.appendChild(svg);
-
-            // Set the width of the SVG
-            svg.style.width = '30px';
-            nationality.appendChild(flag)
+        let rank = document.createElement('div')
+        rank.classList.add("cell", "first-column", "rank")
+        if (element["rank"] == 1) {
+            rank.innerHTML = '<i class="fa-solid fa-medal"></i>'
+            rank.style.fontSize = "0.85em"
         } else {
-            let nationality_text = document.createTextNode(element["nationality"])
-            nationality.appendChild(nationality_text)
+            rank.innerHTML = element["rank"]
+        }
+        
+        let flag = document.createElement('div')
+        flag.classList.add("cell", "flag")
+        let svgString = await get_flag(element["nationality"]);
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(svgString, 'image/svg+xml');
+        let svg = doc.querySelector('svg');
+        flag.appendChild(svg);
+        
+        let name = document.createElement('div')
+        name.classList.add("cell", "name")
+        name.innerHTML = element["name"]
+        
+        let club = document.createElement('div')
+        club.classList.add("cell", "club")
+        club.innerHTML = element["club"]
+
+        let win_percentage = document.createElement('div')
+        win_percentage.classList.add("cell", "win-percentage")
+        win_percentage.innerHTML = element["win_percentage"]
+
+        let win_lose = document.createElement('div')
+        win_lose.classList.add("cell", "win-lose")
+        if (element["win_lose"] == undefined) {element["win_lose"] = "0-0"}
+        win_lose.innerHTML = element["win_lose"]
+
+        let point_difference = document.createElement('div')
+        point_difference.classList.add("cell", "point-difference", "last-column-very-small")
+        if (element["points_difference"] == undefined || element["points_difference"] == "0") {element["points_difference"] = "±0"}
+        point_difference.innerHTML = element["points_difference"]
+
+        let points_for = document.createElement('div')
+        points_for.classList.add("cell", "points-for")
+        points_for.innerHTML = element["points_for"]
+
+        let points_against = document.createElement('div')
+        points_against.classList.add("cell", "points-against", "last-column-small")
+        points_against.innerHTML = element["points_against"]
+
+        let gender = document.createElement('div')
+        gender.classList.add("cell", "gender")
+        if (element["gender"] == "M") {
+            gender.innerHTML = '<i class="fa-solid fa-mars"></i>'
+        } else if (element["gender"] == "F") {
+            gender.innerHTML = '<i class="fa-solid fa-venus"></i>'
+        } else if (element["gender"] == "D") {
+            gender.innerHTML = '<i class="fa-solid fa-genderless"></i>'
+        } else {
+            gender.innerHTML == ''
         }
 
-        let win_percentage_text = document.createTextNode(element["win_percentage"])
-        if (element["win_lose"] == undefined) {element["win_lose"] = "0-0"}
-        let win_lose_text = document.createTextNode(element["win_lose"])
-        if (element["points_difference"] == undefined || element["points_difference"] == "0") {element["points_difference"] = "±0"}
-        let point_difference_text = document.createTextNode(element["points_difference"])
-        let points_for_text = document.createTextNode(element["points_for"])
-        let points_against_text = document.createTextNode(element["points_against"])
+            
+            let handedness = document.createElement('div')
+        handedness.classList.add("cell", "handedness")
+        handedness.innerHTML = element["handedness"]
 
-        id.appendChild(id_text)
-        rank.appendChild(rank_text)
-        name.appendChild(name_text)
-        club.appendChild(club_text)
-        win_percentage.appendChild(win_percentage_text)
-        win_lose.appendChild(win_lose_text)
-        point_difference.appendChild(point_difference_text)
-        points_for.appendChild(points_for_text)
-        points_against.appendChild(points_against_text)
+        let age = document.createElement('div')
+        age.classList.add("cell", "age", "last-column")
+        age.innerHTML = element["age"]
 
-        nationality.className = "cell-nationality"
-        name.className = "cell-name"
-        rank.className = "cell-rank"
-
-        row.appendChild(id)
-        row.appendChild(rank)
-        row.appendChild(nationality)
-        row.appendChild(name)
-        row.appendChild(club)
-        row.appendChild(win_percentage)
-        row.appendChild(win_lose)
-        row.appendChild(point_difference)
-        row.appendChild(points_for)
-        row.appendChild(points_against)
+        item.appendChild(rank)
+        item.appendChild(flag)
+        item.appendChild(name)
+        item.appendChild(club)
+        item.appendChild(win_percentage)
+        item.appendChild(win_lose)
+        item.appendChild(point_difference)
+        item.appendChild(points_for)
+        item.appendChild(points_against)
+        item.appendChild(gender)
+        item.appendChild(handedness)
+        item.appendChild(age)
 
         if (stage !== "Preliminary Round") {
             if (element["eliminated"] === true && stage !== "Finished") {
-                row.classList.add("eliminated")
+                item.classList.add("eliminated")
             } else if (element["eliminated"] === true && stage === "Finished") {
-                row.classList.add("normal")
+                item.classList.add("normal")
             } else {
-                row.classList.add("not-eliminated")
+                item.classList.add("not-eliminated")
             }
             if (element["rank"] <= 3) {
-                row.classList.add("podium")
+                item.classList.add("podium")
             }
         } else {
             if (element["rank"] <= max_elimination_ranks) {
-                row.classList.add("advancing")
+                item.classList.add("advancing")
             } else if (max_elimination_ranks == null) {
-                row.classList.add("normal")
+                item.classList.add("normal")
             } else {
-                row.classList.add("eliminated")
+                item.classList.add("eliminated")
             }
         }
 
-        row.onclick = function() {
+        item.onclick = function() {
             open_fencer_window(element["id"])
         }
 
-        standings.appendChild(row)
+        document.getElementById("tablebody").appendChild(item)
     }
 }
 
@@ -242,13 +246,6 @@ window.onload = function() {
         document.getElementById("open_in_new_tab").style.display = "none"
         get_standings()
     }
-
-    // adjust the top position for the sticky table header
-    let headers = document.getElementsByTagName("th")
-    for (let i = 0; i < headers.length; i++) {
-        headers[i].style.top = header.offsetHeight + "px"
-    }
-    console.log(headers)
 
 }
 

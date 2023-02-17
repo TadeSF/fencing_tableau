@@ -412,7 +412,6 @@ def build_your_startlist():
         startlist_id = random_generator.id(20)
         return redirect(url_for('build_your_startlist', id=startlist_id))
 
-    print(startlist_id)
     if not os.path.exists("build_your_startlist"):
         os.mkdir("build_your_startlist")
         print("Created build_your_startlist folder")
@@ -486,6 +485,10 @@ def delete_fencer():
 @app.route('/build-your-startlist/save-startlist', methods=['GET'])
 def save_startlist():
     """
+    This function is responsible for saving a startlist, which is a list of fencers and their corresponding bout numbers, to a CSV file.
+    The function is called when the user clicks the button to save a startlist. The function takes the ID of the startlist as an argument
+    and then creates a CSV file by calling the send_file() function. The file is named fencing_startlist_{startlist_id}.csv and is 
+    automatically downloaded by the user's browser.
     """
     startlist_id = request.args.get("id")
     try:
@@ -908,7 +911,7 @@ def standings(tournament_id):
         group = request.args.get('group')
         if group is None:
             group = ""
-        return render_template('/dashboard/standings.html', requested_group=group, num_groups=tournament.get_num_groups())
+        return render_template('/dashboard/standings.html', requested_group=group, num_groups=tournament.get_num_groups(), tournament_id=tournament_id)
 
 @app.route('/<tournament_id>/standings/update')
 def get_standings(tournament_id):

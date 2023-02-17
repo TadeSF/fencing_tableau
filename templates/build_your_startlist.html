@@ -26,43 +26,80 @@
                     </div>
                     <div class="body"></div>
                     <div class="footer">
-                        <div class="footer cell index first-column"></div>
-                        <div class="footer cell name">
-                            <input type="text" id="name" placeholder="Name">
-                        </div>
-                        <div class="footer cell club">
-                            <input type="text" id="club" placeholder="Club">
-                        </div>
-                        <div class="footer cell nationality">
-                            <input type="text" id="nationality-input" onkeyup="showSuggestions()" placeholder="Country-Code" oninput="this.value = this.value.toUpperCase()">
-                            <div id="nationality-dropdown" class="dropdown-content"></div>
-                        </div>
-                        <div class="footer cell gender">
-                            <select id="gender">
-                                <option value="">Select</option>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                                <option value="D">Diverse</option>
-                            </select>
-                        </div>
-                        <div class="footer cell handedness">
-                            <select id="handedness">
-                                <option value="">Select</option>
-                                <option value="R">Right</option>
-                                <option value="L">Left</option>
-                            </select>
-                        </div>
-                        <div class="footer cell age">
-                            <input type="text" id="age" placeholder="Age">
-                        </div>
-                        <div class="footer cell last-column delete"><i class="fa-solid fa-plus" onclick="addFencer()"></i></div>
+                        <form style="display: contents;">
+                            <div class="footer cell index first-column"></div>
+                            <div class="footer cell name">
+                                <input type="text" id="name" placeholder="Name" required>
+                            </div>
+                            <div class="footer cell club">
+                                <input type="text" id="club" placeholder="Club" required>
+                            </div>
+                            <div class="footer cell nationality">
+                                <input type="text" id="nationality-input" onkeyup="showSuggestions()" placeholder="Country-Code" oninput="this.value = this.value.toUpperCase()" required>
+                                <div id="nationality-dropdown" class="dropdown-content"></div>
+                            </div>
+                            <div class="footer cell gender">
+                                <select id="gender">
+                                    <option value="">Select</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                    <option value="D">Diverse</option>
+                                </select>
+                            </div>
+                            <div class="footer cell handedness">
+                                <select id="handedness">
+                                    <option value="">Select</option>
+                                    <option value="R">Right</option>
+                                    <option value="L">Left</option>
+                                </select>
+                            </div>
+                            <div class="footer cell age">
+                                <input type="text" id="age" placeholder="Age">
+                            </div>
+                            <div class="footer cell last-column delete"><i class="fa-solid fa-plus" onclick="addFencer()"></i></div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
         <div>
-            <button class="button" onclick="saveStartlist()">Save Startlist</button>
+            <div class="Button-Block" onclick="saveStartlist()">Download Startlist</div>
         </div>
+        <br><br>
+
+        <!-- <h1 id="Startlist-Instructions">The Startlist File</h1>
+        <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following
+            columns (with one header line) are required:</p>
+        <ul>
+            <li><b>Name</b>: The name of the fencer</li>
+            <li><b>Club</b>: The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT
+                "Turngemeinde in Berlin 1848 e.V.", but "TIB")</li>
+            <li><b>Nationality</b>: The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g.
+                "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)</li>
+            <li><b>Gender</b> (optional): The gender of the fencer. Must be either
+                <ul>
+                    <li>"M"</li>
+                    <li>"F"</li>
+                    <li>"D" for divers</li>
+                </ul>
+            </li>
+            <li><b>Handedness</b> (optional): The handedness of the fencer. Must be either
+                <ul>
+                    <li>"R"</li>
+                    <li>"L"</li>
+                </ul>
+            </li>
+            <li><b>Age</b> (optional): The age of the fencer. Must be a positiv integer, either
+                <ul>
+                    <li>(preferably) the age (e.g. 23)</li>
+                    <li>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday
+                        information)</li>
+                    <li>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</li>
+                </ul>
+            </li>
+        </ul>
+        </p>
+        <br><br> -->
         <p>Version: {{ version }}</p>
         <script src="/static/js/build_your_startlist.js"></script>
     </body>

@@ -5,11 +5,20 @@ body {
   color: rgb(0, 0, 0);
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  position: sticky;
-  margin: 0 auto;
+.wrapper {
+  width: calc(100vw - 20px);
+  max-width: 1000px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section {
+  background-color: #eee;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 h1, h2 {
@@ -18,8 +27,6 @@ h1, h2 {
 }
 
 #header {
-  background-color: white;
-  position: sticky;
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 100%;
@@ -55,91 +62,12 @@ i:hover {
   transform: translate(-2px, -2px);
 }
 
-th {
-  position: sticky;
-  background-color: #c8c8c8;
-  color: #000000;
-  z-index: 1;
-}
-
-th, td {
-  text-align: center;
-  border-bottom: 0.5px solid #ddd;
-}
-
-tr {
-  height: 30px;
-}
-
-thead {
-  top: 0;
-  background-color: #c8c8c8;
-  color: #000000;
-}
-
-.cell-rank {
-  text-align: right;
-}
-
-.cell-name {
-  text-align: left;
-}
-
-.cell-nationality {
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-.normal,
-.eliminated,
-.not-eliminated,
-.advancing {
-  transition: 0.3s;
-  cursor: pointer;
-}
-
-.normal {
-  background-color: rgb(255, 255, 255);
-}
-
-.eliminated {
-  background-color: rgb(255, 202, 202);
-}
-
-.not-eliminated {
-  background-color: rgb(255, 255, 255);
-}
-
-.advancing {
-  background-color: rgb(202, 255, 202);
-}
-
-.normal:hover,
-.eliminated:hover,
-.not-eliminated:hover,
-.advancing:hover {
-  background-color: rgb(203, 203, 203);
-  transition: 0.3s;
-}
-
-.normal:active,
-.eliminated:active,
-.not-eliminated:active,
-.advancing:active {
-  background-color: rgb(255, 238, 0);
-  color: rgb(68, 68, 68);
-}
-
-.podium {
-  font-weight: bold;
-}
-
 form {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   padding: 1em;
-  background-color: #e2e2e2;
+  background-color: white;
   border-radius: 5px;
 }
 
@@ -172,6 +100,84 @@ form select:focus {
   text-align: center;
 }
 
+.container {
+  display: grid;
+  grid-template-columns: 3rem 40px 3fr 1fr repeat(5, 1fr) repeat(3, 1fr);
+  row-gap: 10px;
+  align-items: stretch;
+  justify-items: stretch;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5px;
+}
+
+.header, .body, .item {
+  display: contents;
+}
+
+.item > * {
+  background-color: #fff;
+  transition: 0.3s ease-in-out;
+}
+
+.item:hover > .cell {
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  transform: translate(-3px, -3px);
+  cursor: pointer;
+}
+
+.header .cell {
+  background-color: #eee;
+}
+
+.first-column {
+  border-radius: 10px 0 0 10px;
+}
+
+.last-column {
+  border-radius: 0 10px 10px 0;
+}
+
+.flag {
+  padding: 0;
+}
+
+svg {
+  width: 30px;
+  height: 40px;
+}
+
+.name {
+  justify-content: start;
+  width: 100%;
+  padding-left: 10px;
+  text-align: left;
+}
+
+.podium .name {
+  font-weight: bold;
+}
+
+.eliminated > * {
+  background-color: #333;
+  color: #fff;
+}
+
+.header > .cell > i {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+.cell > i {
+  font-size: 1em;
+  margin: 0;
+}
+
 /* Breakpoint 800px */
 @media screen and (max-width: 1000px) {
   #header {
@@ -179,5 +185,43 @@ form select:focus {
   }
   .header-wrapper {
     justify-content: center;
+  }
+}
+@media screen and (max-width: 800px) {
+  .container {
+    grid-template-columns: 3rem 40px 3fr 1fr repeat(5, 1fr);
+  }
+  .gender, .handedness, .age {
+    display: none;
+  }
+  .last-column-small {
+    border-radius: 0 10px 10px 0;
+  }
+}
+@media screen and (max-width: 600px) {
+  .container {
+    grid-template-columns: 3rem 40px 3fr 1fr repeat(3, 1fr);
+  }
+  .points-against, .points-for {
+    display: none;
+  }
+  .last-column-very-small {
+    border-radius: 0 10px 10px 0;
+  }
+}
+@media screen and (max-width: 500px) {
+  body {
+    font-size: 12px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .container {
+    grid-template-columns: 3rem 40px 3fr 1fr repeat(2, 1fr);
+  }
+  .win-loose {
+    display: none;
+  }
+  #filter_form {
+    grid-template-columns: 1fr 1fr;
   }
 }/*# sourceMappingURL=standings.css.map */
