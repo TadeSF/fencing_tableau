@@ -3,6 +3,7 @@ body {
     font-size: 14px;
     text-align: center;
     margin: 0;
+    overflow-x: hidden;
 }
 
 h2 {
@@ -24,19 +25,67 @@ br {
 .Wrapper {
     width: calc(100% - 20px);
     padding: 10px 0;
-    max-width: 420px;
     margin-left: auto;
     margin-right: auto;
 }
 
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:  ". Head-Section ."
+                "Performance-Section Next-Match-Section Statistics-Section"
+                "Fencer-Information-Section Next-Match-Section Statistics-Section"
+                ". Bug-Section ."
+    ;
+    gap: 10px;
+    height: 100%;
+}
+
 .Section {
-    background-color: #f0f0f0;
+    background-color: #eee;
     border-radius: 8px;
     padding: 10px 20px;
-    margin-bottom: 10px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+}
+
+.Head-Section {
+    grid-area: Head-Section;
+}
+
+.Performance-Section {
+    grid-area: Performance-Section;
+}
+
+#Next-Match-Section {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+#Next-Opponents {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+    align-self: start;
+}
+
+#No-More-Matches {
+    grid-column: 2 / 3;
+    grid-row: 2 / 4;
+    align-self: start;
+}
+
+.Statistics-Section {
+    grid-area: Statistics-Section;
+    align-self: start;
+}
+
+.Fencer-Information-Section {
+    grid-area: Fencer-Information-Section;
+    align-self: start;
+}
+
+.Bug-Section {
+    grid-area: Bug-Section;
+    justify-self: center;
 }
 
 .Name-Banner,
@@ -51,7 +100,7 @@ br {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    font-size: 18px;
+    font-size: 1.2rem;
     margin-bottom: 10px;
 }
 
@@ -138,21 +187,21 @@ br {
 .Next-Piste-Block-Description,
 .Statistics-Block-Description,
 .Information-Block-Description {
-    font-size: 12px;
+    font-size: 0.8rem;
 }
 
 .Standing-Block-Number,
 .Next-Piste-Block-Number {
-    font-size: 40px;
+    font-size: 2.8rem;
 }
 
 .Statistics-Block-Number,
 .Information-Block-Number {
-    font-size: 30px;
+    font-size: 2rem;
 }
 
 .Title {
-    font-size: 18px;
+    font-size: 1.2rem;
     margin-top: 15px;
     margin-bottom: 10px;
 }
@@ -196,8 +245,8 @@ br {
     margin: 0;
     margin-left: 10px;
     margin-right: 10px;
-    font-size: 12px;
-    transition: all 0.5s;
+    font-size: 0.8rem;
+    transition: all 0.3s;
     max-height: 0;
     padding: 0;
     overflow: hidden;
@@ -237,6 +286,7 @@ br {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
+    width: calc(100% - 20px) !important;
 }
 
 form {
@@ -257,7 +307,7 @@ form select {
     outline: none;
     width: 100%;
     padding: 0.6em;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     border: 1px solid #000000;
     border-radius: 4px;
     box-sizing: border-box;
@@ -283,7 +333,7 @@ form select:focus {
 form input[type="text"] {
     width: 100%;
     padding: 0.6em;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     border: 1px solid #333;
     border-radius: 4px;
     box-sizing: border-box;
@@ -307,7 +357,7 @@ form input[type="submit"] {
     width: 100%;
     font-weight: bold;
     padding: 0.6em;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     color: #fff;
     background-color: #333;
     border: none;
@@ -322,9 +372,141 @@ form input[type="submit"]:hover {
     cursor: pointer;
 }
 
-@media only screen and (max-width: 410px) {
+$fencer-red: #e71818;
+$fencer-green: #007000;
+
+@keyframes blink-red {
+    0% {
+        background-color: $fencer-red;
+        color: white
+    }
+    25% {
+        background-color: $fencer-red;
+        color: white
+    }
+    50% {
+        background-color: #ffffff;
+        color: black;
+    }
+    75% {
+        background-color: #ffffff;
+        color: black;
+    }
+    100% {
+        background-color: $fencer-red;
+        color: white;
+    }
+}
+
+@keyframes blink-green {
+    0% {
+        background-color: $fencer-green;
+        color: white
+    }
+    25% {
+        background-color: $fencer-green;
+        color: white
+    }
+    50% {
+        background-color: #ffffff;
+        color: black;
+    }
+    75% {
+        background-color: #ffffff;
+        color: black;
+    }
+    100% {
+        background-color: $fencer-green;
+        color: white;
+    }
+}
+
+.piste-tba {
+    background-color: #ffd500;
+    color: black;
+}
+
+.piste-staged-red {
+    animation: blink-red 2s infinite;
+}
+
+.piste-staged-green {
+    animation: blink-green 2s infinite;
+}
+
+.piste-ongoing-red {
+    color: white;
+    background-color: $fencer-red;
+}
+
+.piste-ongoing-green {
+    color: white;
+    background-color: $fencer-green;
+}
+
+
+
+
+
+
+
+@media screen and (max-width: 410px) {
+    body {
+        font-size: 12px;
+    }
     .Statistics-Wrapper {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(8, auto);
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .Head-Section {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+    }
+    
+    .Performance-Section {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+    }
+    
+    #Next-Match-Section {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+    }
+    
+    #Next-Opponents {
+        grid-column: 1 / 2;
+        grid-row: 4 / 5;
+    }
+    
+    #No-More-Matches {
+        grid-column: 1 / 2;
+        grid-row: 5 / 6;
+    }
+    
+    .Statistics-Section {
+        grid-column: 1 / 2;
+        grid-row: 6 / 7;
+    }
+    
+    .Fencer-Information-Section {
+        grid-column: 1 / 2;
+        grid-row: 7 / 8;
+    }
+    
+    .Bug-Section {
+        grid-column: 1 / 2;
+        grid-row: 8 / 9;
+        justify-self: stretch;
     }
 }

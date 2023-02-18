@@ -13,184 +13,186 @@
 </head>
 <body id="body" data-tournament_id="{{ tournament_id }}" data-fencer_id="{{ fencer_id }}">
     <div class="Wrapper">
-        <div class="Section">
-            <h1>Fencer Hub</h1>
-            <div class="Name-Banner" id="Name-Banner">
-                <div id="Main-Flag"></div>
-                <div id="Main-Name">{{ name }} ({{ club }})</div>
-            </div>
-        </div>
-        <div class="Section">
-            <h2>Performance Overview</h2>
-            <div class="Standing-Wrapper">
-                <div class="Standing-Block" onclick="standings('all')">
-                    <div class="Standing-Block-Description">Overall</div>
-                    <div class="Standing-Block-Number" id="Current_Standing"></div>
-                </div>
-                <div class="Standing-Block" id="Group-Standing-Block" onclick="standings('group')">
-                    <div class="Standing-Block-Description">Group <span id="Group_Number"></span></div>
-                    <div class="Standing-Block-Number" id="Group_Standing"></div>
+        <div class="container">
+            <div class="Section Head-Section">
+                <h1>Fencer Hub</h1>
+                <div class="Name-Banner" id="Name-Banner">
+                    <div id="Main-Flag"></div>
+                    <div id="Main-Name">{{ name }} ({{ club }})</div>
                 </div>
             </div>
-            <br>
-            <h2>Last 5 Matches</h2>
-            <div class="Streak-Wrapper" id="Streak">
-                <div class="Streak-Block" id="Streak-5">-</div>
-                <div class="Streak-Block" id="Streak-4">-</div>
-                <div class="Streak-Block" id="Streak-3">-</div>
-                <div class="Streak-Block" id="Streak-2">-</div>
-                <div class="Streak-Block" id="Streak-1">-</div>
-            </div>
-            <div style="font-size: 12px; text-align: right; padding-right: 10px;">recent</div>
-        </div>
-        <div class="Section" id="Next-Match-Section">
-            <div class="Next-Match">
-                <h2 id="Next-Piste-Title">Upcoming Match</h2>
-                <div class="Next-Piste-Wrapper">
-                    <div class="Next-Piste-Block" id="Next-Piste-Block">
-                        <div class="Next-Piste-Block-Description">Piste</div>
-                        <div class="Next-Piste-Block-Number" id="Next-Piste-Number">TBA</div>
+            <div class="Section Performance-Section">
+                <h2>Performance Overview</h2>
+                <div class="Standing-Wrapper">
+                    <div class="Standing-Block" onclick="standings('all')">
+                        <div class="Standing-Block-Description">Overall</div>
+                        <div class="Standing-Block-Number" id="Current_Standing"></div>
+                    </div>
+                    <div class="Standing-Block" id="Group-Standing-Block" onclick="standings('group')">
+                        <div class="Standing-Block-Description">Group <span id="Group_Number"></span></div>
+                        <div class="Standing-Block-Number" id="Group_Standing"></div>
                     </div>
                 </div>
-                <div class="piste_helper" id="piste_helper">Hello World</div>
-                <div class="Match Information">
-                    <div>
-                        <div class="Title">Against:</div>
-                        <div class="Fencer-Banner-Opponent" id="Next-Match-Fencer">
-                            <div class="Next-Match-Flag"></div>
-                            <div class="Next-Match-Name"></div>
+                <br>
+                <h2>Last 5 Matches</h2>
+                <div class="Streak-Wrapper" id="Streak">
+                    <div class="Streak-Block" id="Streak-5">-</div>
+                    <div class="Streak-Block" id="Streak-4">-</div>
+                    <div class="Streak-Block" id="Streak-3">-</div>
+                    <div class="Streak-Block" id="Streak-2">-</div>
+                    <div class="Streak-Block" id="Streak-1">-</div>
+                </div>
+                <div style="font-size: 12px; text-align: right; padding-right: 10px;">recent</div>
+            </div>
+            <div class="Section" id="Next-Match-Section">
+                <div class="Next-Match">
+                    <h2 id="Next-Piste-Title">Upcoming Match</h2>
+                    <div class="Next-Piste-Wrapper">
+                        <div class="Next-Piste-Block" id="Next-Piste-Block">
+                            <div class="Next-Piste-Block-Description">Piste</div>
+                            <div class="Next-Piste-Block-Number" id="Next-Piste-Number">TBA</div>
+                        </div>
+                    </div>
+                    <div class="piste_helper" id="piste_helper">Hello World</div>
+                    <div class="Match Information">
+                        <div>
+                            <div class="Title">Against:</div>
+                            <div class="Fencer-Banner-Opponent" id="Next-Match-Fencer">
+                                <div class="Next-Match-Flag"></div>
+                                <div class="Next-Match-Name"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="Standing-Wrapper" id="tableau-wrapper-matches" style="margin-bottom: 10px;">
+                        <div class="Standing-Block" id="view_tableau" style="margin-right: auto; margin-left: auto;" onclick="viewTableau()">View Tableau</div>
+                    </div>
+                </div>
+            </div>
+            <div class="Section" id="Next-Opponents">
+                <h2>Upcoming Opponents</h2>
+                <div id="Opponents-Wrapper"></div>
+            </div>
+            <div class="Section" id="No-More-Matches" style="display: none;">
+                <div class="Next-Match">
+                    <h2>Matches Finished</h2>
+                    <p>You finished all matches in the current round.</p>
+                    <div class="Standing-Wrapper" id="tableau-wrapper" style="display: none;">
+                        <div class="Standing-Block" id="view_tableau" onclick="viewTableau()">View Tableau</div>
+                    </div>
+                    <br>
+                    <div id="approval-needed">
+                        <h2>Approve Group Tableau</h2>
+                        <div class="Standing-Wrapper" style="margin-top: 10px;">
+                            <div class="Standing-Block" id="report_issue" onclick="report_issue('group')">Report Issue</div>
+                            <div class="Standing-Block" id="approve_tableau" onclick="approve_tableau('group')">Approve</div>
                         </div>
                     </div>
                 </div>
-                <br>
-                <div class="Standing-Wrapper" id="tableau-wrapper-matches" style="margin-bottom: 10px;">
-                    <div class="Standing-Block" id="view_tableau" style="margin-right: auto; margin-left: auto;" onclick="viewTableau()">View Tableau</div>
-                </div>
             </div>
-        </div>
-        <div class="Section" id="Next-Opponents">
-            <h2>Upcoming Opponents</h2>
-            <div id="Opponents-Wrapper"></div>
-        </div>
-        <div class="Section" id="No-More-Matches" style="display: none;">
-            <div class="Next-Match">
-                <h2>Matches Finished</h2>
-                <p>You finished all matches in the current round.</p>
-                <div class="Standing-Wrapper" id="tableau-wrapper" style="display: none;">
-                    <div class="Standing-Block" id="view_tableau" onclick="viewTableau()">View Tableau</div>
-                </div>
-                <br>
-                <div id="approval-needed">
-                    <h2>Approve Group Tableau</h2>
-                    <div class="Standing-Wrapper" style="margin-top: 10px;">
-                        <div class="Standing-Block" id="report_issue" onclick="report_issue('group')">Report Issue</div>
-                        <div class="Standing-Block" id="approve_tableau" onclick="approve_tableau('group')">Approve</div>
+            <div class="Section Statistics-Section">
+                <h2>Statistics</h2>
+                <h3>Wins/Losses</h3>
+                <div class="Statistics-Wrapper">
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Matches</div>
+                        <div class="Statistics-Block-Number" id="Matches"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Victories</div>
+                        <div class="Statistics-Block-Number" id="Victories"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Defeats</div>
+                        <div class="Statistics-Block-Number" id="Defeats"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Rate</div>
+                        <div class="Statistics-Block-Number" id="Victory_Rate"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="Section">
-            <h2>Statistics</h2>
-            <h3>Wins/Losses</h3>
-            <div class="Statistics-Wrapper">
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Matches</div>
-                    <div class="Statistics-Block-Number" id="Matches"></div>
+                <h3>Points</h3>
+                <div class="Statistics-Wrapper">
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">For</div>
+                        <div class="Statistics-Block-Number" id="Points_For"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Against</div>
+                        <div class="Statistics-Block-Number" id="Points_Against"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Difference</div>
+                        <div class="Statistics-Block-Number" id="Points_Difference"></div>
+                    </div>
+                    <div class="Statistics-Block">
+                        <div class="Statistics-Block-Description">Per Match</div>
+                        <div class="Statistics-Block-Number" id="Points_per_Match"></div>
+                    </div>
                 </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Victories</div>
-                    <div class="Statistics-Block-Number" id="Victories"></div>
+                <h3>Trends</h3>
+                <div class="Chart-Wrapper" id="Standings-Chart-Wrapper">
+                    <canvas id="Standings-Chart"></canvas>
                 </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Defeats</div>
-                    <div class="Statistics-Block-Number" id="Defeats"></div>
+                <div class="Chart-Wrapper" id="Difference-Chart-Wrapper">
+                    <canvas id="Difference-Chart"></canvas>
                 </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Rate</div>
-                    <div class="Statistics-Block-Number" id="Victory_Rate"></div>
+                <div class="Chart-Wrapper" id="Difference-Match-Chart-Wrapper">
+                    <canvas id="Difference-Match-Chart"></canvas>
                 </div>
-            </div>
-            <h3>Points</h3>
-            <div class="Statistics-Wrapper">
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">For</div>
-                    <div class="Statistics-Block-Number" id="Points_For"></div>
-                </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Against</div>
-                    <div class="Statistics-Block-Number" id="Points_Against"></div>
-                </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Difference</div>
-                    <div class="Statistics-Block-Number" id="Points_Difference"></div>
-                </div>
-                <div class="Statistics-Block">
-                    <div class="Statistics-Block-Description">Per Match</div>
-                    <div class="Statistics-Block-Number" id="Points_per_Match"></div>
+                <div class="Chart-Wrapper" id="No-Data">
+                    <p>There are currently no charts available.</p>
                 </div>
             </div>
-            <h3>Trends</h3>
-            <div class="Chart-Wrapper" id="Standings-Chart-Wrapper">
-                <canvas id="Standings-Chart"></canvas>
-            </div>
-            <div class="Chart-Wrapper" id="Difference-Chart-Wrapper">
-                <canvas id="Difference-Chart"></canvas>
-            </div>
-            <div class="Chart-Wrapper" id="Difference-Match-Chart-Wrapper">
-                <canvas id="Difference-Match-Chart"></canvas>
-            </div>
-            <div class="Chart-Wrapper" id="No-Data">
-                <p>There are currently no charts available.</p>
-            </div>
-        </div>
-        <div class="Section">
-            <h2>Fencer Information</h2>
-            <div class="Name-Banner" id="Information-Name-Banner">
-                <div id="Information-Flag"></div>
-                <div id="Information-Name">{{ name }} ({{ club }})</div>
-            </div>
-            <div class="Standing-Wrapper">
-                <div class="Information-Block">
-                    <div class="Information-Block-Description">Gender</div>
-                    <div class="Information-Block-Number" id="Information_Gender"></div>
+            <div class="Section Fencer-Information-Section">
+                <h2>Fencer Information</h2>
+                <div class="Name-Banner" id="Information-Name-Banner">
+                    <div id="Information-Flag"></div>
+                    <div id="Information-Name">{{ name }} ({{ club }})</div>
                 </div>
-                <div class="Information-Block">
-                    <div class="Information-Block-Description">Hand</div>
-                    <div class="Information-Block-Number" id="Information_Handedness"></div>
+                <div class="Standing-Wrapper">
+                    <div class="Information-Block">
+                        <div class="Information-Block-Description">Gender</div>
+                        <div class="Information-Block-Number" id="Information_Gender"></div>
+                    </div>
+                    <div class="Information-Block">
+                        <div class="Information-Block-Description">Hand</div>
+                        <div class="Information-Block-Number" id="Information_Handedness"></div>
+                    </div>
+                    <div class="Information-Block">
+                        <div class="Information-Block-Description">Age</div>
+                        <div class="Information-Block-Number" id="Information_Age"></div>
+                    </div>
                 </div>
-                <div class="Information-Block">
-                    <div class="Information-Block-Description">Age</div>
-                    <div class="Information-Block-Number" id="Information_Age"></div>
+                <br>
+                <div class="Standing-Wrapper" id="Button-ChangeInformationForm" style="display: none;">
+                    <div class="Standing-Block" onclick="displayChangeInformationForm()">Change Information</div>
+                </div>
+                <div id="Change-Information-Wrapper" style="display: none;">
+                    <h2>Change Information</h2>
+                    <form id="Change-Information-Form">
+                        <select id="Change-Attribute">
+                            <option id="Change-Name" value="name">Name</option>
+                            <option id="Change-Club" value="club">Club</option>
+                            <option id="Change-Nationality" value="nationality">Nationality</option>
+                            <option id="Change-Gender" value="gender">Gender</option>
+                            <option id="Change-Handedness" value="handedness">Handedness</option>
+                            <option id="Change-Age" value="age">Age</option>
+                        </select>
+                        <input type="text" id="Change-Value" placeholder="New Value">
+                        <input type="submit" id="Change-Submit" value="Change" onclick="changeInformationForm(event)">
+                    </form>
                 </div>
             </div>
-            <br>
-            <div class="Standing-Wrapper" id="Button-ChangeInformationForm" style="display: none;">
-                <div class="Standing-Block" onclick="displayChangeInformationForm()">Change Information</div>
+            <div class="Section Bug-Section" id="bug_wrapper" style="background-color: white;">
+                <h2>Report a Bug</h2>
+                <div class="Standing-Wrapper">
+                    <div class="Standing-Block" style="background-color: rgb(229, 229, 229);" onclick="report_github()">Report on Github</div>
+                    <div class="Standing-Block" style="background-color: rgb(229, 229, 229);" onclick="report_email()">Report via Email</div>
+                </div>
+                <br>
+                <p>Version:<br>{{ version }}</p>
             </div>
-            <div id="Change-Information-Wrapper" style="display: none;">
-                <h2>Change Information</h2>
-                <form id="Change-Information-Form">
-                    <select id="Change-Attribute">
-                        <option id="Change-Name" value="name">Name</option>
-                        <option id="Change-Club" value="club">Club</option>
-                        <option id="Change-Nationality" value="nationality">Nationality</option>
-                        <option id="Change-Gender" value="gender">Gender</option>
-                        <option id="Change-Handedness" value="handedness">Handedness</option>
-                        <option id="Change-Age" value="age">Age</option>
-                    </select>
-                    <input type="text" id="Change-Value" placeholder="New Value">
-                    <input type="submit" id="Change-Submit" value="Change" onclick="changeInformationForm(event)">
-                </form>
-            </div>
-        </div>
-        <div class="Section" id="bug_wrapper" style="background-color: white;">
-            <h2>Report a Bug</h2>
-            <div class="Standing-Wrapper">
-                <div class="Standing-Block" style="background-color: rgb(229, 229, 229);" onclick="report_github()">Report on Github</div>
-                <div class="Standing-Block" style="background-color: rgb(229, 229, 229);" onclick="report_email()">Report via Email</div>
-            </div>
-            <br>
-            <p>Version:<br>{{ version }}</p>
         </div>
     </div>
 

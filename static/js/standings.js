@@ -92,11 +92,16 @@ function clearTable() {
 
 
 async function update_standings(rankings, stage, max_elimination_ranks) {
+    // wait 1 second before updating the table
+    await new Promise(r => setTimeout(r, 1000));
+
+
+
     let standings = document.getElementById('standings_table')
     console.log(standings)
 
-    // Remove all rows from the table
-    clearTable(standings);
+    // create a temporary array of all the rows
+    let rows = []
 
     // Add the new, updated rows
     for (const element of rankings) {
@@ -210,8 +215,16 @@ async function update_standings(rankings, stage, max_elimination_ranks) {
             open_fencer_window(element["id"])
         }
 
-        document.getElementById("tablebody").appendChild(item)
+        rows.push(item)
     }
+
+    // Remove all rows from the table
+    clearTable();
+
+    for (const row of rows) {
+        document.getElementById("tablebody").appendChild(row)
+    }
+
 }
 
 function updateFilter() {

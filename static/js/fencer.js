@@ -169,54 +169,47 @@ async function update() {
                 }
 
 
-                let piste_helper = document.getElementById("piste_helper");
+                const piste_helper = document.getElementById("piste_helper");
+                const piste_block = document.getElementById("Next-Piste-Block");
+
+                // remove all the classes from piste_block
+                if (piste_block.classList.contains("piste-tba")) {
+                    piste_block.classList.remove("piste-tba");
+                }
+                if (piste_block.classList.contains("piste-staged-red")) {
+                    piste_block.classList.remove("piste-staged-red");
+                }
+                if (piste_block.classList.contains("piste-staged-green")) {
+                    piste_block.classList.remove("piste-staged-green");
+                }
+                if (piste_block.classList.contains("piste-ongoing-red")) {
+                    piste_block.classList.remove("piste-ongoing-red");
+                }
+                if (piste_block.classList.contains("piste-ongoing-green")) {
+                    piste_block.classList.remove("piste-ongoing-green");
+                }
 
                 if (next_match["piste"] === "TBA") {
-                    document.getElementById("Next-Piste-Block").style.backgroundColor = "yellow";
+                    piste_block.classList.add("piste-tba");
                     document.getElementById("Next-Piste-Title").innerHTML = "Upcoming Match";
-                    document.getElementById("Next-Piste-Block").style.color = "black";
                     piste_helper.innerHTML = "The piste number will be announced later.<br>Come back regularly to check the piste number.";
                 } else if (next_match["ongoing"] === true) {
                     if (next_match["color"] === "green") {
-                        document.getElementById("Next-Piste-Block").style.backgroundColor = "green";
+                        piste_block.classList.add("piste-ongoing-green");
                     } else if (next_match["color"] === "red") {
-                        document.getElementById("Next-Piste-Block").style.backgroundColor = "red";
+                        piste_block.classList.add("piste-ongoing-red");
                     }
-                    document.getElementById("Next-Piste-Block").style.color = "white";
                     document.getElementById("Next-Piste-Title").innerHTML = "Ongoing Match";
                     piste_helper.innerHTML = "The match is ongoing.<br>You are fencing on this piste right now.<br>The color of the piste indicates your color.";
                 } else {
                     document.getElementById("Next-Piste-Title").innerHTML = "Upcoming Match";
-                    document.getElementById("Next-Piste-Block").style.color = "black";
-                    piste_helper.innerHTML = "You are fencing on this piste next, but there is still another match ongoing.<br>Please stand by and get ready."
-                    // flashing the background color in white and yellow
-                    let color = "white";
-                    let color1 = "white";
-                    let color2 = "orange";
-                    let text_color = "black";
-                    let text_color1 = "black";
-                    let text_color2 = "black";
-                    if (next_match["piste_occupied"] === false) {
-                        if (next_match["color"] === "green") {
-                            color1 = "green";
-                            color2 = "white";
-                            text_color1 = "white";
-                            text_color2 = "black";
-                        } else if (next_match["color"] === "red") {
-                            color1 = "red";
-                            color2 = "white";
-                            text_color1 = "white";
-                            text_color2 = "black";
-                        }
-                        piste_helper.innerHTML = "You are fencing on this piste next.<br>The previous match has finished.<br>The color of the piste indicates your color.";
+                    piste_helper.innerHTML = "You are fencing on this piste next, but there is still another match ongoing.<br>Please stand by and get ready.";
+                    if (next_match["color"] === "green") {
+                        piste_block.classList.add("piste-staged-green");
+                    } else if (next_match["color"] === "red") {
+                        piste_block.classList.add("piste-staged-red");
                     }
-                    let interval = setInterval(function () {
-                        document.getElementById("Next-Piste-Block").style.backgroundColor = color;
-                        document.getElementById("Next-Piste-Block").style.color = text_color
-                        color = (color == color1) ? color2 : color1;
-                        text_color = (text_color == text_color1) ? text_color2 : text_color1;
-                    }, 1000);
-                    setTimeout(function () { clearInterval(interval) }, 10000);
+                    piste_helper.innerHTML = "You are fencing on this piste next.<br>The previous match has finished.<br>The color of the piste indicates your color.";
                 }
             } else {
                 document.getElementById("Next-Match-Section").style.display = "none";
@@ -291,7 +284,9 @@ async function update() {
             }
             if (DifferenceMatchChart) {
                 DifferenceMatchChart.destroy();
+
             }
+
 
             document.getElementById("Standings-Chart").innerHTML = "";
             document.getElementById("Difference-Chart").innerHTML = "";
@@ -331,6 +326,8 @@ async function update() {
                     ]
                 },
                 options: {
+                    // responsive: false,
+                    // maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false,
@@ -425,6 +422,8 @@ async function update() {
                     ]
                 },
                 options: {
+                    // responsive: false,
+                    // maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false,
@@ -513,6 +512,8 @@ async function update() {
                     ]
                 },
                 options: {
+                    // responsive: false,
+                    // maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false,

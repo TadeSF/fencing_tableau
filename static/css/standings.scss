@@ -3,9 +3,10 @@ body {
     font-size: 14px;
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
+    margin: 0;
 }
 
-.wrapper {
+.main-wrapper {
     width: calc(100vw - 20px);
     max-width: 1000px;
     padding-top: 5px;
@@ -30,8 +31,6 @@ h1, h2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
-    z-index: 1;
-    top: 0;
     padding-top: 20px;
     justify-items: center;
 }
@@ -117,6 +116,7 @@ form select:focus {
     justify-content: center;
     text-align: center;
     padding: 5px;
+    white-space: nowrap;
 }
 
 .header, .body, .item {
@@ -138,6 +138,10 @@ form select:focus {
 .header {
     .cell {
         background-color: #eee;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        border-radius: 0;
     }
 }
 
@@ -224,6 +228,26 @@ svg {
         color: #000000;
         cursor: inherit;
     }
+}
+
+// Keyframe loading animation for placeholder cells
+@keyframes loading {
+    0% {
+        background-color: #fff;
+    }
+    50% {
+        background-color: rgb(247, 247, 247);
+    }
+    100% {
+        background-color: #fff;
+    }
+}
+
+.placeholder {
+    animation: loading 1s infinite ease-in-out;
+    grid-column: 1 / -1;
+    border-radius: 10px;
+    height: 30px;
 }
 
 
