@@ -1,3 +1,10 @@
+if (window.self === window.top) {
+    document.body.classList.add('not-in-iframe');
+} else {
+    document.body.classList.add('in-iframe');
+}
+
+
 function get_standings() {
     let group_query = document.getElementById("group_filter").value
     let gender_query = document.getElementById("gender_filter").value

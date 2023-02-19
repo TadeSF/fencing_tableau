@@ -1,19 +1,36 @@
-:root {
-  --fencer-width: 150px;
-}
-
 body {
   font-family: margin-mvb, sans-serif;
   font-size: 14px;
   background-color: rgb(255, 255, 255);
   color: rgb(0, 0, 0);
+  margin: 0;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  position: sticky;
-  margin: 0 auto;
+.wrapper {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.not-in-iframe .wrapper {
+  padding: 20px;
+  width: calc(100vw - 40px);
+}
+
+.in-iframe {
+  overflow-x: hidden;
+}
+.in-iframe .wrapper {
+  padding: 0;
+  padding-right: 5px;
+  width: calc(100% - 5px);
+}
+
+.section {
+  background-color: #eee;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 10px;
 }
 
 h1, h2 {
@@ -22,7 +39,7 @@ h1, h2 {
 }
 
 i {
-  font-size: 1.5em;
+  font-size: 1.5rem;
   margin: 0 20px;
   transition: 0.3s;
 }
@@ -34,45 +51,371 @@ i:hover {
 }
 
 #header {
-  background-color: white;
-  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 70px;
-  z-index: 1;
-  top: 0;
+  margin-bottom: 30px;
 }
 
-th {
-  position: sticky;
-  top: 70px;
-  background-color: #c8c8c8;
+.header > .cell > i {
+  font-size: 1.2em;
+  margin: 0;
+}
+.header > .cell > i:hover {
+  transform: translate(0, 0);
   color: #000000;
-  z-index: 1;
-  width: 60px;
+  cursor: auto;
 }
 
-th, td {
+.container {
+  display: grid;
+  grid-template-columns: auto 3rem minmax(10rem, 1fr) 5rem minmax(10rem, 1fr) repeat(2, 3rem);
+  row-gap: 10px;
+  align-items: stretch;
+  justify-items: stretch;
+}
+
+.header, .body, .item {
+  display: contents;
+}
+
+.item > * {
+  background-color: #fff;
+  transition: 0.3s ease-in-out;
+}
+
+.item:hover > .cell {
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  transform: translate(-3px, -3px);
+}
+
+.first-column {
+  border-radius: 10px 0 0 10px;
+  grid-column: 1/2;
+}
+
+.last-column {
+  border-radius: 0 10px 10px 0;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  border-bottom: 0.5px solid #ddd;
+  padding: 5px;
+  white-space: nowrap;
+  z-index: 100;
 }
 
-tr {
-  height: 30px;
-  transition: 0.3 ease-in-out;
+.group {
+  padding-left: 10px;
 }
 
-tr:hover {
-  background-color: #f5f5f5;
-  transition: 0.3 ease-in-out;
+@keyframes piste-free {
+  0% {
+    background-color: orange;
+    scale: 1.1;
+  }
+  33% {
+    background-color: orangered;
+    scale: 1;
+  }
+  66% {
+    background-color: orangered;
+    scale: 1;
+  }
+  100% {
+    background-color: orange;
+    scale: 1.1;
+  }
+}
+@keyframes piste-staged {
+  0% {
+    background-color: #ccc;
+  }
+  25% {
+    background-color: #ccc;
+  }
+  50% {
+    background-color: #fff;
+  }
+  75% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: #ccc;
+  }
+}
+@keyframes piste-ongoing {
+  0% {
+    background-color: green;
+  }
+  50% {
+    background-color: rgb(0, 150, 0);
+  }
+  100% {
+    background-color: green;
+  }
+}
+.piste .piste-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.4rem;
+  color: #fff;
+  width: 1.5rem;
+  border-radius: 10px;
+  transition: 0.3s ease-in-out;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.piste .piste-wrapper:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
 }
 
-thead {
-  top: 0;
-  background-color: #aeaeae;
-  color: #ffffff;
+.piste-completed {
+  color: #000 !important;
+  background-color: #fff;
+}
+.piste-completed:hover {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
+  transform: translate(0px, 0px) !important;
+  cursor: default !important;
+}
+
+.piste-ongoing {
+  animation: piste-ongoing 2s infinite;
+  color: #fff;
+}
+.piste-ongoing:hover {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
+  transform: translate(0px, 0px) !important;
+  cursor: default !important;
+}
+
+.piste-empty {
+  animation: piste-free 1.5s infinite;
+  color: #fff;
+}
+
+.piste-staged {
+  animation: piste-staged 2s infinite;
+  color: #000 !important;
+}
+
+.piste-tba {
+  background-color: #fff;
+  color: #000 !important;
+}
+
+.red .Name-Banner:hover {
+  box-shadow: inset 0 0 0 3px red;
+}
+
+.score {
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.green .Name-Banner:hover {
+  box-shadow: inset 0 0 0 3px green;
+}
+
+.wildcard .Name-Banner:hover {
+  box-shadow: inset 0 0 0 0 !important;
+  cursor: default !important;
+}
+
+.Name-Banner {
+  background-color: #eee;
+  border-radius: 10px;
+  padding: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease-in-out;
+}
+.Name-Banner:hover {
+  cursor: pointer;
+}
+
+.flag {
+  width: 26px;
+  height: 18px;
+  margin-right: 10px;
+}
+
+.option-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  color: #fff;
+  background-color: #333;
+  border-radius: 10px;
+  width: 100%;
+  transition: 0.3s ease-in-out;
+}
+.option-button-wrapper:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
+}
+
+.cell > .option-button-wrapper > i {
+  font-size: 1rem;
+  margin: 0;
+}
+.cell > .option-button-wrapper > i:hover {
+  transform: translate(0, 0);
+  color: inherit;
+  cursor: inherit;
+}
+
+.forward-button-ongoing {
+  animation: piste-ongoing 2s infinite;
+}
+
+.forward-button-completed {
+  background-color: #eee;
+  color: #000;
+}
+
+.forward-button-staged:hover {
+  background-color: orangered;
+}
+
+.forward-button-blocked {
+  background-color: #eee;
+  color: #000;
+}
+.forward-button-blocked:hover {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) !important;
+  transform: translate(0px, 0px) !important;
+  cursor: default !important;
+}
+
+@keyframes loading_placeholder {
+  0% {
+    background-color: #fff;
+  }
+  50% {
+    background-color: rgb(247, 247, 247);
+  }
+  100% {
+    background-color: #fff;
+  }
+}
+.placeholder {
+  animation: loading_placeholder 1s infinite ease-in-out;
+  grid-column: 1/-1;
+  border-radius: 10px;
+  height: 34.5px;
+}
+
+#piste_options,
+#match_options,
+#score_options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  padding-top: 30px;
+  margin-top: -25px;
+  margin-bottom: 20px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 0 0 10px 10px;
+  z-index: 1;
+}
+#piste_options div,
+#match_options div,
+#score_options div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  margin: 0 8px;
+  color: #fff;
+  background-color: #333;
+  border-radius: 10px;
+  transition: 0.3s ease-in-out;
+}
+#piste_options div:hover,
+#match_options div:hover,
+#score_options div:hover {
+  cursor: pointer;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
+}
+#piste_options div i,
+#match_options div i,
+#score_options div i {
+  font-size: 1rem;
+  margin: 0 8px;
+}
+#piste_options div i:hover,
+#match_options div i:hover,
+#score_options div i:hover {
+  transform: translate(0, 0);
+  color: #fff;
+  cursor: inherit;
+}
+#piste_options input[type=text],
+#match_options input[type=text],
+#score_options input[type=text] {
+  padding: 8px;
+  margin: 0 8px;
+  width: 10rem;
+  border: 2px solid #333;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: #fff;
+  outline: none;
+  text-align: center;
+  font-size: 0.8rem;
+  transition: 0.3s ease-in-out;
+  cursor: text;
+}
+#piste_options input[type=text]:hover,
+#match_options input[type=text]:hover,
+#score_options input[type=text]:hover {
+  border-color: orange;
+}
+#piste_options input[type=text]:focus,
+#match_options input[type=text]:focus,
+#score_options input[type=text]:focus {
+  border-color: orange;
+  box-shadow: inset 5px 5px 0px rgba(0, 0, 0, 0.2);
+}
+
+#piste_options {
+  grid-column: 1/4;
+}
+
+#score_options {
+  grid-column: 3/6;
+}
+#score_options #red_score_input {
+  border-color: red;
+}
+#score_options #green_score_input {
+  border-color: green;
+}
+
+#match_options {
+  grid-column: 5/-1;
 }
 
 #prompt {
@@ -188,107 +531,6 @@ thead {
   color: #000000;
 }
 
-.cell_button {
-  color: rgb(255, 255, 255);
-  border: none;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
-  cursor: pointer;
-  transition: 0.3s;
-  width: 100px;
-  border-radius: 5px;
-}
-
-.cell_button:hover {
-  background-color: rgb(158, 158, 158);
-  color: rgb(0, 0, 0);
-  transition: 0.3s;
-}
-
-.cell_button-start {
-  background-color: #333;
-}
-
-.cell_button-start:hover {
-  background-color: rgb(255, 145, 0);
-  color: white;
-  transition: 0.3s;
-}
-
-@keyframes loading {
-  0% {
-    background-position: left;
-  }
-  100% {
-    background-position: right;
-  }
-}
-.cell_button-ongoing {
-  background: rgb(255, 145, 0);
-  background: linear-gradient(90deg, rgb(255, 145, 0) 30%, rgb(233, 105, 0) 50%, rgb(255, 145, 0) 70%);
-  background-repeat: no-repeat;
-  background-size: 600% 100%;
-  animation: loading 2s ease-in-out infinite;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.cell_button-ongoing:hover {
-  animation-play-state: paused;
-  background: red;
-  color: white;
-}
-
-.cell_button-finished {
-  background-color: rgb(0, 126, 0);
-}
-
-.cell_button-finished:hover {
-  background-color: red;
-  color: white;
-}
-
-.cell-id {
-  display: none;
-}
-
-.th-green, .th-red {
-  width: var(--fencer-width);
-  height: 100%;
-  width: auto;
-}
-
-.th-green-div {
-  color: white;
-  text-align: right;
-  background-color: green;
-  margin: 1px;
-  margin-left: 15px;
-  padding: 2px;
-  padding-right: 10px;
-  border-radius: 5px;
-}
-
-.th-red-div {
-  color: white;
-  text-align: left;
-  background-color: red;
-  margin: 1px;
-  margin-right: 15px;
-  padding: 2px;
-  padding-left: 10px;
-  border-radius: 5px;
-}
-
-.th-score {
-  background: rgb(0, 128, 0);
-  background: linear-gradient(90deg, rgb(0, 128, 0) 10%, rgb(255, 0, 0) 90%);
-  width: 70px;
-}
-
 .fencer-div {
   display: flex;
   flex-direction: row;
@@ -322,11 +564,4 @@ thead {
 
 .fencer-div-red:hover {
   background-color: rgba(255, 0, 0, 0.2);
-}
-
-.flag {
-  width: 20px;
-  height: 15px;
-  margin-right: 10px;
-  margin-left: 10px;
 }/*# sourceMappingURL=matches.css.map */

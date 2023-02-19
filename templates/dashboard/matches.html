@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Matches</title>
     <link rel="stylesheet" href="/static/css/matches.css">
     <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
     <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
     <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
-  </head>
-  <body>
-    <div id="header">
-      <h1>Matches</h1>
-      <i class="fa-solid fa-sync" id="reload" onclick="get_matches()"></i>
-      <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
-      <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
+</head>
+
+<body data-tournament_id="{{ tournament_id }}" data-pistes="{{ num_pistes }}">
+    <div class="wrapper">
+        <div class="section">
+            <div id="header">
+                <h1>Matches</h1>
+                <i class="fa-solid fa-sync" id="reload" onclick="get_matches()"></i>
+                <i class="fa-solid fa-floppy-disk" onclick="savePDF()"></i>
+                <i class="fa-solid fa-external-link" id="open_in_new_tab" onclick="open_in_new_tab()"></i>
+                <i class="fa-solid fa-filter" id="filter" onclick="toggleFilter()"></i>
+            </div>
+
+            <div class="container">
+                <div class="header">
+                    <div class="cell group first-column"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="cell piste"><i class="fa-solid fa-road"></i></div>
+                    <div class="cell red"><i class="fa-solid fa-circle-user" style="color: red"></i></div>
+                    <div class="cell score"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="cell green"><i class="fa-solid fa-circle-user" style="color: green"></i></div>
+                    <div class="cell forward"><i class="fa-solid fa-forward-step"></i></div>
+                    <div class="cell options last-column"><i class="fa-solid fa-gear"></i></div>
+                </div>
+                <div class="body" id="tablebody">
+                    <div class="cell placeholder"></div>
+                    <div class="cell placeholder"></div>
+                    <div class="cell placeholder"></div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div style="height: 70px;"></div>
-    
-    <table id="matches_table">
-      <thead>
-        <tr>
-          <th style="display: none;">#</th>
-          <th>Group</th>
-          <th>Piste</th>
-          <th class="th-green"><div class="th-green-div">Green</div></th>
-          <th width="40px"></th>
-          <th class="th-red"><div class="th-red-div">Red</div></th>
-          <th width="100px">Options</th>
-        </tr>
-      </thead>
-      <tbody id="matches">
-      </tbody>
-      <tfoot>
-      </tfoot>
-    </table>
-    <div id="prompt">
-      <form id="form" style="display: flex; flex-direction: row;">
-        <input type="text" id="form_id" name="form_id"  style="display: none;">
-        <input type="text" id="form_greenScore" name="form_greenScore" placeholder="Green Fencer Score" pattern="^(0|[1-9]|[1-2][0-9])$">
-        <p>   :   </p>
-        <input type="text" id="form_redScore" name="form_redScore" placeholder="Red Fencer Score">
-        <button type="submit" id="submit_score">Submit</button>
-        <button type="button" id="closePrompt" onclick="closePromptWindow()"><i class="fa-solid fa-xmark"></i></button>
-      </form>
-    </div>
-    <div style="height: 60px;"></div>
     <script src="/static/js/matches.js"></script>
-  </body>
-  </html>
+</body>
+
+</html>

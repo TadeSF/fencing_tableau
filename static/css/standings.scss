@@ -6,13 +6,24 @@ body {
     margin: 0;
 }
 
-.main-wrapper {
-    width: calc(100vw - 20px);
+.wrapper {
     max-width: 1000px;
-    padding-top: 5px;
-    padding-bottom: 5px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.not-in-iframe .wrapper {
+    padding: 20px;
+    width: calc(100vw - 40px);
+}
+
+.in-iframe {
+    overflow-x: hidden;
+    .wrapper {
+        padding: 0;
+        padding-right: 5px;
+        width: calc(100% - 5px);
+    }
 }
 
 .section {

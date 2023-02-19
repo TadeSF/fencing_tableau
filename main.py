@@ -801,7 +801,7 @@ def matches(tournament_id):
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        return render_template('/dashboard/matches.html')
+        return render_template('/dashboard/matches.html', tournament_id=tournament_id, num_pistes=get_tournament(tournament_id).num_pistes)
 
 @app.route('/<tournament_id>/matches/update', methods=['GET'])
 def get_matches(tournament_id):
