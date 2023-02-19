@@ -192,13 +192,16 @@ async function update_matches(matches) {
             forward_button.onmouseleave = function() {
                 forward_icon.classList.remove("fa-trophy")
                 forward_icon.classList.add("fa-spin", "fa-spinner")
-            }
+            } 
         } else if (element["piste"] != "TBA") {
             forward_button_wrapper.classList.add("forward-button-staged")
             forward_button.onclick = function() {
                 match_set_active(element["id"])
             }
             forward_icon.classList.add("fa-solid", "fa-play")
+            if (element["piste_occupied"] == false) {
+                forward_icon.classList.add("fa-beat")
+            }
         } else {
             forward_button_wrapper.classList.add("forward-button-blocked")
             forward_icon.classList.add("fa-solid", "fa-ban")
