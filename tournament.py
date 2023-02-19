@@ -422,16 +422,15 @@ class Tournament:
 
 
     def assign_pistes(self, matches: List[Match]):
-        print(self.preliminary_stage)
+        matches = sorted(matches, key=lambda match: match.priority, reverse=True)
         for match in matches:
             if match.piste == None and match.wildcard == False:
                 for piste in self.pistes:
                     if not piste.staged:
                         match.assign_piste(piste)
-                        piste.staged = True
                         break
                 else:
-                    continue
+                    break
 
 
     def generate_matches(self) -> None:
@@ -534,6 +533,7 @@ class Tournament:
                     "ongoing": match.match_ongoing,
                     "complete": match.match_completed,
                     "piste_occupied": match.piste.occupied if match.piste else None,
+                    "priority": match.priority,
                 })
             return dictionary
 
@@ -558,6 +558,7 @@ class Tournament:
                     "ongoing": match.match_ongoing,
                     "complete": match.match_completed,
                     "piste_occupied": match.piste.occupied if match.piste else None,
+                    "priority": match.priority,
                 })
             return dictionary
 
@@ -706,19 +707,86 @@ class Tournament:
 
     def set_active(self, match_id: int) -> None:
         if self.stage == Stage.PRELIMINARY_ROUND:
-            for match in self.matches_of_current_preliminary_round:
+            for match in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
                 if match.id == match_id:
-                    match.set_active()
+                    # Check if there are other active matches in on the same piste, if so, "staged" should not be set to True
+                    for match2 in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
+                        if match2.piste == match.piste and match2.match_ongoing:
+                            match.set_active(staged=True)
+                            break
+                    else:
+                        match.set_active()
+
             self.assign_pistes(self.matches_of_current_preliminary_round)
 
+
+    def prioritize_match(self, match_id, value) -> None:
+        for match in (self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches):
+            if match.id == match_id:
+                match.priority = value
+                print("match " + match.id + " priority set to ", match.priority)
+
+    
+    def assign_certain_piste(self, match_id, piste: int) -> None:
+        match = self.get_match_by_id(match_id)
+        requested_piste = self.pistes[piste - 1]
+        old_piste = match.piste
+
+        # There are 4 cases:
+
+        if old_piste != None:
+            if old_piste.staged and not requested_piste.staged:
+                # 1. The match is already staged, and there is no other match staged on the requested piste
+                #   -> The staged status of the other piste is set to false
+                print("Case 1")
+                old_piste.staged = False
+
+            elif old_piste.staged and requested_piste.staged:
+                # 2. The match is already staged, and there is another match staged on the same piste
+                #   -> The matches switch piste and the staged status remains true for both
+                print("Case 2")
+                for match2 in self.all_matches:
+                    if match2.piste == requested_piste and match2.match_ongoing == False and match2.match_completed == False:
+                        match2.assign_piste(old_piste)
+                        break
+
+            else:
+                raise Exception("Error in assign_certain_piste: match.piste != None, but old_piste.staged and requested_piste.staged are both false. This should not happen.")
+
         else:
-            self.assign_pistes(self.elimination_matches)
-            for match in self.elimination_matches:
-                if match.id == match_id and match.wildcard == False:
-                    match.set_active()
+            if not requested_piste.staged:
+                # 3. The match is not staged, and there is no other match staged on the same piste
+                #   -> The match is staged on the requested piste
+                print("Case 3")
+
+            else:
+                # 4. The match is not staged, but there is another match staged on the same piste
+                #   -> The match is staged on the requested piste, the piste assignment for the other piste is removed
+                print("Case 4")
+                for match2 in self.all_matches:
+                    if match2.piste == requested_piste and match2.match_ongoing == False and match2.match_completed == False:
+                        match2.piste = None
+                        break
+
+        # In all cases, the match is staged on the requested piste
+        match.assign_piste(requested_piste)
+
+        self.assign_pistes(self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches)
+
+    def remove_piste_assignment(self, match_id) -> None:
+        match = self.get_match_by_id(match_id)
+        if match.piste != None:
+            match.piste.staged = False
+            match.piste = None
+        else:
+            raise PisteError("Error in remove_piste_assignment: The match is not staged on a piste and therefore cannot be removed from a piste.")
+
 
 
     def next_stage(self) -> None:
+        for piste in self.pistes:
+            piste.reset()
+
         if self.stage == Stage.PRELIMINARY_ROUND:
             self.preliminary_stage += 1
             if self.preliminary_stage > self.num_preliminary_rounds:
@@ -744,9 +812,6 @@ class Tournament:
         else:
             self.stage = self.stage.next_stage()
             self.create_next_elimination_round()
-
-        for piste in self.pistes:
-            piste.reset()
 
         for fencer in self.fencers:
             fencer.approved_tableau = False

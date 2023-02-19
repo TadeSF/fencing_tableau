@@ -82,9 +82,11 @@ async function update_matches(matches) {
     for (const element of matches) {
         let item = document.createElement('div')
         item.className = "item"
+        item.id = "match-" + element["id"]
         item.dataset.match_id = element["id"]
         item.dataset.completed = element["complete"]
         item.dataset.ongoing = element["ongoing"]
+        item.dataset.priority = element["priority"]
 
         let group = document.createElement('div')
         group.classList.add("group", "cell", "first-column")
@@ -99,11 +101,11 @@ async function update_matches(matches) {
         piste_wrapper.innerHTML = element["piste"]
         piste_wrapper.classList.add("piste-wrapper")
         piste.classList.add("piste", "cell")
-        if (element["complete"] == true) {
+        if (element["complete"] === true) {
             piste_wrapper.classList.add("piste-completed")
-        } else if (element["ongoing"] == true) {
+        } else if (element["ongoing"] === true) {
             piste_wrapper.classList.add("piste-ongoing")
-        } else if (element["piste_occupied"] == false) {
+        } else if (element["piste_occupied"] === false) {
             piste_wrapper.classList.add("piste-empty")
             piste.onclick = function() {
                 openPisteOptions(item, matches_table, element["id"])
@@ -115,6 +117,11 @@ async function update_matches(matches) {
             }
         } else {
             piste_wrapper.classList.add("piste-tba")
+            if (element["priority"] == 1) {
+                piste_wrapper.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i>'
+            } else if (element["priority"] == -1) {
+                piste_wrapper.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i>'
+            }
             piste.onclick = function() {
                 openPisteOptions(item, matches_table, element["id"])
             }
@@ -359,15 +366,56 @@ function openPisteOptions(siblingElement, parentElement, match_id) {
             }
         }
 
-        let prioritize_piste_button = document.createElement('div')
-        prioritize_piste_button.innerHTML = '<i class="fa-solid fa-gauge-high"></i>'
-        prioritize_piste_button.onclick = function() {
-            prioritize_piste(match_id)
+        let unassign_piste_button = document.createElement('div')
+        unassign_piste_button.innerHTML = '<i class="fas fa-trash-can"></i>'
+        unassign_piste_button.onclick = function() {
+            remove_piste_assignment(match_id)
+        }
+
+        let high_priority_piste_button = document.createElement('div')
+        high_priority_piste_button.innerHTML = '<i class="fa-solid fa-circle-arrow-up"></i>'
+        high_priority_piste_button.onclick = function() {
+            if (siblingElement.dataset.priority == 1) {
+                prioritize_match(match_id, 0)
+                document.body.dataset.priority = 0
+                high_priority_piste_button.classList.remove("priority-active")
+            } else {
+                prioritize_match(match_id, 1)
+                document.body.dataset.priority = 1
+                high_priority_piste_button.classList.add("priority-active")
+            }
+        }
+
+        let low_priority_piste_button = document.createElement('div')
+        low_priority_piste_button.innerHTML = '<i class="fa-solid fa-circle-arrow-down"></i>'
+        low_priority_piste_button.onclick = function() {
+            if (siblingElement.dataset.priority == -1) {
+                prioritize_match(match_id, 0)
+                document.body.dataset.priority = 0
+                low_priority_piste_button.classList.remove("priority-low-active")
+            } else {
+                prioritize_match(match_id, -1)
+                document.body.dataset.priority = -1
+                low_priority_piste_button.classList.add("priority-low-active")
+            }
+        }
+
+        if (siblingElement.dataset.priority == 1) {
+            high_priority_piste_button.classList.add("priority-active")
+        } else if (siblingElement.dataset.priority == -1) {
+            low_priority_piste_button.classList.add("priority-low-active")
         }
 
         piste_options.appendChild(assign_piste_input)
         piste_options.appendChild(assign_piste_button)
-        piste_options.appendChild(prioritize_piste_button)
+
+        piste_number = siblingElement.children[1].children[0].innerHTML
+        if (piste_number == "TBA" || piste_number == "<i class=\"fa-solid fa-circle-arrow-down\"></i>" || piste_number == "<i class=\"fa-solid fa-circle-arrow-up\"></i>") {
+            piste_options.appendChild(high_priority_piste_button)
+            piste_options.appendChild(low_priority_piste_button)
+        } else {
+            piste_options.appendChild(unassign_piste_button)
+        }
 
         piste_options.style.animation = "fade-in " + panelAnimationTime + "ms ease-in-out"
 
@@ -515,6 +563,24 @@ function push_score(id, green_score, red_score) {
 }
 
 function match_set_active(id) {
+    // check if a match on the same piste is already active
+    const all_matches = document.getElementsByClassName("item")
+    for (const element of all_matches) {
+        if (element.dataset.ongoing == "true") {
+            if (element.children[1].children[0].innerHTML === document.getElementById("match-" + id).children[1].children[0].innerHTML) {
+                // ask the user if they want to continue
+                if (confirm("A match on the same piste is already ongoing. Do you want to continue?\n\nContinuing here is an EXPERIMENTAL FEATURE that could cause fatal bugs and disrupt the ongoing tournament.") == false) {
+                    return;
+                }
+                if (confirm("Are you sure you want to set the match active?") == false) {
+                    return;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
     // send JSON to server (POST)
     let data = {}
     data["id"] = id
@@ -536,6 +602,74 @@ function match_set_active(id) {
         console.log(error)
     })
 }
+
+function prioritize_match(id, value) {
+    // send JSON to server (POST)
+    let data = {}
+    data["id"] = id
+    data["value"] = value
+    fetch('matches/prioritize', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success === false) {
+            alert(data.message)
+        } else {
+            get_matches()
+        }
+    })
+}
+
+function assign_piste(match_id, piste) {
+    // send JSON to server (POST)
+    let data = {}
+    data["id"] = match_id
+    data["piste"] = piste
+    fetch('matches/assign_piste', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success === false) {
+            alert(data.message)
+        } else {
+            get_matches()
+        }
+    })
+}
+
+function remove_piste_assignment(match_id) {
+    // send JSON to server (POST)
+    let data = {}
+    data["id"] = match_id
+    fetch('matches/remove_piste_assignment', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success === false) {
+            alert(data.message)
+        } else {
+            get_matches()
+        }
+    })
+}
+
+
+
 
 function open_in_new_tab() {
     window.open("matches", "_blank")

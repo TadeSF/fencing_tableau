@@ -356,6 +356,15 @@ i:hover {
     transform: translate(0, -35px);
   }
 }
+.piste-wrapper > i {
+  color: inherit;
+}
+.piste-wrapper > i:hover {
+  color: inherit;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2) !important;
+  transform: translate(0px, 0px) !important;
+}
+
 #piste_options,
 #match_options,
 #score_options {
@@ -404,6 +413,32 @@ i:hover {
   transform: translate(0, 0);
   color: #fff;
   cursor: inherit;
+}
+#piste_options .priority-active,
+#match_options .priority-active,
+#score_options .priority-active {
+  background-color: orange;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-3px, -3px);
+}
+#piste_options .priority-active:hover,
+#match_options .priority-active:hover,
+#score_options .priority-active:hover {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(0px, 0px);
+}
+#piste_options .priority-low-active,
+#match_options .priority-low-active,
+#score_options .priority-low-active {
+  background-color: red;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-3px, -3px);
+}
+#piste_options .priority-low-active:hover,
+#match_options .priority-low-active:hover,
+#score_options .priority-low-active:hover {
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(0px, 0px);
 }
 #piste_options input[type=text],
 #match_options input[type=text],

@@ -6,3 +6,6 @@ class RequiredLibraryError(Exception):
 
 class SearchError(Exception):
     pass
+
+class PisteError(Exception):
+    pass

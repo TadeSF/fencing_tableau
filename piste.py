@@ -1,8 +1,3 @@
-class PisteError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-
 class Piste:
     def __init__(self, number_assigend) -> None:
         self.number = number_assigend
@@ -20,11 +15,9 @@ class Piste:
     def match_finished(self):
         self.occupied = False
 
-    def match_started(self):
-        if self.occupied:
-            raise PisteError("This Piste is already/still occupied")
+    def match_started(self, staged: bool = False):
+        self.staged = staged
         self.occupied = True
-        self.staged = False
 
     def reset(self):
         self.staged = False

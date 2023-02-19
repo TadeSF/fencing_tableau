@@ -19,6 +19,7 @@ class Match:
 
         # Match information
         self.piste: Piste = None
+        self.priority = 0
         self.match_ongoing = False
         self.match_completed = False
         self.wildcard = False
@@ -111,13 +112,16 @@ class Match:
             self.piste.match_finished()
 
 
-    def set_active(self):
-        self.piste.match_started()
+    def set_active(self, staged: bool = False):
+        self.piste.match_started(staged)
         self.match_ongoing = True
 
     def assign_piste(self, piste: Piste):
         self.piste = piste
         self.piste.staged = True
+        print("Piste assigned to match")
+        print(self.piste.number)
+        print(self.piste.staged)
 
 
 

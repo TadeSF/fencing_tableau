@@ -18,7 +18,7 @@ try:
     from exceptions import *
     from fencer import Fencer, Stage, Wildcard
     from match import EliminationMatch, GroupMatch
-    from piste import Piste, PisteError
+    from piste import Piste
     from tournament import *
 
 except ModuleNotFoundError:
@@ -885,6 +885,86 @@ def push_score(tournament_id):
     tournament.push_score(match_id, green_score, red_score)
     save_tournament(tournament)
     return jsonify({"success": True}), 200
+
+@app.route('/<tournament_id>/matches/prioritize', methods=['POST'])
+def prioritize(tournament_id):
+    """
+    Flask processes a POST request to prioritize a match in the piste-assignment-process.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    match_id : str
+        The id of the match.
+    
+    Returns
+    -------
+    200
+    """
+    tournament = get_tournament(tournament_id)
+    match_id = request.json['id']
+    value = request.json['value']
+    tournament.prioritize_match(match_id, value)
+    save_tournament(tournament)
+    return jsonify({"success": True}), 200
+
+@app.route('/<tournament_id>/matches/assign_piste', methods=['POST'])
+def assign_piste(tournament_id):
+    """
+    Flask processes a POST request to assign a piste to a match.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    match_id : str
+        The id of the match.
+    piste : int
+        The number of the piste.
+    
+    Returns
+    -------
+    200
+    """
+    try:
+        tournament = get_tournament(tournament_id)
+        match_id = request.json['id']
+        piste = int(request.json['piste'])
+        tournament.assign_certain_piste(match_id, piste)
+        save_tournament(tournament)
+        return jsonify({"success": True}), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"success": False, "message": {e}}), 400
+
+@app.route('/<tournament_id>/matches/remove_piste_assignment', methods=['POST'])
+def remove_piste_assignment(tournament_id):
+    """
+    Flask processes a POST request to remove a piste assignment from a match.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+    match_id : str
+        The id of the match.
+    
+    Returns
+    -------
+    200
+    """
+    try:
+        tournament = get_tournament(tournament_id)
+        match_id = request.json['id']
+        tournament.remove_piste_assignment(match_id)
+        save_tournament(tournament)
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+
 
 @app.route('/<tournament_id>/standings')
 def standings(tournament_id):

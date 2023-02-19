@@ -386,6 +386,15 @@ i:hover {
     }
 }
 
+.piste-wrapper > i {
+    color: inherit;
+    &:hover {
+        color: inherit;
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2) !important;
+        transform: translate(0px, 0px) !important;
+    }
+}
+
 
 #piste_options,
 #match_options,
@@ -427,6 +436,28 @@ i:hover {
                 color: #fff;
                 cursor: inherit;
             }
+        }
+    }
+
+    .priority-active {
+        background-color: orange;
+        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+        transform: translate(-3px, -3px);
+
+        &:hover {
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+            transform: translate(0px, 0px);
+        }
+    }
+
+    .priority-low-active {
+        background-color: red;
+        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
+        transform: translate(-3px, -3px);
+
+        &:hover {
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+            transform: translate(0px, 0px);
         }
     }
 
