@@ -70,7 +70,11 @@ def matchmaker_groups(fencers: List[Fencer], stage: Stage, prelim_round: int) ->
     # Every fencer fences against every other fencer
     for i in range(0, len(fencers)):
         for j in range(i + 1, len(fencers)):
-            matches.append(GroupMatch(fencers[i], fencers[j], stage, prelim_round=prelim_round))
+            # Randomize the color of the fencers
+            red = fencers[i] if random.randint(0, 1) == 0 else fencers[j]
+            green = fencers[j] if red == fencers[i] else fencers[i]
+            # Create match
+            matches.append(GroupMatch(green, red, stage, prelim_round=prelim_round))
 
     return matches
 
@@ -87,7 +91,11 @@ def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "plac
                 if type(group[i]) == Wildcard and type(group[-i-1]) == Wildcard:
                     # If both fencers are wildcards, skip this match
                     continue
-                matches.append(EliminationMatch(group[i], group[-i-1], stage=stage if group[i].eliminated == False else Stage.PLACEMENTS))
+                
+                # Randomize the color of the fencers
+                red = group[i] if random.randint(0, 1) == 0 else group[-i-1]
+                green = group[-i-1] if red == group[i] else group[i]
+                matches.append(EliminationMatch(green, red, stage=stage if group[i].eliminated == False else Stage.PLACEMENTS))
                 # Assign Index
                 group[i].elimination_value = i+1
                 group[-i-1].elimination_value = i+1
@@ -524,8 +532,8 @@ class Tournament:
                     "red_nationality": match.red.nationality,
                     "red_score": match.red_score,
                     "ongoing": match.match_ongoing,
-                    "complete": match.match_completed
-
+                    "complete": match.match_completed,
+                    "piste_occupied": match.piste.occupied if match.piste else None,
                 })
             return dictionary
 
@@ -549,6 +557,7 @@ class Tournament:
                     "red_score": match.red_score,
                     "ongoing": match.match_ongoing,
                     "complete": match.match_completed,
+                    "piste_occupied": match.piste.occupied if match.piste else None,
                 })
             return dictionary
 
