@@ -510,7 +510,7 @@ function openScoreOptions(siblingElement, parentElement, match_id) {
 
             if (event.code == 13) {
                 if (red_score_input.value != "" && green_score_input.value != "") {
-                    push_score(match_id, red_score_input.value, green_score_input.value)
+                    push_score(match_id, green_score_input.value, red_score_input.value)
                 }
             }
         }
@@ -519,7 +519,7 @@ function openScoreOptions(siblingElement, parentElement, match_id) {
         push_score_button.innerHTML = '<i class="fa-solid fa-paper-plane"></i>'
         push_score_button.onclick = function() {
             if (red_score_input.value != "" && green_score_input.value != "") {
-                push_score(match_id, red_score_input.value, green_score_input.value)
+                push_score(match_id, green_score_input.value, red_score_input.value)
             }
         }
 
