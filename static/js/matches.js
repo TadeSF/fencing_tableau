@@ -54,7 +54,24 @@ function parseSVG(svgString) {
 }
 
 async function update_matches(matches) {
-    const matches_table = document.getElementById('tablebody')
+    // render placeholders for all matches
+    const matches_table = document.getElementById("tablebody")
+    let num_matches = function() {
+        let num_matches = 0
+        for (const element of matches_table.children) {
+            if (element.style.display != "none") {
+                num_matches++
+            }
+        }
+        return num_matches
+    }()
+
+    matches_table.innerHTML = ""
+    for (let i = 0; i < num_matches; i++) {
+        let placeholder = document.createElement('div')
+        placeholder.classList.add("cell", "placeholder")
+        matches_table.appendChild(placeholder)
+    }
 
     let matches_array = []
     
@@ -243,171 +260,234 @@ async function update_matches(matches) {
     toggleFilter(true)
 }
 
-function hideAllOptionPanels() {
-    if (document.getElementById("match_options") != null) {
-        document.getElementById("match_options").remove()
+// Set the time for the fade-in and fade-out animations
+const panelAnimationTime = 300
+
+function hideAllOptionPanels(callback) {
+    const match_options = document.getElementById("match_options")
+    const piste_options = document.getElementById("piste_options")
+    const score_options = document.getElementById("score_options")
+
+    let count = 0
+
+    if (match_options != null) {
+        match_options.style.animation = "fade-out " + panelAnimationTime + "ms ease-in-out"
+        setTimeout(function() {
+            match_options.remove()
+            count++
+            if (count === 3) {
+                callback()
+            }
+        }, panelAnimationTime + 10)
+    } else {
+        count++
     }
-    if (document.getElementById("piste_options") != null) {
-        document.getElementById("piste_options").remove()
+
+    if (piste_options != null) {
+        piste_options.style.animation = "fade-out " + panelAnimationTime + "ms ease-in-out"
+        setTimeout(function() {
+            piste_options.remove()
+            count++
+            if (count === 3) {
+                callback()
+            }
+        }, panelAnimationTime + 10)
+    } else {
+        count++
     }
-    if (document.getElementById("score_options") != null) {
-        document.getElementById("score_options").remove()
+
+    if (score_options != null) {
+        score_options.style.animation = "fade-out " + panelAnimationTime + "ms ease-in-out"
+        setTimeout(function() {
+            score_options.remove()
+            count++
+            if (count === 3) {
+                callback()
+            }
+        }, panelAnimationTime + 10)
+    } else {
+        count++
+    }
+
+    if (count === 3) {
+        callback()
     }
 }
 
 function openPisteOptions(siblingElement, parentElement, match_id) {
-    // if there is already a piste options panel directly after the siblingElement, remove it
-    if (siblingElement.nextElementSibling != null && siblingElement.nextElementSibling.id == "piste_options") {
-        siblingElement.nextElementSibling.remove()
-        return
+    // if the piste options are already open in the same match, set a boolean flag to true
+    let options_open = false
+    if (document.getElementById("piste_options") != null) {
+        // if the element comes after the sibling in the DOM, set the flag to true
+        if (document.getElementById("piste_options") == siblingElement.nextSibling) {
+            options_open = true
+        }   
     }
 
-    hideAllOptionPanels()
 
-    let piste_options = document.createElement('div')
-    piste_options.id = "piste_options"
+    hideAllOptionPanels(function() {
 
-    let assign_piste_input = document.createElement('input')
-    assign_piste_input.type = "text"
-    assign_piste_input.placeholder = "Assign Piste"
-    assign_piste_input.id = "assign_piste_input"
-    assign_piste_input.onkeyup = function(event) {
-        // check if it is a number
-        if (isNaN(this.value)) {
-            this.value = ""
-        } else if (parseInt(this.value) > document.body.dataset.pistes) {
-            this.value = ""
+        if (options_open === true) {
+            return;
         }
 
-        if (event.code === 13) {
-            assign_piste(match_id, assign_piste_input.value)
+        let piste_options = document.createElement('div')
+        piste_options.id = "piste_options"
+
+        let assign_piste_input = document.createElement('input')
+        assign_piste_input.type = "text"
+        assign_piste_input.placeholder = "Assign Piste"
+        assign_piste_input.id = "assign_piste_input"
+        assign_piste_input.onkeyup = function(event) {
+            // check if it is a number
+            if (isNaN(this.value)) {
+                this.value = ""
+            } else if (parseInt(this.value) > document.body.dataset.pistes) {
+                this.value = ""
+            }
+
+            if (event.code == 13) {
+                assign_piste(match_id, assign_piste_input.value)
+            }
         }
-    }
 
-    let assign_piste_button = document.createElement('div')
-    assign_piste_button.innerHTML = '<i class="fas fa-check"></i>'
-    assign_piste_button.onclick = function() {
-        if (assign_piste_input.value != "") {
-            assign_piste(match_id, assign_piste_input.value)
+        let assign_piste_button = document.createElement('div')
+        assign_piste_button.innerHTML = '<i class="fas fa-check"></i>'
+        assign_piste_button.onclick = function() {
+            if (assign_piste_input.value != "") {
+                assign_piste(match_id, assign_piste_input.value)
+            }
         }
-    }
 
-    let prioritize_piste_button = document.createElement('div')
-    prioritize_piste_button.innerHTML = '<i class="fa-solid fa-gauge-high"></i>'
-    prioritize_piste_button.onclick = function() {
-        prioritize_piste(match_id)
-    }
+        let prioritize_piste_button = document.createElement('div')
+        prioritize_piste_button.innerHTML = '<i class="fa-solid fa-gauge-high"></i>'
+        prioritize_piste_button.onclick = function() {
+            prioritize_piste(match_id)
+        }
 
-    piste_options.appendChild(assign_piste_input)
-    piste_options.appendChild(assign_piste_button)
-    piste_options.appendChild(prioritize_piste_button)
-    parentElement.insertBefore(piste_options, siblingElement.nextSibling)
+        piste_options.appendChild(assign_piste_input)
+        piste_options.appendChild(assign_piste_button)
+        piste_options.appendChild(prioritize_piste_button)
+
+        piste_options.style.animation = "fade-in " + panelAnimationTime + "ms ease-in-out"
+
+        parentElement.insertBefore(piste_options, siblingElement.nextSibling)
+    });
 }
 
 function openMatchOptions(siblingElement, parentElement, match_id) {
-    if (siblingElement.nextElementSibling != null && siblingElement.nextElementSibling.id == "match_options") {
-        siblingElement.nextElementSibling.remove()
-        return
+    // if the piste options are already open in the same match, set a boolean flag to true
+    let options_open = false
+    if (document.getElementById("match_options") != null) {
+
+        // if the element comes after the sibling in the DOM, set the flag to true
+        if (document.getElementById("match_options") == siblingElement.nextSibling) {
+            options_open = true
+        }   
     }
 
-    hideAllOptionPanels()
 
-    let match_options = document.createElement('div')
-    match_options.id = "match_options"
-    
-    let button1 = document.createElement('div')
-    button1.innerHTML = '<i class="fa-solid fa-question"></i>'
+    hideAllOptionPanels(function() {
 
-    let button2 = document.createElement('div')
-    button2.innerHTML = '<i class="fa-solid fa-question"></i>'
+        if (options_open === true) {
+            return;
+        }
 
-    let button3 = document.createElement('div')
-    button3.innerHTML = '<i class="fa-solid fa-question"></i>'
+        let match_options = document.createElement('div')
+        match_options.id = "match_options"
+        
+        let button1 = document.createElement('div')
+        button1.innerHTML = '<i class="fa-solid fa-question"></i>'
 
-    match_options.appendChild(button1)  
-    match_options.appendChild(button2)
-    match_options.appendChild(button3)
-    parentElement.insertBefore(match_options, siblingElement.nextSibling)
+        let button2 = document.createElement('div')
+        button2.innerHTML = '<i class="fa-solid fa-question"></i>'
+
+        let button3 = document.createElement('div')
+        button3.innerHTML = '<i class="fa-solid fa-question"></i>'
+
+        match_options.appendChild(button1)  
+        match_options.appendChild(button2)
+        match_options.appendChild(button3)
+        
+        match_options.style.animation = "fade-in " + panelAnimationTime + "ms ease-in-out"
+
+        parentElement.insertBefore(match_options, siblingElement.nextSibling)
+    });
 }
 
 function openScoreOptions(siblingElement, parentElement, match_id) {
-    if (siblingElement.nextElementSibling != null && siblingElement.nextElementSibling.id == "score_options") {
-        siblingElement.nextElementSibling.remove()
-        return
+    // if the piste options are already open in the same match, set a boolean flag to true
+    let options_open = false
+    if (document.getElementById("score_options") != null) {
+
+        // if the element comes after the sibling in the DOM, set the flag to true
+        if (document.getElementById("score_options") == siblingElement.nextSibling) {
+            options_open = true
+        }   
     }
 
-    hideAllOptionPanels()
+    hideAllOptionPanels(function() {
 
-    let score_options = document.createElement('div')
-    score_options.id = "score_options"
-
-    let red_score_input = document.createElement('input')
-    red_score_input.type = "text"
-    red_score_input.placeholder = "Red Score"
-    red_score_input.id = "red_score_input"
-    red_score_input.onkeyup = function(event) {
-        // check if it is a number
-        if (isNaN(this.value)) {
-            this.value = ""
-        } else if (parseInt(this.value) > 15) {
-            this.value = ""
-        }
-    }
-
-    let green_score_input = document.createElement('input')
-    green_score_input.type = "text"
-    green_score_input.placeholder = "Green Score"
-    green_score_input.id = "green_score_input"
-    green_score_input.onkeyup = function(event) {
-        // check if it is a number
-        if (isNaN(this.value)) {
-            this.value = ""
-        } else if (parseInt(this.value) > 15) {
-            this.value = ""
+        if (options_open === true) {
+            return;
         }
 
-        if (event.code === 13) {
+        let score_options = document.createElement('div')
+        score_options.id = "score_options"
+
+        let red_score_input = document.createElement('input')
+        red_score_input.type = "text"
+        red_score_input.placeholder = "Red Score"
+        red_score_input.id = "red_score_input"
+        red_score_input.onkeyup = function(event) {
+            // check if it is a number
+            if (isNaN(this.value)) {
+                this.value = ""
+            } else if (parseInt(this.value) > 15) {
+                this.value = ""
+            }
+        }
+
+        let green_score_input = document.createElement('input')
+        green_score_input.type = "text"
+        green_score_input.placeholder = "Green Score"
+        green_score_input.id = "green_score_input"
+        green_score_input.onkeyup = function(event) {
+            // check if it is a number
+            if (isNaN(this.value)) {
+                this.value = ""
+            } else if (parseInt(this.value) > 15) {
+                this.value = ""
+            }
+
+            if (event.code == 13) {
+                if (red_score_input.value != "" && green_score_input.value != "") {
+                    push_score(match_id, red_score_input.value, green_score_input.value)
+                }
+            }
+        }
+        
+        let push_score_button = document.createElement('div')
+        push_score_button.innerHTML = '<i class="fa-solid fa-paper-plane"></i>'
+        push_score_button.onclick = function() {
             if (red_score_input.value != "" && green_score_input.value != "") {
                 push_score(match_id, red_score_input.value, green_score_input.value)
             }
         }
-    }
-    
-    let push_score_button = document.createElement('div')
-    push_score_button.innerHTML = '<i class="fa-solid fa-paper-plane"></i>'
-    push_score_button.onclick = function() {
-        if (red_score_input.value != "" && green_score_input.value != "") {
-            push_score(match_id, red_score_input.value, green_score_input.value)
-        }
-    }
 
-    score_options.appendChild(red_score_input)
-    score_options.appendChild(green_score_input)
-    score_options.appendChild(push_score_button)
-    parentElement.insertBefore(score_options, siblingElement.nextSibling)
+        score_options.appendChild(red_score_input)
+        score_options.appendChild(green_score_input)
+        score_options.appendChild(push_score_button)
+
+        score_options.style.animation = "fade-in " + panelAnimationTime + "ms ease-in-out"
+
+        parentElement.insertBefore(score_options, siblingElement.nextSibling)
+    });
 }
 
 
 function push_score(id, green_score, red_score) {
-    // render placeholders for all matches
-    const tablebody = document.getElementById("tablebody")
-    let num_matches = function() {
-        let num_matches = 0
-        for (let i = 0; i < tablebody.children.length; i++) {
-            if (tablebody.children[i].style.display != "none") {
-                num_matches++
-            }
-        }
-        return num_matches
-    }()
-
-    tablebody.innerHTML = ""
-    for (let i = 0; i < num_matches; i++) {
-        let placeholder = document.createElement('div')
-        placeholder.classList.add("cell", "placeholder")
-        tablebody.appendChild(placeholder)
-    }
-
+    
     const data = new URLSearchParams();
     data.append('id', id);
     data.append('green_score', green_score);
@@ -447,19 +527,6 @@ function match_set_active(id) {
     })
     .then(response => {
         if (response.ok) {
-            // let button = document.getElementById("button_" + id)
-            // button.innerHTML = "Ongoing"
-            // button.classList.add("cell_button-ongoing")
-            // button.classList.remove("cell_button-start")
-            // button.onclick = function() {
-            //     openPromptWindow(this.parentNode.childNodes[0].innerHTML)
-            // }
-            // button.onmouseover = function() {
-            //     this.innerHTML = "Input Score"
-            // }
-            // button.onmouseout = function() {
-            //     this.innerHTML = "Ongoing"
-            // }
             get_matches()
         } else {
             alert("A match on the same piste is already ongoing")
@@ -474,11 +541,11 @@ function open_in_new_tab() {
     window.open("matches", "_blank")
 }
 
-filter_toggle = false;
+let filter_toggle = false;
 function toggleFilter(just_apply = false) {
-    if (just_apply == false) {
+    if (just_apply === false) {
         filter_toggle = !filter_toggle;
-        if (filter_toggle == true) {
+        if (filter_toggle === true) {
             document.getElementById("filter").className = "fa-solid fa-filter-circle-xmark"
         } else {
             document.getElementById("filter").className = "fa-solid fa-filter"
@@ -486,7 +553,7 @@ function toggleFilter(just_apply = false) {
     }
 
     for (const element of document.getElementsByClassName("item")) {
-        if (element.dataset.completed == "true" && filter_toggle == true) {
+        if (element.dataset.completed == "true" && filter_toggle === true) {
             element.style.display = "none";
         } else {
             element.style.display = "contents";
