@@ -131,7 +131,13 @@ async function update_matches(matches) {
         let score = document.createElement('div')
         score.classList.add("score", "cell")
         if (element["green_score"] != 0 || element["red_score"] != 0) {
-            score.innerHTML = element["red_score"] + " : " + element["green_score"]
+            if (element["red_score"].toString().length == 1 && element["green_score"].toString().length == 2) {
+                score.innerHTML = "&ensp;" + element["red_score"] + "&thinsp;:&thinsp;" + element["green_score"]
+            } else if (element["red_score"].toString().length == 2 && element["green_score"].toString().length == 1) {
+                score.innerHTML = element["red_score"] + "&thinsp;:&thinsp;" + element["green_score"] + "&ensp;"
+            } else {
+                score.innerHTML = element["red_score"] + "&thinsp;:&thinsp;" + element["green_score"]
+            }
         } else {
             score.innerHTML = " : "
         }
