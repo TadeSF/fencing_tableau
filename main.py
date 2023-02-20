@@ -1373,7 +1373,8 @@ def handle_webhook():
     #     return 'Invalid signature', 400
 
     try:
-        subprocess.run(['bash' ,'update_server.sh'])
+        # Execute the update script
+        subprocess.call(['./update.sh'])
     except Exception as e:
         return 'Error: {}'.format(e), 500
 
