@@ -1358,19 +1358,19 @@ def get_flask_logs():
 def handle_webhook():
     """
     """
-    # Verify the signature
-    signature = request.headers.get('X-Hub-Signature-256')
-    if not signature:
-        return 'No signature found', 400
-    try:
-        algorithm, signature = signature.split('=')
-        if algorithm != 'sha256':
-            raise ValueError
-    except ValueError:
-        return 'Invalid algorithm', 400
-    mac = hmac.new(github_secret.encode(), msg=request.data, digestmod=hashlib.sha256)
-    if not hmac.compare_digest(mac.hexdigest(), signature):
-        return 'Invalid signature', 400
+    # # Verify the signature
+    # signature = request.headers.get('X-Hub-Signature-256')
+    # if not signature:
+    #     return 'No signature found', 400
+    # try:
+    #     algorithm, signature = signature.split('=')
+    #     if algorithm != 'sha256':
+    #         raise ValueError
+    # except ValueError:
+    #     return 'Invalid algorithm', 400
+    # mac = hmac.new(github_secret.encode(), msg=request.data, digestmod=hashlib.sha256)
+    # if not hmac.compare_digest(mac.hexdigest(), signature):
+    #     return 'Invalid signature', 400
 
     # subprocess.run(['sudo', 'update_server.sh'])
 
