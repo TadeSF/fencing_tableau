@@ -1359,27 +1359,18 @@ def handle_webhook():
     """
     """
     # Verify the signature
-    signature = request.headers.get('X-Hub-Signature-256')
-    if not signature:
-        with open('/var/log/nginx/access.log', 'a') as f:
-            f.write('No signature found\n')
-        return 'No signature found', 400
-    try:
-        algorithm, signature = signature.split('=')
-        if algorithm != 'sha256':
-            raise ValueError
-    except ValueError:
-        with open('/var/log/nginx/access.log', 'a') as f:
-            f.write('Invalid algorithm\n')
-        return 'Invalid algorithm', 400
-    mac = hmac.new(github_secret.encode(), msg=request.data, digestmod=hashlib.sha256)
-    if not hmac.compare_digest(mac.hexdigest(), signature):
-        with open('/var/log/nginx/access.log', 'a') as f:
-            f.write('Invalid signature\n')
-        return 'Invalid signature', 400
-
-    with open('/var/log/nginx/access.log', 'a') as f:
-        f.write('Webhook received\n')
+    # signature = request.headers.get('X-Hub-Signature-256')
+    # if not signature:
+    #     return 'No signature found', 400
+    # try:
+    #     algorithm, signature = signature.split('=')
+    #     if algorithm != 'sha256':
+    #         raise ValueError
+    # except ValueError:
+    #     return 'Invalid algorithm', 400
+    # mac = hmac.new(github_secret.encode(), msg=request.data, digestmod=hashlib.sha256)
+    # if not hmac.compare_digest(mac.hexdigest(), signature):
+    #     return 'Invalid signature', 400
 
     # Pull the latest changes
     subprocess.run(['sudo', 'update_server.sh'])
