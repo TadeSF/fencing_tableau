@@ -20,8 +20,8 @@ sleep 1
 echo "Pulling latest changes from Git..."
 sudo git pull
 
-echo "Building documentation..."
-sphinx-build -b html docs docs/build
+# echo "Building documentation..."
+# sphinx-build -b html docs docs/build
 
 # Wait 5 second
 sleep 5
