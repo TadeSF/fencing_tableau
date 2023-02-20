@@ -1,13 +1,20 @@
+from dotenv import load_dotenv
+
+
 try:
-    import bcrypt
     import csv
     import datetime
+    import hashlib
+    import hmac
     import logging
     import os
+    import pickle
+    import subprocess
     import threading
     import traceback
     from typing import List, Literal
 
+    import bcrypt
     from flask import (Flask, Request, Response, abort, jsonify, make_response,
                        redirect, render_template, request, send_file,
                        send_from_directory, url_for)
@@ -23,6 +30,10 @@ try:
 
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
+
+# ------- Dotenv -------
+load_dotenv()
+github_secret = os.getenv('GITHUB_SECRET')
 
 # ------- Versioning -------
 APP_VERSION = _version.VERSION
@@ -94,8 +105,6 @@ def check_tournament_exists(tournament_id) -> bool:
 # ------- Pickeling -------
 # Pickeling is an easy way to save data to a file, so that it stays persistent even if the server has to restart.
 
-import pickle
-import subprocess
 
 
 def create_local_tournament_folder():
@@ -1345,18 +1354,27 @@ def get_flask_logs():
     return send_from_directory('logs', 'flask.log')
 
 
-@app.route("/server/update")
-def update():
-    subprocess.call(["sudo", "update.sh"])
-    return "Updating..."
+@app.route('/github-webhook', methods=['POST'])
+def handle_webhook():
 
-@app.route('/server/quit')
-def quit():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-    return 'Server shutting down...'
+    # Verify the signature
+    signature = request.headers.get('X-Hub-Signature')
+    if not signature:
+        return 'No signature found', 400
+    try:
+        algorithm, signature = signature.split('=')
+        if algorithm != 'sha1':
+            raise ValueError
+    except ValueError:
+        return 'Invalid signature', 400
+    mac = hmac.new(github_secret.encode(), msg=request.data, digestmod=hashlib.sha1)
+    if not hmac.compare_digest(mac.hexdigest(), signature):
+        return 'Invalid signature', 400
+
+    # Pull the latest changes
+    subprocess.run(['sudo', 'update_server.sh'])
+
+    return 'Webhook received', 200
 
 
 
@@ -1375,8 +1393,12 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
+# ------- Flask Mail -------
 
 
+
+
+# ------- Testing locally -------
 if __name__ == '__main__':
     load_all_tournaments()
     delete_old_tournaments()
