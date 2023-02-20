@@ -1372,7 +1372,10 @@ def handle_webhook():
     # if not hmac.compare_digest(mac.hexdigest(), signature):
     #     return 'Invalid signature', 400
 
-    subprocess.run(['bash' ,'update_server.sh'])
+    try:
+        subprocess.run(['bash' ,'update_server.sh'])
+    except Exception as e:
+        return 'Error: {}'.format(e), 500
 
     return 'Webhook received', 200
 
