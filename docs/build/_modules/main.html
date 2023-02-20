@@ -1446,7 +1446,7 @@
     <span class="c1"># if not hmac.compare_digest(mac.hexdigest(), signature):</span>
     <span class="c1">#     return &#39;Invalid signature&#39;, 400</span>
 
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sudo&#39;</span><span class="p">,</span> <span class="s1">&#39;update_server.sh&#39;</span><span class="p">])</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sudo&#39;</span><span class="p">,</span> <span class="s1">&#39;bash&#39;</span> <span class="p">,</span><span class="s1">&#39;update_server.sh&#39;</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="s1">&#39;Webhook received&#39;</span><span class="p">,</span> <span class="mi">200</span>
 
