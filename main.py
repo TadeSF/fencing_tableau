@@ -1374,7 +1374,6 @@ def handle_webhook():
 
     subprocess.run(['bash' ,'update_server.sh'])
 
-
     return 'Webhook received', 200
 
 
