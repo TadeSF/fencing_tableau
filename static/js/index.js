@@ -71,6 +71,10 @@ function openDocumentation() {
   window.open('/docs', '_blank')
 }
 
+function openUserguide() {
+  window.open('/docs/Userguide', '_blank')
+}
+
 
 window.onerror = function(error, url, line) {
   alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);

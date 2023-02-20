@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>main &mdash; fencing_tableau  documentation</title>
+  <title>main &mdash; FenceWithFriends  documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -26,7 +26,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> fencing_tableau
+            <a href="../index.html" class="icon icon-home"> FenceWithFriends
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -36,15 +36,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../Userguide.html">Userguide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Principles.html">Main Principles and Program Desing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">Main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tournament.html">Tournament Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../match.html">Match Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../fencer.html">Fencer Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../piste.html">Piste Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Utilities.html">Utilities</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">fencing_tableau</a>
+          <a href="../index.html">FenceWithFriends</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -63,16 +72,23 @@
            <div itemprop="articleBody">
              
   <h1>Source code for main</h1><div class="highlight"><pre>
-<span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">bcrypt</span>
+<span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+
+
+<span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">csv</span>
     <span class="kn">import</span> <span class="nn">datetime</span>
+    <span class="kn">import</span> <span class="nn">hashlib</span>
+    <span class="kn">import</span> <span class="nn">hmac</span>
     <span class="kn">import</span> <span class="nn">logging</span>
     <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">pickle</span>
+    <span class="kn">import</span> <span class="nn">subprocess</span>
     <span class="kn">import</span> <span class="nn">threading</span>
     <span class="kn">import</span> <span class="nn">traceback</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
 
+    <span class="kn">import</span> <span class="nn">bcrypt</span>
     <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Flask</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span>
                        <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">send_file</span><span class="p">,</span>
                        <span class="n">send_from_directory</span><span class="p">,</span> <span class="n">url_for</span><span class="p">)</span>
@@ -88,6 +104,10 @@
 
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">RequiredLibraryError</span><span class="p">(</span><span class="s2">&quot;Please install all required libraries by running &#39;pip install -r requirements.txt&#39;&quot;</span><span class="p">)</span>
+
+<span class="c1"># ------- Dotenv -------</span>
+<span class="n">load_dotenv</span><span class="p">()</span>
+<span class="n">github_secret</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GITHUB_SECRET&#39;</span><span class="p">)</span>
 
 <span class="c1"># ------- Versioning -------</span>
 <span class="n">APP_VERSION</span> <span class="o">=</span> <span class="n">_version</span><span class="o">.</span><span class="n">VERSION</span>
@@ -159,8 +179,6 @@
 <span class="c1"># ------- Pickeling -------</span>
 <span class="c1"># Pickeling is an easy way to save data to a file, so that it stays persistent even if the server has to restart.</span>
 
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 
 
 <span class="k">def</span> <span class="nf">create_local_tournament_folder</span><span class="p">():</span>
@@ -1410,18 +1428,27 @@
     <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;logs&#39;</span><span class="p">,</span> <span class="s1">&#39;flask.log&#39;</span><span class="p">)</span>
 
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/server/update&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="s2">&quot;update.sh&quot;</span><span class="p">])</span>
-    <span class="k">return</span> <span class="s2">&quot;Updating...&quot;</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/github-webhook&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">handle_webhook</span><span class="p">():</span>
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/server/quit&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">quit</span><span class="p">():</span>
-    <span class="n">func</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;werkzeug.server.shutdown&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Not running with the Werkzeug Server&#39;</span><span class="p">)</span>
-    <span class="n">func</span><span class="p">()</span>
-    <span class="k">return</span> <span class="s1">&#39;Server shutting down...&#39;</span>
+    <span class="c1"># Verify the signature</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;X-Hub-Signature&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">signature</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;No signature found&#39;</span><span class="p">,</span> <span class="mi">400</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">algorithm</span><span class="p">,</span> <span class="n">signature</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">algorithm</span> <span class="o">!=</span> <span class="s1">&#39;sha1&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Invalid signature&#39;</span><span class="p">,</span> <span class="mi">400</span>
+    <span class="n">mac</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">github_secret</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">msg</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">digestmod</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">hmac</span><span class="o">.</span><span class="n">compare_digest</span><span class="p">(</span><span class="n">mac</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="n">signature</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Invalid signature&#39;</span><span class="p">,</span> <span class="mi">400</span>
+
+    <span class="c1"># Pull the latest changes</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;sudo&#39;</span><span class="p">,</span> <span class="s1">&#39;update_server.sh&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="s1">&#39;Webhook received&#39;</span><span class="p">,</span> <span class="mi">200</span>
 
 
 
@@ -1440,8 +1467,12 @@
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;500.html&#39;</span><span class="p">),</span> <span class="mi">500</span>
 
 
+<span class="c1"># ------- Flask Mail -------</span>
 
 
+
+
+<span class="c1"># ------- Testing locally -------</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">load_all_tournaments</span><span class="p">()</span>
     <span class="n">delete_old_tournaments</span><span class="p">()</span>

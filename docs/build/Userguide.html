@@ -44,6 +44,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-tournament-master">The Tournament Master</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-new-tournament">Creating a new tournament</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-startlist">The Startlist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-dashboard">Using the Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tournament-information">Tournament Information</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matches">Matches</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#the-referee">The Referee</a></li>
@@ -85,19 +90,23 @@
              
   <section id="userguide">
 <h1>Userguide<a class="headerlink" href="#userguide" title="Permalink to this heading"></a></h1>
-<p>This is a userguide for the program. It is not a tutorial, but it will help you to understand the program and how to use it to its full potential.</p>
+<p>This is a userguide for the Web-Application. It is not a tutorial, but it will help you to understand the program and how to use it to its full potential.</p>
 <section id="the-tournament-master">
 <h2>The Tournament Master<a class="headerlink" href="#the-tournament-master" title="Permalink to this heading"></a></h2>
 <p>The Tournament Master is the creator and manager of the tournament. He has the highest clearence and can do (almost) anything. It is advised that he uses a desktop computer or laptop to use the program. The functionality includes the possibilities to display information in a seperate Window (e.g. for a beamer or big screen).</p>
-<p>The Tournament Master can:
-- Create a new tournament
-- Manage all stages of the tournament
-- Assign Pistes to matches
-- Ban a fencer from the tournament
-- Change the status of a match
-- Input Scores
-- Manage all settings
-- Change Fencer Information</p>
+<dl class="simple">
+<dt>The Tournament Master can:</dt><dd><ul class="simple">
+<li><p>Create a new tournament</p></li>
+<li><p>Manage all stages of the tournament</p></li>
+<li><p>Assign Pistes to matches</p></li>
+<li><p>Ban a fencer from the tournament</p></li>
+<li><p>Change the status of a match</p></li>
+<li><p>Input Scores</p></li>
+<li><p>Manage all settings</p></li>
+<li><p>Change Fencer Information</p></li>
+</ul>
+</dd>
+</dl>
 <section id="creating-a-new-tournament">
 <h3>Creating a new tournament<a class="headerlink" href="#creating-a-new-tournament" title="Permalink to this heading"></a></h3>
 <p>When creating a new tournament, the Tournament Master has to fill in/provide the following information/files:</p>
@@ -139,10 +148,12 @@ Please refer to the coresponding section <a class="reference internal" href="#th
 </dl>
 </li>
 <li><dl class="simple">
-<dt>Elimination mode</dt><dd><p>This Web-Application offers three different tournament modes.
-- Direct Elimination (“KO”) (default)
-- Repechage (not yet implemented)
-- Direct Elimination with Placement Matches</p>
+<dt>Elimination mode</dt><dd><p>This Web-Application offers three different tournament modes.</p>
+<ul>
+<li><p>Direct Elimination (“KO”) (default)</p></li>
+<li><p>Repechage (not yet implemented)</p></li>
+<li><p>Direct Elimination with Placement Matches</p></li>
+</ul>
 </dd>
 </dl>
 </li>
@@ -159,59 +170,194 @@ Please refer to the coresponding section <a class="reference internal" href="#th
 <p>The first line contains the column headers. The following columns (with one header line) are required:</p>
 <ul>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">Name</span></code></dt><dd><p>The name of the fencer</p>
+<dt><code class="docutils literal notranslate"><span class="pre">Name</span></code></dt><dd><p>The name of the fencer
+(mandatory)</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">Club</span></code></dt><dd><p>The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT “Turngemeinde in Berlin 1848 e.V.”, but “TIB”)</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">Nationality</span></code></dt><dd><p>The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. “GER” for Germany, “FRA” for France, “USA” for the United States of America, etc.)</p>
+<dt><code class="docutils literal notranslate"><span class="pre">Club</span></code></dt><dd><p>The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT “Turngemeinde in Berlin 1848 e.V.”, but “TIB”)
+(mandatory)</p>
 </dd>
 </dl>
 </li>
 <li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">Gender</span></code> (optional, but must be in header)</dt><dd><dl class="simple">
-<dt>The gender of the fencer. Must be either</dt><dd><ul class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Nationality</span></code></dt><dd><p>The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. “GER” for Germany, “FRA” for France, “USA” for the United States of America, etc.). For a list of all country codes, please refer to <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3</a>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If you get an Error trying to upload your startlist with the message <code class="docutils literal notranslate"><span class="pre">Invalid</span> <span class="pre">Country</span> <span class="pre">Code</span></code>, please check your startlist for any country codes that are not three letters long. If you are sure that all country codes are correct, you can use <code class="docutils literal notranslate"><span class="pre">XXX</span></code> as a placeholder (this will display the flag of the United Nations) and report the missing country code to us.</p>
+</div>
+<p>(mandatory)</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Gender</span></code></dt><dd><p>The gender of the fencer. Must be either</p>
+<ul class="simple">
 <li><p>“M”</p></li>
 <li><p>“F”</p></li>
 <li><p>“D” for divers</p></li>
 </ul>
-</dd>
-</dl>
 <p>(optional, but must be in header)</p>
 </dd>
 </dl>
 </li>
 <li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">Handedness</span></code></dt><dd><dl class="simple">
-<dt>The handedness of the fencer. Must be either</dt><dd><ul class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Handedness</span></code></dt><dd><p>The handedness of the fencer. Must be either</p>
+<ul class="simple">
 <li><p>“R”</p></li>
 <li><p>“L”</p></li>
 </ul>
-</dd>
-</dl>
 <p>(optional, but must be in header)</p>
 </dd>
 </dl>
 </li>
 <li><dl>
-<dt><code class="docutils literal notranslate"><span class="pre">Age</span></code></dt><dd><dl class="simple">
-<dt>The age of the fencer. Must be a positiv integer, either</dt><dd><ul class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Age</span></code></dt><dd><p>The age of the fencer. Must be a positiv integer, either</p>
+<ul class="simple">
 <li><p>(preferably) the age (e.g. 23)</p></li>
 <li><p>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday information)</p></li>
 <li><p>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</p></li>
 </ul>
-</dd>
-</dl>
 <p>(optional, but must be in header)</p>
 </dd>
 </dl>
 </li>
 </ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>There is no specific <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">Number</span></code> column. The start number is automatically assigned to the fencers according to the Startlist. If you want to have a sorted Startlist Fencer #1 is the best (e.g. highest elo), you just have to sort the Startlist accordingly with the first row after the header being Fencer #1.</p>
+</div>
+</section>
+<section id="using-the-dashboard">
+<h3>Using the Dashboard<a class="headerlink" href="#using-the-dashboard" title="Permalink to this heading"></a></h3>
+<p>The Dashboard is the main page of the Web-Application for the master. It is the first page that is displayed when you log in as Tournament Master. It contains all information about the current state of the tournament. The Dashboard is divided into three sections:</p>
+<section id="tournament-information">
+<h4>Tournament Information<a class="headerlink" href="#tournament-information" title="Permalink to this heading"></a></h4>
+<p>The Tournament Information section contains all information about the current tournament. It includes the following information:</p>
+<ul class="simple">
+<li><p>Tournament Name</p></li>
+<li><p>Tournament Location</p></li>
+<li><p>Tournament ID</p></li>
+<li><p>The current status of the tournament (e.g. “Preliminary Round 1”, “Elimination Round 1”, “Finished”)</p></li>
+<li><p>Detailed Information about the tournament itself (e.g. number of fencers, number of groups, number of elimination rounds, etc.)</p></li>
+</ul>
+<section id="dashboard-buttons">
+<h5>Dashboard Buttons<a class="headerlink" href="#dashboard-buttons" title="Permalink to this heading"></a></h5>
+<p>The Dashboard contains several buttons that can be used to control the tournament. The following buttons are (depending on the state) available:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Advance</span> <span class="pre">to</span> <span class="pre">next</span> <span class="pre">stage</span></code></dt><dd><p>This button advances the tournament to the next stage (e.g. from Preliminary Round 1 to Preliminary Round 2 or Elimination Round of 16 to Round of 8).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QR-Code</span></code></dt><dd><p>This button opens a new window with a genereted QR-Code and Link that leads to the fencer-login page. This QR-Code can be used to display the fencer-login page on a screen in the tournament hall.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Tableau</span></code></dt><dd><p>This button opens a new window with a Tableau that displays the tableaus of the current preliminary round. Not available during elimination rounds.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Simulation</span></code></dt><dd><p>This button is only available if specified in the tournament configurations at creation. It simulates all matches of the current stage. This feature only exists for testing purposes.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+<section id="matches">
+<h4>Matches<a class="headerlink" href="#matches" title="Permalink to this heading"></a></h4>
+<p>The Matches section contains all information about the matches of the current stage. It includes the following information:</p>
+<ul class="simple">
+<li><p>The group/stage of the match</p></li>
+<li><p>The piste of the match (dynamic, assigned automatically, can be changed by the master)</p></li>
+<li><p>The fencers of the match</p></li>
+<li><p>The score (if the match is finished)</p></li>
+</ul>
+<section id="matches-buttons">
+<h5>Matches Buttons<a class="headerlink" href="#matches-buttons" title="Permalink to this heading"></a></h5>
+<p>Each match contains several buttons that can be used to control the match. The following buttons are (depending on the state) available:</p>
+<ul>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Piste</span></code></dt><dd><p>This Button opens a option menu that allows the master to change settings of the assigned piste.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The piste assignment is dynamic and should work automatically and without any user interaction. But since the real world is not perfect and it is sometimes necessary to change the piste assignment, this option menu is available for the master.</p>
+</div>
+<p>The following settings are – depending on the assingment state of a match - available:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Assign</span> <span class="pre">Piste</span> <span class="pre">Input</span></code> and <code class="docutils literal notranslate"><span class="pre">Send</span></code></dt><dd><p>Input and button allow the master to assign the match to a piste. The master has to input the piste number in the <code class="docutils literal notranslate"><span class="pre">Assign</span> <span class="pre">Piste</span> <span class="pre">Input</span></code>. The piste will be assigned to the match.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If the piste is already assigned to another match, the other match will be unassigned from the piste.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Unassign</span> <span class="pre">Piste</span></code></dt><dd><p>This button unassigns the match from the piste. The piste will be available for other matches.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">High</span> <span class="pre">Priority</span></code></dt><dd><p>This button sets the priority of the match to high. This means that the match will be assigned the next free piste that is available, even if other matches are listed before this match. This is useful if a match is running late and the master wants to assign the next match to a piste as soon as possible.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Low</span> <span class="pre">Priority</span></code></dt><dd><p>This button sets the priority of the match to low. This means that this match will not be assigned to a piste if there are other matches of higher or normal priority. This is useful if a fencer is temporarily not available (e.g. needs medical attention or just a break) and the master wants to assign the next match to a piste as soon as possible without doing it manually.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The Piste Button is animated to indicate the state of the match. This includes blinking when the match is assigned to a piste but the piste is still occupied, flashing orange when the match is assigned to a piste and the piste is free, or pulsing green when the match is ongoing on the piste.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The piste Button may not be available if the match is already ongoing or finished.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Results</span></code></dt><dd><p>This Button opens a option menu that allows the master to input or change the results of the match OR to start the match if it is not already started.
+The score is set by inputting the score of each fencer in the corresponding input field and confirming by pressing the <code class="docutils literal notranslate"><span class="pre">Send</span></code> button. The score will be updated and the match will be marked as finished.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If the match is already finished, the score will be overwritten by the new score.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The Results Button is animated to indicate the state of the match. This includes pulsing the logo when the match is ready to be started or “loading” green when the match is ongoing.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The Results Button may not be available if the match is not ready to be started (e.g. if no piste is yet assigned to the match).</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>The “Start Match” option is already available if another match is still ongoing on the same piste. THIS IS AN EXPERIMENTAL FEATURE! It is not guaranteed that the match will be started correctly. If you want to start a match on a piste that is already occupied, you have to make sure that the match on the piste is finished before starting the new match. If you are not sure, do not use this feature. It may have unexpected implications on the tournament and the management process.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Match</span> <span class="pre">Options</span></code></dt><dd><p>This Button opens a option menu that allows the master to change settings of the match. As of yet, there are no settings available. The dummy buttons that are displayed have no functionality.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
 </section>
 </section>
 <section id="the-referee">

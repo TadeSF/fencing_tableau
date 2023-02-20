@@ -19,7 +19,7 @@ import main
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'fencing_tableau'
+project = 'FenceWithFriends'
 copyright = '2023, CC BY-NC, Tade Strehk, Moritz Hellmich'
 author = 'Tade Strehk, Moritz Hellmich'
 
