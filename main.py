@@ -1326,23 +1326,7 @@ def serve_docs(filename):
     # If the file does not have an extension, add .html
     if '.' not in filename:
         filename += '.html'
-    
-    if '.html' in filename:
-        mimetype = 'text/html'
-    elif '.css' in filename:
-        mimetype = 'text/css'
-    elif '.js' in filename:
-        mimetype = 'application/javascript'
-    elif '.png' in filename:
-        mimetype = 'image/png'
-    elif '.jpg' in filename:
-        mimetype = 'image/jpeg'
-    elif '.gif' in filename:
-        mimetype = 'image/gif'
-    elif '.svg' in filename:
-        mimetype = 'image/svg+xml'
-    
-    return send_from_directory('docs/build', filename, mimetype=mimetype)
+    return send_from_directory('docs/build', filename)
     
 
 @app.route('/docs')
