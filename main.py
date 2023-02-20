@@ -1374,7 +1374,8 @@ def handle_webhook():
 
     try:
         # Execute the update script
-        subprocess.call(['update.sh'])
+        subprocess.call(['bash', '/home/pi/fencing_tableau/update_server.sh'])
+        
     except Exception as e:
         return 'Error: {}'.format(e), 500
 
