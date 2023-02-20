@@ -11,7 +11,7 @@ The project is still in an early stage and not ready for testing.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   
    Userguide
 
    Principles
