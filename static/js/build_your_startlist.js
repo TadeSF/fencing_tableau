@@ -296,7 +296,7 @@ function get_startlist() {
                 item_nationality.classList.add("body", "cell", "nationality");
                 let flag = document.createElement("img");
                 flag.classList.add("flag");
-                flag.src = "/static/flags/" + startlist[i][2] + ".svg";
+                flag.src = "/static/flags/" + startlist[i][2].toLowerCase() + ".svg";
                 item_nationality.appendChild(flag);
 
                 let item_gender = document.createElement("div");

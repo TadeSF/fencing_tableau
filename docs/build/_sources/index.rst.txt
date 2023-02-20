@@ -3,15 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to fencing_tableau's documentation!
-===========================================
+Welcome to the FenceWithFriends documentation!
+==============================================
 
 This Project is a Python-based Web-Application used to manage and host (rather informal) fencing competitions in accordance with FIE Guidlines. It creates a preliminary round and an elimination round with finals for a given number of competitors.
 The project is still in an early stage and not ready for testing.
 
+If you are a user of the application, please refer to the :doc:`Userguide`.
+
 .. toctree::
    :maxdepth: 2
-   
+
    Userguide
 
    Principles

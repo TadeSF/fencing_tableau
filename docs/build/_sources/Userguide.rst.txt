@@ -4,7 +4,83 @@ This is a userguide for the program. It is not a tutorial, but it will help you 
 
 The Tournament Master
 ---------------------
-Hello World
+The Tournament Master is the creator and manager of the tournament. He has the highest clearence and can do (almost) anything. It is advised that he uses a desktop computer or laptop to use the program. The functionality includes the possibilities to display information in a seperate Window (e.g. for a beamer or big screen).
+
+The Tournament Master can:
+- Create a new tournament
+- Manage all stages of the tournament
+- Assign Pistes to matches
+- Ban a fencer from the tournament
+- Change the status of a match
+- Input Scores
+- Manage all settings
+- Change Fencer Information
+
+Creating a new tournament
+*************************
+When creating a new tournament, the Tournament Master has to fill in/provide the following information/files:
+
+- Tournament Name
+    The name of the tournament. This name will be publicly displayed in the list of all tournaments.
+- Tournament Location (optional)
+    The location of the tournament. This information will not be public but can be accessed with the right tournament ID.
+- Startlist (in .csv format)
+    The Startlist must have a certain format. We provide a template_, a sample-file_ and even a dedicated Startlist-Builder_. The Startlist-Builder is a program that helps you to create a startlist. It is not mandatory to use it, but it is highly recommended.
+    Please refer to the coresponding section `The Startlist`_ below for more information.
+- Number of available pistes
+    Must be a fixed number and cannot be changed after the tournament is created.
+- Number of preliminary rounds
+    Select the number of preliminary rounds that will be played. In each preliminary round, the groups are reassigned according to the standings (or in the first round the Startlist). The number of preliminary rounds cannot be changed after the tournament is created. Defaults to 1. If you want to skip the preliminary rounds and start directly with the elimination round, set the field to None.
+- Number of preliminary groups
+    Select the number of preliminary groups. The number of preliminary groups cannot be changed after the tournament is created. Defaults to "Auto", which means that the number of groups is calculated automatically according to FIE Guidlines and the total number of fencers.
+- First elimination round
+    Select the first elimination round. The number of elimination rounds cannot be changed after the tournament is created. Defaults to "Auto", which means that the first elimination round is the next bigger power of 2 after the number of fencers (to make elimination work, wildcards are assigned to the first fencers in the first elimination round). If you want to cap the number of elimination rounds (e.g. you want only the top 32 fencers to advance), set the field to the desired number.
+- Elimination mode
+    This Web-Application offers three different tournament modes.
+    - Direct Elimination ("KO") (default)
+    - Repechage (not yet implemented)
+    - Direct Elimination with Placement Matches
+- Master Password
+    The Master Password is used to protect the tournament from unauthorized access. When creating a tournament or logging in as master, a cookie is set in the browser of the user and his/her status is saved.
+
+.. _template: https://fencewithfriends.online/csv-template
+.. _sample-file: https://fencewithfriends.online/csv-sample
+.. _Startlist-Builder: https://fencewithfriends.online/build-your-startlist
+
+The Startlist
+*************
+The Startlist is a comma delimited CSV (.csv) file that contains all information about the fencers. It is mandatory to provide a Startlist when creating a tournament. The Startlist must have a certain format. We provide a template_, a sample-file_ and even a dedicated Startlist-Builder_. The Startlist-Builder is a program that helps you to create a startlist. It is not mandatory to use it, but it is highly recommended.
+
+The first line contains the column headers. The following columns (with one header line) are required:
+        
+- ``Name``
+    The name of the fencer
+- ``Club``
+    The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT "Turngemeinde in Berlin 1848 e.V.", but "TIB")
+- ``Nationality``
+    The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)
+- ``Gender`` (optional, but must be in header)
+    The gender of the fencer. Must be either
+        - "M"
+        - "F"
+        - "D" for divers
+    (optional, but must be in header)
+- ``Handedness`` 
+    The handedness of the fencer. Must be either
+        - "R"
+        - "L" 
+    (optional, but must be in header)
+- ``Age``
+    The age of the fencer. Must be a positiv integer, either
+        - (preferably) the age (e.g. 23)
+        - the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday information)
+        - the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)
+    (optional, but must be in header)
+                
+            
+        
+
+
 
 The Referee
 -----------

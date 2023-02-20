@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Userguide &mdash; fencing_tableau  documentation</title>
+  <title>Userguide &mdash; FenceWithFriends  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Main" href="main.html" />
-    <link rel="prev" title="Principles" href="Principles.html" /> 
+    <link rel="next" title="Main Principles and Program Desing" href="Principles.html" />
+    <link rel="prev" title="Welcome to the FenceWithFriends documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,7 +29,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> fencing_tableau
+            <a href="index.html" class="icon icon-home"> FenceWithFriends
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,13 +40,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Principles.html">Principles</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Userguide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#the-tournament-master">The Tournament Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-tournament-master">The Tournament Master</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-tournament">Creating a new tournament</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-startlist">The Startlist</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#the-referee">The Referee</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-fencer">The Fencer</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Principles.html">Main Principles and Program Desing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main.html">Main</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tournament.html">Tournament Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="match.html">Match Module</a></li>
@@ -61,7 +65,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">fencing_tableau</a>
+          <a href="index.html">FenceWithFriends</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -84,7 +88,131 @@
 <p>This is a userguide for the program. It is not a tutorial, but it will help you to understand the program and how to use it to its full potential.</p>
 <section id="the-tournament-master">
 <h2>The Tournament Master<a class="headerlink" href="#the-tournament-master" title="Permalink to this heading"></a></h2>
-<p>Hello World</p>
+<p>The Tournament Master is the creator and manager of the tournament. He has the highest clearence and can do (almost) anything. It is advised that he uses a desktop computer or laptop to use the program. The functionality includes the possibilities to display information in a seperate Window (e.g. for a beamer or big screen).</p>
+<p>The Tournament Master can:
+- Create a new tournament
+- Manage all stages of the tournament
+- Assign Pistes to matches
+- Ban a fencer from the tournament
+- Change the status of a match
+- Input Scores
+- Manage all settings
+- Change Fencer Information</p>
+<section id="creating-a-new-tournament">
+<h3>Creating a new tournament<a class="headerlink" href="#creating-a-new-tournament" title="Permalink to this heading"></a></h3>
+<p>When creating a new tournament, the Tournament Master has to fill in/provide the following information/files:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Tournament Name</dt><dd><p>The name of the tournament. This name will be publicly displayed in the list of all tournaments.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Tournament Location (optional)</dt><dd><p>The location of the tournament. This information will not be public but can be accessed with the right tournament ID.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Startlist (in .csv format)</dt><dd><p>The Startlist must have a certain format. We provide a <a class="reference external" href="https://fencewithfriends.online/csv-template">template</a>, a <a class="reference external" href="https://fencewithfriends.online/csv-sample">sample-file</a> and even a dedicated <a class="reference external" href="https://fencewithfriends.online/build-your-startlist">Startlist-Builder</a>. The Startlist-Builder is a program that helps you to create a startlist. It is not mandatory to use it, but it is highly recommended.
+Please refer to the coresponding section <a class="reference internal" href="#the-startlist">The Startlist</a> below for more information.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Number of available pistes</dt><dd><p>Must be a fixed number and cannot be changed after the tournament is created.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Number of preliminary rounds</dt><dd><p>Select the number of preliminary rounds that will be played. In each preliminary round, the groups are reassigned according to the standings (or in the first round the Startlist). The number of preliminary rounds cannot be changed after the tournament is created. Defaults to 1. If you want to skip the preliminary rounds and start directly with the elimination round, set the field to None.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Number of preliminary groups</dt><dd><p>Select the number of preliminary groups. The number of preliminary groups cannot be changed after the tournament is created. Defaults to “Auto”, which means that the number of groups is calculated automatically according to FIE Guidlines and the total number of fencers.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>First elimination round</dt><dd><p>Select the first elimination round. The number of elimination rounds cannot be changed after the tournament is created. Defaults to “Auto”, which means that the first elimination round is the next bigger power of 2 after the number of fencers (to make elimination work, wildcards are assigned to the first fencers in the first elimination round). If you want to cap the number of elimination rounds (e.g. you want only the top 32 fencers to advance), set the field to the desired number.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Elimination mode</dt><dd><p>This Web-Application offers three different tournament modes.
+- Direct Elimination (“KO”) (default)
+- Repechage (not yet implemented)
+- Direct Elimination with Placement Matches</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Master Password</dt><dd><p>The Master Password is used to protect the tournament from unauthorized access. When creating a tournament or logging in as master, a cookie is set in the browser of the user and his/her status is saved.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="the-startlist">
+<h3>The Startlist<a class="headerlink" href="#the-startlist" title="Permalink to this heading"></a></h3>
+<p>The Startlist is a comma delimited CSV (.csv) file that contains all information about the fencers. It is mandatory to provide a Startlist when creating a tournament. The Startlist must have a certain format. We provide a <a class="reference external" href="https://fencewithfriends.online/csv-template">template</a>, a <a class="reference external" href="https://fencewithfriends.online/csv-sample">sample-file</a> and even a dedicated <a class="reference external" href="https://fencewithfriends.online/build-your-startlist">Startlist-Builder</a>. The Startlist-Builder is a program that helps you to create a startlist. It is not mandatory to use it, but it is highly recommended.</p>
+<p>The first line contains the column headers. The following columns (with one header line) are required:</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Name</span></code></dt><dd><p>The name of the fencer</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Club</span></code></dt><dd><p>The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT “Turngemeinde in Berlin 1848 e.V.”, but “TIB”)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Nationality</span></code></dt><dd><p>The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g. “GER” for Germany, “FRA” for France, “USA” for the United States of America, etc.)</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Gender</span></code> (optional, but must be in header)</dt><dd><dl class="simple">
+<dt>The gender of the fencer. Must be either</dt><dd><ul class="simple">
+<li><p>“M”</p></li>
+<li><p>“F”</p></li>
+<li><p>“D” for divers</p></li>
+</ul>
+</dd>
+</dl>
+<p>(optional, but must be in header)</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Handedness</span></code></dt><dd><dl class="simple">
+<dt>The handedness of the fencer. Must be either</dt><dd><ul class="simple">
+<li><p>“R”</p></li>
+<li><p>“L”</p></li>
+</ul>
+</dd>
+</dl>
+<p>(optional, but must be in header)</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">Age</span></code></dt><dd><dl class="simple">
+<dt>The age of the fencer. Must be a positiv integer, either</dt><dd><ul class="simple">
+<li><p>(preferably) the age (e.g. 23)</p></li>
+<li><p>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday information)</p></li>
+<li><p>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</p></li>
+</ul>
+</dd>
+</dl>
+<p>(optional, but must be in header)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
 </section>
 <section id="the-referee">
 <h2>The Referee<a class="headerlink" href="#the-referee" title="Permalink to this heading"></a></h2>
@@ -100,8 +228,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Principles.html" class="btn btn-neutral float-left" title="Principles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="main.html" class="btn btn-neutral float-right" title="Main" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to the FenceWithFriends documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Principles.html" class="btn btn-neutral float-right" title="Main Principles and Program Desing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
