@@ -24,12 +24,14 @@ echo "Building documentation..."
 sphinx-build -b html docs docs/build
 
 # Wait 5 second
+sleep 5
 
 # Start Gunicorn
 echo "Starting Gunicorn..."
 sudo systemctl start fencing_tableau
 
 # Wait 5 second
+sleep 5
 
 # Restart Nginx
 echo "Restarting Nginx..."
