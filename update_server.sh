@@ -7,7 +7,7 @@ sleep 1
 
 # Stop Gunicorn
 echo "Stopping Gunicorn..."
-sudo systemctl stop gunicorn
+sudo systemctl stop fencing_tableau
 
 # Change to app directory
 echo "Changing to app directory..."
@@ -19,7 +19,7 @@ sudo git pull
 
 # Start Gunicorn
 echo "Starting Gunicorn..."
-sudo systemctl start gunicorn
+sudo systemctl start fencing_tableau
 
 # Restart Nginx
 echo "Restarting Nginx..."
