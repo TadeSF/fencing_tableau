@@ -13,6 +13,9 @@ sudo systemctl stop fencing_tableau
 echo "Changing to app directory..."
 cd /home/pi/fencing_tableau
 
+# Wait 1 second
+sleep 1
+
 # Pull latest changes from Git
 echo "Pulling latest changes from Git..."
 sudo git pull
@@ -20,9 +23,13 @@ sudo git pull
 echo "Building documentation..."
 sphinx-build -b html docs docs/build
 
+# Wait 5 second
+
 # Start Gunicorn
 echo "Starting Gunicorn..."
 sudo systemctl start fencing_tableau
+
+# Wait 5 second
 
 # Restart Nginx
 echo "Restarting Nginx..."
