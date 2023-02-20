@@ -1372,7 +1372,7 @@ def handle_webhook():
     # if not hmac.compare_digest(mac.hexdigest(), signature):
     #     return 'Invalid signature', 400
 
-    subprocess.run(['sudo', 'bash' ,'update_server.sh'])
+    subprocess.run(['bash' ,'update_server.sh'])
 
 
     return 'Webhook received', 200
