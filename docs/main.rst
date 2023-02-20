@@ -1,4 +1,4 @@
-Main module
+Main
 ====
 
 This module is the main module of the application. It contains the main functions as well as the Flask server setup and routes.

@@ -1313,6 +1313,29 @@ def simulate_current(tournament_id):
         save_tournament(tournament)
         return '', 200
 
+
+@app.route('/docs/<path:filename>')
+def serve_docs(filename):
+    """
+    Flask serves and renders on a GET request /docs/build/index.html file from the docs folder. This is the documentation.
+    The documentation is built using Sphinx. See the docs folder for more information.
+    The template is based on the Read the Docs theme.
+    
+    The template is not in the templates folder, the path has to be specified manually.
+    """
+    # If the file does not have an extension, add .html
+    if '.' not in filename:
+        filename += '.html'
+    return send_from_directory('docs/build', filename, mimetype='text/html')
+
+@app.route('/docs')
+def redirect_docs():
+    """
+    Flask redirects on a GET request /docs to /docs/build/index.html.
+    """
+    return redirect(url_for('serve_docs', filename='index.html'))
+
+
 @app.route('/logs/flask')
 def get_flask_logs():
     """

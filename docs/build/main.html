@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Main module &mdash; fencing_tableau  documentation</title>
+  <title>Main &mdash; fencing_tableau  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,9 +19,7 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Fencer Module" href="fencer.html" />
-    <link rel="prev" title="Welcome to fencing_tableau’s documentation!" href="index.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,59 +37,58 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Main module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#tournament-cache">Tournament Cache</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#main.get_tournament"><code class="docutils literal notranslate"><span class="pre">get_tournament()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main.check_tournament_exists"><code class="docutils literal notranslate"><span class="pre">check_tournament_exists()</span></code></a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Main</a><ul>
+<li><a class="reference internal" href="#tournament-cache">Tournament Cache</a><ul>
+<li><a class="reference internal" href="#main.get_tournament"><code class="docutils literal notranslate"><span class="pre">get_tournament()</span></code></a></li>
+<li><a class="reference internal" href="#main.check_tournament_exists"><code class="docutils literal notranslate"><span class="pre">check_tournament_exists()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tournament-loading-saving">Tournament Loading/Saving</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#main.save_tournament"><code class="docutils literal notranslate"><span class="pre">save_tournament()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main.load_all_tournaments"><code class="docutils literal notranslate"><span class="pre">load_all_tournaments()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main.delete_old_tournaments"><code class="docutils literal notranslate"><span class="pre">delete_old_tournaments()</span></code></a></li>
+<li><a class="reference internal" href="#tournament-loading-saving">Tournament Loading/Saving</a><ul>
+<li><a class="reference internal" href="#main.save_tournament"><code class="docutils literal notranslate"><span class="pre">save_tournament()</span></code></a></li>
+<li><a class="reference internal" href="#main.load_all_tournaments"><code class="docutils literal notranslate"><span class="pre">load_all_tournaments()</span></code></a></li>
+<li><a class="reference internal" href="#main.delete_old_tournaments"><code class="docutils literal notranslate"><span class="pre">delete_old_tournaments()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#flask-server-setup">Flask Server Setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#flask-routes">Flask Routes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#sites">Sites</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.matches"><code class="docutils literal notranslate"><span class="pre">matches()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.standings"><code class="docutils literal notranslate"><span class="pre">standings()</span></code></a></li>
+<li><a class="reference internal" href="#flask-server-setup">Flask Server Setup</a></li>
+<li><a class="reference internal" href="#flask-routes">Flask Routes</a><ul>
+<li><a class="reference internal" href="#sites">Sites</a><ul>
+<li><a class="reference internal" href="#main.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li><a class="reference internal" href="#main.dashboard"><code class="docutils literal notranslate"><span class="pre">dashboard()</span></code></a></li>
+<li><a class="reference internal" href="#main.matches"><code class="docutils literal notranslate"><span class="pre">matches()</span></code></a></li>
+<li><a class="reference internal" href="#main.standings"><code class="docutils literal notranslate"><span class="pre">standings()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#setup-login-functions">Setup-/ Login-Functions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main.process_form"><code class="docutils literal notranslate"><span class="pre">process_form()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.login_manager"><code class="docutils literal notranslate"><span class="pre">login_manager()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.login_referee"><code class="docutils literal notranslate"><span class="pre">login_referee()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.login_fencer"><code class="docutils literal notranslate"><span class="pre">login_fencer()</span></code></a></li>
+<li><a class="reference internal" href="#setup-login-functions">Setup-/ Login-Functions</a><ul>
+<li><a class="reference internal" href="#main.process_form"><code class="docutils literal notranslate"><span class="pre">process_form()</span></code></a></li>
+<li><a class="reference internal" href="#main.login_referee"><code class="docutils literal notranslate"><span class="pre">login_referee()</span></code></a></li>
+<li><a class="reference internal" href="#main.login_fencer"><code class="docutils literal notranslate"><span class="pre">login_fencer()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#get-tournament-infos">Get Tournament Infos</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main.get_dashboard_infos"><code class="docutils literal notranslate"><span class="pre">get_dashboard_infos()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.get_matches"><code class="docutils literal notranslate"><span class="pre">get_matches()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.get_standings"><code class="docutils literal notranslate"><span class="pre">get_standings()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.matches_left"><code class="docutils literal notranslate"><span class="pre">matches_left()</span></code></a></li>
+<li><a class="reference internal" href="#get-tournament-infos">Get Tournament Infos</a><ul>
+<li><a class="reference internal" href="#main.get_dashboard_infos"><code class="docutils literal notranslate"><span class="pre">get_dashboard_infos()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_matches"><code class="docutils literal notranslate"><span class="pre">get_matches()</span></code></a></li>
+<li><a class="reference internal" href="#main.get_standings"><code class="docutils literal notranslate"><span class="pre">get_standings()</span></code></a></li>
+<li><a class="reference internal" href="#main.matches_left"><code class="docutils literal notranslate"><span class="pre">matches_left()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#pushing-data-to-the-server">Pushing Data to the Server</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main.push_score"><code class="docutils literal notranslate"><span class="pre">push_score()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#main.next_stage"><code class="docutils literal notranslate"><span class="pre">next_stage()</span></code></a></li>
+<li><a class="reference internal" href="#pushing-data-to-the-server">Pushing Data to the Server</a><ul>
+<li><a class="reference internal" href="#main.push_score"><code class="docutils literal notranslate"><span class="pre">push_score()</span></code></a></li>
+<li><a class="reference internal" href="#main.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
+<li><a class="reference internal" href="#main.next_stage"><code class="docutils literal notranslate"><span class="pre">next_stage()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#testing-tools">Testing-Tools</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main.simulate_current"><code class="docutils literal notranslate"><span class="pre">simulate_current()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#testing-tools">Testing-Tools</a><ul>
+<li><a class="reference internal" href="#main.simulate_current"><code class="docutils literal notranslate"><span class="pre">simulate_current()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="fencer.html">Fencer Module</a></li>
 </ul>
-
+</li>
+</ul>
+</div>
         </div>
       </div>
     </nav>
@@ -106,7 +103,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">Main module</li>
+      <li class="breadcrumb-item active">Main</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/main.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -116,15 +113,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="main-module">
-<h1>Main module<a class="headerlink" href="#main-module" title="Permalink to this heading"></a></h1>
+  <section id="main">
+<h1>Main<a class="headerlink" href="#main" title="Permalink to this heading"></a></h1>
 <p>This module is the main module of the application. It contains the main functions as well as the Flask server setup and routes.</p>
 <section id="tournament-cache">
 <h2>Tournament Cache<a class="headerlink" href="#tournament-cache" title="Permalink to this heading"></a></h2>
 <p>The Tournament Cache is a list of all the tournaments that are currently loaded in the application. It is used to have the tournament ready in RAM for quicker loading times and to avoid loading the same tournament twice.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="main.get_tournament">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tournament.Tournament</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/main.html#get_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_tournament" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">get_tournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tournament</span></span></span><a class="reference internal" href="_modules/main.html#get_tournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.get_tournament" title="Permalink to this definition"></a></dt>
 <dd><p>This function returns a tournament from the tournament cache, given an id.
 If the tournament with the given id does not exist, it returns None.</p>
 <dl class="field-list simple">
@@ -177,7 +174,7 @@ This is done by pickeling a tournament object. The file is saved in the /tournam
 
 <dl class="py function">
 <dt class="sig sig-object py" id="main.load_all_tournaments">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_all_tournaments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#load_all_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.load_all_tournaments" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">load_all_tournaments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#load_all_tournaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.load_all_tournaments" title="Permalink to this definition"></a></dt>
 <dd><p>This function loads all saved tournaments from the /tournaments folder and adds them to the tournament cache.</p>
 </dd></dl>
 
@@ -227,8 +224,12 @@ The server will be run on port 8080:</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dashboard.html</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>dashboard.html 200</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -242,8 +243,12 @@ This is the page where the matches are displayed and it is visible on the dashbo
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>matches.html</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>matches.html, 200</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -256,9 +261,11 @@ This is the page where the matches are displayed and it is visible on the dashbo
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p></li>
+<li><p><strong>group</strong> (<em>str</em>) – The requested group (only if in Preliminary Stage). If <code class="docutils literal notranslate"><span class="pre">group</span></code> is “all”, overall standings are reported.</p></li>
 <li><p><strong>Returns</strong> – </p></li>
-<li><p><strong>standings.html</strong> – </p></li>
-<li><p><strong>200</strong> – </p></li>
+<li><p><strong>standings.html</strong> – On success</p></li>
+<li><p><strong>200</strong> – On success</p></li>
+<li><p><strong>404</strong> – On tournament not found</p></li>
 </ul>
 </dd>
 </dl>
@@ -278,7 +285,7 @@ It creates a new tournament object and adds it to the tournament cache as well a
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – The name of the tournament.</p></li>
-<li><p><strong>fencers</strong> (<em>file</em>) – A csv file containing the fencers with the Headers Name, Club, Nationality. Nationality has to be the alpha-3 Countrycode.</p></li>
+<li><p><strong>fencers</strong> (<em>file</em>) – A csv file containing the fencers with the Headers Name, Club, Nationality, Gender, Handedness. Nationality has to be the alpha-3 Countrycode. Gender and Handedness are optional.</p></li>
 <li><p><strong>location</strong> (<em>str</em>) – The location of the tournament.</p></li>
 <li><p><strong>pistes</strong> (<em>int</em>) – The number of pistes.</p></li>
 <li><p><strong>first_elimination_round</strong> (<em>int</em>) – The first elimination round (by default, this will be calculated automaticly)</p></li>
@@ -289,18 +296,6 @@ It creates a new tournament object and adds it to the tournament cache as well a
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>redirects to /dashboard/&lt;tournament_id&gt;</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="main.login_manager">
-<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">login_manager</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#login_manager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.login_manager" title="Permalink to this definition"></a></dt>
-<dd><p>Flask processes a POST request to login as a manager.
-Note: This is not implemented fully yet.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>redirects to /dashboard/&lt;tournament_id&gt;</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,8 +337,12 @@ This includes general information about the tournament.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>json object (from tournament.get_dashboard_infos())</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>json object (from tournament.get_dashboard_infos()), 200</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -368,7 +367,10 @@ This includes general information about the tournament.</p>
 <dd><p>Flask serves on a GET request /&lt;tournament_id&gt;/standings/update the standings of the current state as a json object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p></li>
+<li><p><strong>group</strong> (<em>str</em>) – The requested group (only if in Preliminary Stage). If <code class="docutils literal notranslate"><span class="pre">group</span></code> is “all”, overall standings are reported.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>json object (from tournament.get_standings()</p>
@@ -384,8 +386,12 @@ This includes general information about the tournament.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str (from tournament.get_matches_left()</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>str (from tournament.get_matches_left()</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -444,8 +450,12 @@ is still in use by another match.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>200</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>200</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -463,8 +473,12 @@ This is only used for testing purposes and will be deprecated in later versions.
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tournament_id</strong> (<em>str</em>) – The id of the tournament.</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>200</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>200</em> – On success</p></li>
+<li><p><em>404</em> – On tournament not found</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -476,10 +490,7 @@ This is only used for testing purposes and will be deprecated in later versions.
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to fencing_tableau’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="fencer.html" class="btn btn-neutral float-right" title="Fencer Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
+          <footer>
 
   <hr/>
 

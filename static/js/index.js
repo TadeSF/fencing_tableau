@@ -68,7 +68,7 @@ function openGithub() {
 }
 
 function openDocumentation() {
-  alert("We are still working on the documentation. Please check back later.")
+  window.open('/docs', '_blank')
 }
 
 
