@@ -1391,7 +1391,24 @@
     <span class="c1"># If the file does not have an extension, add .html</span>
     <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
         <span class="n">filename</span> <span class="o">+=</span> <span class="s1">&#39;.html&#39;</span>
-    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;docs/build&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="s1">&#39;text/html&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="s1">&#39;.html&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;text/html&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.css&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;text/css&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.js&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;application/javascript&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.png&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;image/png&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.jpg&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;image/jpeg&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.gif&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;image/gif&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;.svg&#39;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="n">mimetype</span> <span class="o">=</span> <span class="s1">&#39;image/svg+xml&#39;</span>
+    
+    <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="s1">&#39;docs/build&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mimetype</span><span class="o">=</span><span class="n">mimetype</span><span class="p">)</span>
+    
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/docs&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">redirect_docs</span><span class="p">():</span>
