@@ -23,7 +23,7 @@ body {
   color: #d8d8d8;
   margin-right: 5px;
 }
-#header img {
+#header #landing_hero {
   grid-row: 1/3;
   align-self: end;
   width: 100%;
@@ -32,6 +32,24 @@ body {
      object-fit: cover;
   -o-object-position: right;
      object-position: right;
+}
+#header #landing_hero_mobile {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: bottom;
+     object-position: bottom;
+  z-index: 1;
+}
+#header .cta-button {
+  align-self: left;
+  width: 100%;
 }
 #header .ScrollDown {
   grid-column: 2/3;
@@ -71,11 +89,12 @@ body {
   justify-items: stretch;
   gap: 1rem;
   margin-right: 5%;
+  z-index: 2;
 }
 .hero_section h1 {
   grid-area: title;
   align-self: end;
-  font-size: 3.5rem;
+  font-size: 3rem;
   margin: 0;
   margin-bottom: 1rem;
 }
@@ -87,7 +106,7 @@ body {
   margin-bottom: 2rem;
 }
 .hero_section .cta-button {
-  margin: 0;
+  justify-self: center;
 }
 .hero_section #start_tournament {
   grid-area: start-button;
@@ -106,7 +125,51 @@ body {
   background-color: black;
   color: white;
   border-radius: 10px;
-  padding: 2px 10px;
+  padding-top: 0.08em;
+  padding-bottom: 0.15em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
+  text-transform: uppercase;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas: "img1 text1" "text2 img2" "img3 text3" "quotes quotes";
+  -moz-column-gap: 1rem;
+       column-gap: 1rem;
+  row-gap: 1rem;
+}
+.container .img1, .container .img2, .container .img3 {
+  width: 100%;
+  height: 100%;
+}
+.container .img1 img, .container .img2 img, .container .img3 img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+}
+.container .text-block {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.container .text-block p {
+  text-align: justify;
+  -moz-text-align-last: center;
+       text-align-last: center;
+}
+.container .text-block h1 {
+  text-align: center;
+}
+.container .quotes {
+  grid-area: quotes;
 }
 
 .button-grid {
@@ -124,8 +187,8 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  align-self: left;
   width: auto;
+  max-width: 25rem;
   padding: 1em;
   font-size: 1em;
   font-weight: bold;
@@ -143,18 +206,15 @@ body {
   transform: translate(4px, 4px);
   transition: 0.3s ease-in-out;
 }
-
-main {
+.cta-button .button-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  justify-content: center;
 }
-main h1 {
-  margin-top: 5rem;
-}
-main h1:first-of-type {
-  margin-top: 0;
+.cta-button .button-content i {
+  font-size: 2em;
+  margin-bottom: 0.4em;
 }
 
 main p {
@@ -505,16 +565,31 @@ form .error {
 @media screen and (max-width: 800px) {
   #header {
     text-align: center;
-    grid-template-columns: 1fr;
+    grid-template-columns: auto;
+    grid-template-rows: repeat(2, auto);
+    align-items: start;
+    padding-top: 3rem;
+    height: calc(100svh - 3rem);
   }
-  #header img, #header .copyright_text {
+  #header #landing_hero, #header .copyright_text {
     display: none;
   }
+  #header #landing_hero_mobile {
+    display: block;
+  }
   #header .hero_section {
+    grid-column: 1/2;
+    grid-row: 1/2;
     margin: 30px;
   }
   #header .ScrollDown {
     grid-column: 1/2;
+    grid-row: 2/3;
+  }
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(7, auto);
+    grid-template-areas: "text1" "img1" "text2" "img2" "text3" "img3" "quotes";
   }
   .button-grid {
     grid-template-columns: 1fr 1fr;
@@ -529,9 +604,9 @@ form .error {
   }
   #header .hero_section {
     margin: 20px;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto repeat(4, 1fr);
-    grid-template-areas: "title" "text" "start-button" "manage-button" "referee-button" "participant-button";
+    grid-template-areas: "title title" "text text" "start-button manage-button" "referee-button participant-button";
   }
   .button-grid {
     grid-template-columns: 1fr;

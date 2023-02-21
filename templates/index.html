@@ -14,94 +14,125 @@
 
 <body>
     <div id="header">
-        <img src="/static/img/landing_hero.jpg" alt="Fencer">
-        <div class="copyright_text">Foto von <a
+        <img src="/static/img/stock/landing_hero2.jpg" alt="Fencer" id="landing_hero">
+        <!-- <div class="copyright_text">Foto von <a
                     href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a>
                 auf <a
                     href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
-        </div>
+        </div> -->
+        <img src="/static/img/stock/landing_hero_mobile_small.jpg" alt="Fencer" id="landing_hero_mobile">
         <div class="hero_section">
             <h1>Focus on <span class="text-pop-up">FENCING</span>,<br>
                 not on organizing</h1>
             <p class="header-text">FenceWithFriends helps you create and manage the fencing tournament of your dreams.</p>
-            <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">Create Tournament</button>
-            <button class="cta-button" id="button_manage" onclick="login_manager()">Manage Tournament</button>
-            <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
-            <button class="cta-button" id="button_participant" onclick="login_fencer()">Log in as Participant</button>
+            <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">
+                <div class="button-content">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Start New Tournament</span>
+                </div>
+            </button>
+            <button class="cta-button" id="button_manage" onclick="login_manager()">
+                <div class="button-content">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Master-Login</span>
+                </div>
+            </button>
+            <button class="cta-button" id="button_referee" onclick="login_referee()">
+                <div class="button-content">
+                    <i class="fa-solid fa-eye"></i>
+                    <strike><span>Referee-Login</span></strike>
+                </div>
+            </button>
+            <button class="cta-button" id="button_participant" onclick="login_fencer()">
+                <div class="button-content">
+                    <i class="fa-solid fa-image-portrait"></i>
+                    <span>Fencer-Login</span>
+                </div>
+            </button>
         </div>
         <div class="ScrollDown"><i class="fas fa-angle-down"></i></div>
     </div>
-    <main>
-        <h1>Easily organize and manage <span class="text-pop-up">FENCING TOURNAMENTS</span></h1>
-        <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including
-            (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates
-            standings
-            and results in real-time. Save time and focus on what matters most - the competition.</p>
-        <p>It is free and open-source. There is no registration required.</p>
-        <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read
-            the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
-
-        <h1 id="Startlist-Instructions">The <span class="text-pop-up">Startlist</span> File</h1>
-        <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following
-            columns (with one header line) are required:</p>
-        <ul>
-            <li><b>Name</b>: The name of the fencer</li>
-            <li><b>Club</b>: The club of the fencer – to avoid display annomalies, please just use an acronym (e.g. NOT
-                "Turngemeinde in Berlin 1848 e.V.", but "TIB")</li>
-            <li><b>Nationality</b>: The Nationality of the fencer. Must be a three-letter alpha-3 country code (e.g.
-                "GER" for Germany, "FRA" for France, "USA" for the United States of America, etc.)</li>
-            <li><b>Gender</b> (optional): The gender of the fencer. Must be either
-                <ul>
-                    <li>"M"</li>
-                    <li>"F"</li>
-                    <li>"D" for divers</li>
-                </ul>
-            </li>
-            <li><b>Handedness</b> (optional): The handedness of the fencer. Must be either
-                <ul>
-                    <li>"R"</li>
-                    <li>"L"</li>
-                </ul>
-            </li>
-            <li><b>Age</b> (optional): The age of the fencer. Must be a positiv integer, either
-                <ul>
-                    <li>(preferably) the age (e.g. 23)</li>
-                    <li>the birthyear (e.g. 1999, age calculations might be one year off due to missing birthday
-                        information)</li>
-                    <li>the birthday (format: YYYY-MM-DD, e.g. 1999-01-01)</li>
-                </ul>
-            </li>
-        </ul>
-        </p>
-        <div class="button-grid" style="justify-content: center;">
-            <a onclick="{window.open('build-your-startlist', '_blank')}" class="cta-button" style="background-color: red;">Start Startlist Builder</a>
-            <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
-            <a href="example-startlist" class="cta-button">Download Example File (CSV)</a>
+    <div class="container">
+        <div class="img1" style="grid-area: img1">
+            <img src="/static/img/stock/illustration_1.jpeg" alt="Fencer">
+        </div>
+        <div class="text-block" style="grid-area: text1">
+            <h1>Easily organize and manage your <span class="text-pop-up">TOURNAMENTS</span></h1>
+            <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
+            <p>It is free and open-source. There is no registration required.</p>
+            <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
+        </div>
+        
+        <div class="text-block" style="grid-area: text2">
+            <h1 id="Startlist-Instructions">The <span class="text-pop-up">Startlist</span> File</h1>
+            <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following columns (with one header line) are required:</p>
+            <div class="button-grid" style="justify-content: center;">
+                <div onclick="{window.open('build-your-startlist', '_blank')}" class="cta-button" style="background-color: red;">
+                    <div class="button-content">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Startlist-Builder</span>
+                    </div>
+                </div>
+                <a href="csv-template" class="cta-button">
+                    <div class="button-content">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>CSV Template</span>
+                    </div>
+                </a>
+                <a href="example-startlist" class="cta-button">
+                    <div class="button-content">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <span>Example</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="img2" style="grid-area: img2">
+            <img src="/static/img/stock/illustration_2.jpeg" alt="Fencer">
         </div>
 
-        <h1>How it Works</h1>
-        <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
-            is possible for everyone to see current standings and matches from their mobile devices. It just needs one
-            person as a tournament manager with a computer.</p>
-        <div class="button-grid" style="justify-content: center;">
-            <a onclick="openUserguide()" class="cta-button">View Userguide</a>
-            <a onclick="openDocumentation()" class="cta-button">View Documentation</a>
-            <a onclick="openGithub()" class="cta-button">View Project on Github</a>
+        <div class="img3" style="grid-area: img3">
+            <img src="/static/img/stock/illustration_3.jpeg" alt="Fencer">
         </div>
-    </main>
-    <section>
-        <h2>What people are saying</h2>
-        <blockquote>
-            <p>"This web app has revolutionized the way we run our tournaments. It's user-friendly and has saved us
-                countless hours of paperwork."</p>
-            <cite>- John Doe, Tournament Director</cite>
-        </blockquote>
-        <blockquote>
-            <p>"As a fencer, I love the real-time standings updates and being able to see my results immediately after
-                my match. This web app has definitely improved the tournament experience for all of us."</p>
-            <cite>- Jane Doe, Club Fencer</cite>
-        </blockquote>
-    </section>
+        <div class="text-block" style="grid-area: text3">
+            <h1>How it Works</h1>
+            <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
+                is possible for everyone to see current standings and matches from their mobile devices. It just needs one
+                person as a tournament manager with a computer.</p>
+            <div class="button-grid" style="justify-content: center;">
+                <div onclick="openUserguide()" class="cta-button" style="background-color: blue;">
+                    <div class="button-content">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>User Guide</span>
+                    </div>
+                </div>
+                <div onclick="openDocumentation()" class="cta-button">
+                    <div class="button-content">
+                        <i class="fa-solid fa-file-code"></i>
+                        <span>Code Documentation</span>
+                    </div>
+                </div>
+                <div onclick="openGithub()" class="cta-button">
+                    <div class="button-content">
+                        <i class="fa-brands fa-github"></i>
+                        <span>Github</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-block quotes">
+            <h1>What people are saying</h1>
+            <blockquote>
+                <p>"This web app has revolutionized the way we run our tournaments. It's user-friendly and has saved us countless hours of paperwork."</p>
+                <cite>- John Doe, Tournament Director</cite>
+            </blockquote>
+            <blockquote>
+                <p>"As a fencer, I love the real-time standings updates and being able to see my results immediately after my match. This web app has definitely improved the tournament experience for all of us."</p>
+                <cite>- Jane Doe, Club Fencer</cite>
+            </blockquote>
+        </div>
+    </div>
     <footer>
         <ul>
             <li>Contact: tade99@gmx.de</li>

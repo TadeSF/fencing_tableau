@@ -1,4 +1,6 @@
 $bg-grey: #d8d8d8;
+$bg-grey-mobile: #d7d2d8;
+
 
 html {
     font-size: 14px;
@@ -26,13 +28,32 @@ body {
         margin-right: 5px;
     }
 
-    img {
+    #landing_hero {
         grid-row: 1 / 3;
         align-self: end;
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: right;
+    }
+
+    #landing_hero_mobile {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: bottom;
+        z-index: 1;
+    }
+
+    .cta-button {
+        align-self: left;
+        width: 100%;
     }
 
     .ScrollDown {
@@ -91,11 +112,12 @@ body {
     justify-items: stretch;
     gap: 1rem;
     margin-right: 5%;
+    z-index: 2;
 
     h1 {
         grid-area: title;
         align-self: end;
-        font-size: 3.5rem;
+        font-size: 3rem;
         margin: 0;
         margin-bottom: 1rem;
         
@@ -110,7 +132,9 @@ body {
     }
 
     .cta-button {
-        margin: 0;
+        // margin-right: auto;
+        // margin-left: auto;
+        justify-self: center;
     }
 
     #start_tournament {
@@ -134,8 +158,59 @@ body {
     background-color: black;
     color: white;
     border-radius: 10px;
-    padding: 2px 10px;
+    padding-top: 0.08em;
+    padding-bottom: 0.15em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    text-transform: uppercase;
 }
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:    "img1 text1"
+                            "text2 img2"
+                            "img3 text3"
+                            "quotes quotes";
+    column-gap: 1rem;
+    row-gap: 1rem;
+
+    .img1, .img2, .img3 {
+        width: 100%;
+        height: 100%;
+        
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+    }
+
+    .text-block {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        p {
+            text-align: justify;
+            text-align-last: center;
+        }
+
+        h1 {
+            text-align: center;
+        }
+    }
+
+    .quotes {
+        grid-area: quotes;
+    }
+}
+
+
 
 .button-grid {
     display: grid;
@@ -152,8 +227,8 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    align-self: left;
     width: auto;
+    max-width: 25rem;
     padding: 1em;
     font-size: 1em;
     font-weight: bold;
@@ -171,19 +246,16 @@ body {
         transform: translate(4px, 4px);
         transition: 0.3s ease-in-out;
     }
-}
 
-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
+    .button-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
-    h1 {
-        margin-top: 5rem;
-
-        &:first-of-type {
-            margin-top: 0;
+        i {
+            font-size: 2em;
+            margin-bottom: 0.4em;
         }
     }
 }
@@ -528,18 +600,42 @@ form .error {
 @media screen and (max-width: 800px) {
     #header {
         text-align: center;
-        grid-template-columns: 1fr;
-        img, .copyright_text {
+        grid-template-columns: auto;
+        grid-template-rows: repeat(2, auto);
+        align-items: start;
+        padding-top: 3rem;
+        height: calc(100svh - 3rem);
+
+        #landing_hero, .copyright_text {
             display: none;
+        }
+
+        #landing_hero_mobile {
+            display: block;
         }
         
         .hero_section {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
             margin: 30px;
         }
 
         .ScrollDown {
             grid-column: 1 / 2;
+            grid-row: 2 / 3;
         }
+    }
+
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(7, auto);
+        grid-template-areas:    "text1"
+                                "img1"
+                                "text2"
+                                "img2"
+                                "text3"
+                                "img3"
+                                "quotes";
     }
 
     .button-grid {
@@ -558,14 +654,12 @@ form .error {
     #header {
         .hero_section {
             margin: 20px;
-            grid-template-columns: auto;
+            grid-template-columns: 1fr 1fr;
             grid-template-rows: auto auto repeat(4, 1fr);
-            grid-template-areas:    "title"
-                                    "text"
-                                    "start-button"
-                                    "manage-button"
-                                    "referee-button"
-                                    "participant-button";
+            grid-template-areas:    "title title"
+                                    "text text"
+                                    "start-button manage-button"
+                                    "referee-button participant-button";
         }
     }
 
