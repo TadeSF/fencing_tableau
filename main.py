@@ -390,7 +390,7 @@ def index():
     Flask serves on GET request / the index.html file from the templates folder.
     """
     user_agent = request.headers.get("User-Agent")
-    if "mobile" in user_agent.lower():
+    if "mobile" in user_agent.lower() and request.args.get('no_mobile') is None:
         return redirect(url_for('mobile_index'))
     return render_template('index.html', version=APP_VERSION)
 
