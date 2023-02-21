@@ -40,7 +40,7 @@
             <button class="cta-button" id="button_referee" onclick="login_referee()">
                 <div class="button-content">
                     <i class="fa-solid fa-eye"></i>
-                    <strike><span>Referee-Login</span></strike>
+                    <span style="text-decoration:line-through;">Referee-Login</span>
                 </div>
             </button>
             <button class="cta-button" id="button_participant" onclick="login_fencer()">
@@ -56,14 +56,35 @@
         <div class="img1" style="grid-area: img1">
             <img src="/static/img/stock/illustration_1.jpeg" alt="Fencer">
         </div>
-        <div class="text-block" style="grid-area: text1">
+        <div class="text-block" style="grid-area: text1" id="textblock-introduction">
             <h1>Easily organize and manage your <span class="text-pop-up">TOURNAMENTS</span></h1>
             <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
             <p>It is free and open-source. There is no registration required.</p>
             <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
         </div>
-        
-        <div class="text-block" style="grid-area: text2">
+    
+        <div class="text-block" style="grid-area: text2" id="textblock-get-started">
+            <h1>How to get <span class="text-pop-up">started</span></h1>
+            <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
+                is possible for everyone to see current standings and matches from their mobile devices. It just needs one
+                person as a tournament manager with a computer.</p>
+            <div class="button-grid" style="justify-content: center;">
+                <div onclick="openUserguide()" class="cta-button" style="background-color: blue;">
+                    <div class="button-content">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>User Guide</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="img2" style="grid-area: img2">
+            <img src="/static/img/stock/illustration_2.jpeg" alt="Fencer">
+        </div>
+
+        <div class="img3" style="grid-area: img3">
+            <img src="/static/img/stock/illustration_3.jpeg" alt="Fencer">
+        </div>
+        <div class="text-block" style="grid-area: text3" id="textblock-startlist">
             <h1 id="Startlist-Instructions">The <span class="text-pop-up">Startlist</span> File</h1>
             <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following columns (with one header line) are required:</p>
             <div class="button-grid" style="justify-content: center;">
@@ -87,25 +108,12 @@
                 </a>
             </div>
         </div>
-        <div class="img2" style="grid-area: img2">
-            <img src="/static/img/stock/illustration_2.jpeg" alt="Fencer">
-        </div>
 
-        <div class="img3" style="grid-area: img3">
-            <img src="/static/img/stock/illustration_3.jpeg" alt="Fencer">
-        </div>
-        <div class="text-block" style="grid-area: text3">
-            <h1>How it Works</h1>
-            <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
-                is possible for everyone to see current standings and matches from their mobile devices. It just needs one
-                person as a tournament manager with a computer.</p>
+        <div class="text-block" style="grid-area: text4" id="textblock-codebase">
+            <h1>The <span class="text-pop-up">Codebase</span></h1>
+            <p>FenceWithFriends is a Python-based Web-Application hosted on a webserver in Germany. The Code is completely open source and available throug our documentation (where the code is explained) and Github (where we are collaborating and keeping our version history). We are very open to participation, so if you are a Programmer and interested in joining this fun project, reach out to us!</p>
+            <p>Our Code is Licensed under the Creative Commons BY-NC 4.0 License. You can find details in our <a href="https://github.com/TadeSF/fencing_tableau">Github Repository</a>.</p>
             <div class="button-grid" style="justify-content: center;">
-                <div onclick="openUserguide()" class="cta-button" style="background-color: blue;">
-                    <div class="button-content">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                        <span>User Guide</span>
-                    </div>
-                </div>
                 <div onclick="openDocumentation()" class="cta-button">
                     <div class="button-content">
                         <i class="fa-solid fa-file-code"></i>
@@ -119,6 +127,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="img4" style="grid-area: img4">
+            <img src="/static/img/stock/illustration_4.jpeg" alt="Fencer">
         </div>
 
         <div class="text-block quotes">
