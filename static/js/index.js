@@ -83,7 +83,6 @@ window.onerror = function(error, url, line) {
 
 window.onload = function() {
   const cookieBanner = document.getElementById("cookieBanner");
-  console.log(document.cookie)
   if (document.cookie.indexOf("cookieConsent=true") === -1) {
     cookieBanner.style.display = "block";
   } else {

@@ -5,34 +5,34 @@
     <title>FenceWithFriends</title>
     <link rel="stylesheet" href="static/css/index.css">
     <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="height=device-height, initial-scale=1.0">
 </head>
 
 <body>
-    <header>
+    <div id="header">
         <img src="/static/img/landing_hero.jpg" alt="Fencer">
         <div class="copyright_text">Foto von <a
-                href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a>
-            auf <a
-                href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+                    href="https://unsplash.com/@alevisionco?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">alevision.co</a>
+                auf <a
+                    href="https://unsplash.com/de/fotos/X8pTJ7fjqCE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
         </div>
-        <div class="hero_text">
-            <h1>Focus on FENCING,<br>not on organizing</h1>
-            <p class="header-text">FenceWithFriends helps you create and manage the fencing tournament of your dreams.
-            </p>
-            <button class="cta-button" id="start_tournament" onclick="new_tournament()"
-                style="background-color: red">Start Tournament</button>
-            <div class="button-flex">
-                <button class="cta-button" id="button_manage" onclick="login_manager()">Manage existing
-                    Tournament</button>
-                <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
-                <button class="cta-button" id="button_participate" onclick="login_fencer()">Log in as
-                    Participant</button>
-            </div>
+        <div class="hero_section">
+            <h1>Focus on <span class="text-pop-up">FENCING</span>,<br>
+                not on organizing</h1>
+            <p class="header-text">FenceWithFriends helps you create and manage the fencing tournament of your dreams.</p>
+            <button class="cta-button" id="start_tournament" onclick="new_tournament()" style="background-color: red">Create Tournament</button>
+            <button class="cta-button" id="button_manage" onclick="login_manager()">Manage Tournament</button>
+            <button class="cta-button" id="button_referee" onclick="login_referee()">Log in as Referee</button>
+            <button class="cta-button" id="button_participant" onclick="login_fencer()">Log in as Participant</button>
         </div>
-    </header>
+        <div class="ScrollDown"><i class="fas fa-angle-down"></i></div>
+    </div>
     <main>
-        <h1>Easily organize and manage FENCING TOURNAMENTS</h1>
+        <h1>Easily organize and manage <span class="text-pop-up">FENCING TOURNAMENTS</span></h1>
         <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including
             (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates
             standings
@@ -41,7 +41,7 @@
         <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read
             the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
 
-        <h1 id="Startlist-Instructions">The Startlist File</h1>
+        <h1 id="Startlist-Instructions">The <span class="text-pop-up">Startlist</span> File</h1>
         <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following
             columns (with one header line) are required:</p>
         <ul>
@@ -73,7 +73,7 @@
             </li>
         </ul>
         </p>
-        <div class="button-flex" style="justify-content: center;">
+        <div class="button-grid" style="justify-content: center;">
             <a onclick="{window.open('build-your-startlist', '_blank')}" class="cta-button" style="background-color: red;">Start Startlist Builder</a>
             <a href="csv-template" class="cta-button">Download Startlist-Template (CSV)</a>
             <a href="example-startlist" class="cta-button">Download Example File (CSV)</a>
@@ -83,7 +83,7 @@
         <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
             is possible for everyone to see current standings and matches from their mobile devices. It just needs one
             person as a tournament manager with a computer.</p>
-        <div class="button-flex" style="justify-content: center;">
+        <div class="button-grid" style="justify-content: center;">
             <a onclick="openUserguide()" class="cta-button">View Userguide</a>
             <a onclick="openDocumentation()" class="cta-button">View Documentation</a>
             <a onclick="openGithub()" class="cta-button">View Project on Github</a>
@@ -201,7 +201,8 @@
     <!-- Cookie Consent Banner -->
     <div class="cookie-banner" id="cookieBanner">
         <p>This website uses cookies to ensure you get the best experience on our website. By using our website, you consent to our use of cookies in accordance with the terms of our <a href="/privacy">privacy policy</a>.</p>
-        <button id="cookieConsentButton" onclick="acceptCookies()">Accept</button>
+        <button id="cookieConsentButton" onclick="acceptCookies()" style="background-color: green;">Accept</button>
+        <button id="cookieConsentButton" onclick="acceptCookies()" style="background-color: red;">Decline</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>

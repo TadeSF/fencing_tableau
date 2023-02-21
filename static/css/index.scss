@@ -1,14 +1,62 @@
+$bg-grey: #d8d8d8;
+
+html {
+    font-size: 14px;
+}
+
 body {
     font-family: margin-mvb, sans-serif;
     margin: 0;
 }
 
-header {
-    display: flex;
+#header {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto 4rem;
     align-items: center;
-    background-color: #d8d8d8;
-    color: #0a0a0a;
-    height: 100vh;
+    justify-items: center;
+    background-color: $bg-grey;
+    color: #000;
+    min-height: 500px;
+    height: 100svh;
+    overflow: hidden;
+
+    .text-pop-up {
+        color: $bg-grey;
+        margin-right: 10px;
+    }
+
+    img {
+        grid-row: 1 / 3;
+        align-self: end;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: right;
+    }
+
+    .ScrollDown {
+        grid-column: 2 / 3;
+        display: block;
+        width: 100%;
+        color: white;
+        padding: 0.5rem;
+        font-size: 2rem;
+        text-align: center;
+    }
+    
+    // img::before {
+    //     position: absolute;
+    //     bottom: 0;
+    //     left: 0;
+    //     right: 0;
+    //     display: block;
+    //     width: 100%;
+    //     background-color: rgba(0, 0, 0, 0.5);
+    //     color: white;
+    //     padding: 0.5rem;
+    //     font-size: 0.75rem;
+    // }
 }
 
 .copyright_text {
@@ -31,50 +79,67 @@ header {
     color: grey;
 }
 
-.hero_text {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
+.hero_section {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto repeat(2, 1fr);
+    grid-template-areas:    "title title title"
+                            "text text text"
+                            "start-button start-button start-button"
+                            "manage-button referee-button participant-button";
+    align-items: stretch;
+    justify-items: stretch;
+    gap: 1rem;
+    margin-right: 5%;
+
+    h1 {
+        grid-area: title;
+        align-self: end;
+        font-size: 3.5rem;
+        margin: 0;
+        margin-bottom: 1rem;
+        
+    }
+    p {
+        grid-area: text;
+        align-self: center;
+        font-size: 1.5rem;
+        margin: 0;
+        margin-bottom: 2rem;
+        
+    }
+
+    .cta-button {
+        margin: 0;
+    }
+
+    #start_tournament {
+        grid-area: start-button;
+    }
+
+    #button_manage {
+        grid-area: manage-button;
+    }
+
+    #button_referee {
+        grid-area: referee-button;
+    }
+
+    #button_participant {
+        grid-area: participant-button;
+    }
 }
 
-header img {
-    position: relative;
-    width: 50%;
-    height: 100%;
-    object-fit: cover;
-    align-self: right;
-}
-
-header img::before {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: block;
-    width: 100%;
-    background-color: rgba(0,0,0,0.5);
+.text-pop-up {
+    background-color: black;
     color: white;
-    padding: 0.5rem;
-    font-size: 0.75rem;
+    border-radius: 10px;
+    padding: 2px 10px;
 }
 
-header h1 {
-    font-size: 3em;
-    margin: 0;
-    padding: 0 2rem;
-}
-
-header p {
-    font-size: 1.5em;
-    padding: 0 2rem;
-}
-
-.button-flex {
-    display: flex;
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -96,6 +161,10 @@ main p {
 }
 
 .cta-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     align-self: left;
     width: auto;
     margin: 2em;
@@ -105,17 +174,17 @@ main p {
     color: #fff;
     background-color: #333;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
     text-decoration: none;
 }
 
 .cta-button:hover {
-    background-color: #444;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        transition: 0.3s;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+    transform: translate(4px, 4px);
+    transition: 0.3s ease-in-out;
 }
 
 section {
@@ -189,12 +258,11 @@ footer ul ul li {
     margin: 0 0 0 1rem;
 }
 
-
 #new_tournament_form,
 #login_manager_form,
 #login_fencer_form {
     transition: all 0.5s ease-in-out;
-    display:none;
+    display: none;
     position: fixed;
     width: 100%;
     height: 100%;
@@ -204,7 +272,7 @@ footer ul ul li {
     z-index: 99;
 }
 .form_container {
-    position:fixed;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -216,8 +284,8 @@ footer ul ul li {
 }
 
 div::-webkit-scrollbar {
-  width: 0;
-  background-color: transparent;
+    width: 0;
+    background-color: transparent;
 }
 
 /* General form styles */
@@ -231,23 +299,23 @@ form {
     text-align: center;
     background-color: #f8f8f8;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  /* Form label styles */
-  form label {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Form label styles */
+form label {
     display: block;
     margin-bottom: 0.5em;
     font-size: 0.9em;
     font-weight: bold;
     color: #333;
-  }
-  
-  /* Form input styles */
-  form input[type="text"],
-  form input[type="email"],
-  form input[type="password"],
-  form input[type="number"] {
+}
+
+/* Form input styles */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="number"] {
     width: 100%;
     padding: 0.8em;
     font-size: 1em;
@@ -257,17 +325,17 @@ form {
     background-color: #fff;
     outline: none;
     text-align: center;
-  }
-  form input[type="text"]:focus,
-  form input[type="email"]:focus,
-  form input[type="password"]:focus,
-  form input[type="number"]:focus {
+}
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="password"]:focus,
+form input[type="number"]:focus {
     border-color: #e71818;
     box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
     text-align: center;
-  }
+}
 
-  /* Form file input styles */
+/* Form file input styles */
 form input[type="file"] {
     width: 100%;
     padding: 0.8em;
@@ -277,12 +345,12 @@ form input[type="file"] {
     box-sizing: border-box;
     background-color: #fff;
     text-align: center;
-  }
-  form input[type="file"]:focus {
+}
+form input[type="file"]:focus {
     border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52,152,219,0.5);
-  }
-  form select[name="fileType"] {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+form select[name="fileType"] {
     width: 50%;
     padding: 0.8em;
     font-size: 1em;
@@ -290,14 +358,14 @@ form input[type="file"] {
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #fff;
-  }
-  form select[name="fileType"]:focus {
+}
+form select[name="fileType"]:focus {
     border-color: #3498db;
-    box-shadow: 0 0 8px rgba(52,152,219,0.5);
-  }
-  
-  /* Form button styles */
-  form button[type="submit"] {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+/* Form button styles */
+form button[type="submit"] {
     width: 100%;
     padding: 1em;
     font-size: 1em;
@@ -307,17 +375,17 @@ form input[type="file"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: 0.3s;
-  }
-  form button[type="submit"]:hover {
+}
+form button[type="submit"]:hover {
     background-color: #444;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-  }
+}
 
-  /* Form select styles */
-  form select {
+/* Form select styles */
+form select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -330,13 +398,13 @@ form input[type="file"] {
     box-sizing: border-box;
     background-color: #fff;
     text-align: center;
-  }
-  form select:focus {
+}
+form select:focus {
     border-color: #db3434;
     box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
     text-align: center;
-  }
-  
+}
+
 /* Form checkbox styles */
 form input[type="checkbox"] {
     appearance: none;
@@ -351,20 +419,20 @@ form input[type="checkbox"] {
     cursor: pointer;
     transition: 0.3s;
     margin-right: 1em;
-  }
-  form input[type="checkbox"]:checked {
+}
+form input[type="checkbox"]:checked {
     background-color: #0e6900;
     border-color: #083f00;
-  }
-  form input[type="checkbox"]:focus {
+}
+form input[type="checkbox"]:focus {
     border-color: #db3434;
     box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
-  }
-  form input[type="checkbox"]:hover {
+}
+form input[type="checkbox"]:hover {
     border-color: #db3434;
-  }
+}
 
-  /* Form date input styles */
+/* Form date input styles */
 form input[type="date"] {
     width: 100%;
     padding: 0.8em;
@@ -374,19 +442,18 @@ form input[type="date"] {
     box-sizing: border-box;
     background-color: #fff;
     text-align: center;
-  }
-  form input[type="date"]:focus {
+}
+form input[type="date"]:focus {
     border-color: #db3434;
     box-shadow: 0 0 8px rgba(219, 52, 52, 0.5);
-  }
-  
-  /* Form error styles */
-  form .error {
+}
+
+/* Form error styles */
+form .error {
     color: red;
     font-size: 0.8em;
     margin-top: 0.5em;
-  }
-  
+}
 
 .form_flex {
     display: flex;
@@ -403,46 +470,91 @@ form input[type="date"] {
 }
 
 .number_container {
-  margin-left: 2em;
-  margin-right: 2em;
+    margin-left: 2em;
+    margin-right: 2em;
 }
 
 #fencer-error-message {
-  margin-top: 15px;
-  padding: 15px;
-  color: white;
-  display: none;
-  border-radius: 4px;
+    margin-top: 15px;
+    padding: 15px;
+    color: white;
+    display: none;
+    border-radius: 4px;
 }
-
 
 /* Cookie Consent Banner Styles */
 .cookie-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #000000;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-gap: 20px;
+    font-size: 1rem;
+    align-items: center;
+    justify-items: start;
+    z-index: 1000;
+
+    button {
+        color: #fff;
+        box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #3e8e41;
+        }
+    }
+
+    a {
+        color: #fff;
+    }
 }
 
-.cookie-banner a {
-  color: #fff;
+@media screen and (max-width: 800px) {
+    #header {
+        grid-template-columns: 1fr;
+        img, .copyright_text {
+            display: none;
+        }
+        
+        .hero_section {
+            margin: 30px;
+        }
+
+        .ScrollDown {
+            grid-column: 1 / 2;
+        }
+    }
 }
 
-#cookieConsentButton {
-  background-color: #4CAF50;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+@media screen and (max-width: 500px) {
+    html {
+        font-size: 12px;
+    }
+    #header {
+        .hero_section {
+            margin: 20px;
+            grid-template-columns: auto;
+            grid-template-rows: auto auto repeat(4, 1fr);
+            grid-template-areas:    "title"
+                                    "text"
+                                    "start-button"
+                                    "manage-button"
+                                    "referee-button"
+                                    "participant-button";
+        }
+    }
 }
 
-#cookieConsentButton:hover {
-  background-color: #3e8e41;
+@media screen and (max-width: 375px) {
+    html {
+        font-size: 10px;
+    }
 }

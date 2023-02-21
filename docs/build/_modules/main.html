@@ -463,9 +463,9 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flask serves on GET request / the index.html file from the templates folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">user_agent</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;mobile&quot;</span> <span class="ow">in</span> <span class="n">user_agent</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;no_mobile&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;mobile_index&#39;</span><span class="p">))</span>
+    <span class="c1"># user_agent = request.headers.get(&quot;User-Agent&quot;)</span>
+    <span class="c1"># if &quot;mobile&quot; in user_agent.lower() and request.args.get(&#39;no_mobile&#39;) is None:</span>
+    <span class="c1">#     return redirect(url_for(&#39;mobile_index&#39;))</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span></div>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/m&#39;</span><span class="p">)</span>
