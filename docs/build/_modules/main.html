@@ -92,6 +92,7 @@
     <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Flask</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span>
                        <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">send_file</span><span class="p">,</span>
                        <span class="n">send_from_directory</span><span class="p">,</span> <span class="n">url_for</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">flask_mail</span> <span class="kn">import</span> <span class="n">Mail</span><span class="p">,</span> <span class="n">Message</span>
 
     <span class="kn">import</span> <span class="nn">_version</span>
     <span class="kn">import</span> <span class="nn">attr_checker</span>
@@ -107,7 +108,11 @@
 
 <span class="c1"># ------- Dotenv -------</span>
 <span class="n">load_dotenv</span><span class="p">()</span>
-<span class="n">github_secret</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GITHUB_SECRET&#39;</span><span class="p">)</span>
+<span class="n">GITHUB_SECRET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GITHUB_SECRET&#39;</span><span class="p">)</span>
+<span class="n">MAIL_SENDER</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_SENDER&#39;</span><span class="p">)</span>
+<span class="n">MAIL_USERNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_USERNAME&#39;</span><span class="p">)</span>
+<span class="n">MAIL_PASSWORD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_PASSWORD&#39;</span><span class="p">)</span>
+<span class="n">MAIL_ADMIN_RECIPIENTS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MAIL_ADMIN_RECIPIENTS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 
 <span class="c1"># ------- Versioning -------</span>
 <span class="n">APP_VERSION</span> <span class="o">=</span> <span class="n">_version</span><span class="o">.</span><span class="n">VERSION</span>
@@ -425,8 +430,22 @@
     <span class="k">return</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">checkpw</span><span class="p">(</span><span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span> <span class="n">hashed_password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
 
 
-<span class="c1"># ------- Flask -------</span>
+
+
+
+
+<span class="c1"># ------- Flask / Flask Mail -------</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">static_folder</span><span class="o">=</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">template_folder</span><span class="o">=</span><span class="s1">&#39;templates&#39;</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_SERVER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;smtp.gmx.net&#39;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">465</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_USERNAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MAIL_USERNAME</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_PASSWORD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MAIL_PASSWORD</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_USE_TLS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_USE_SSL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">mail</span> <span class="o">=</span> <span class="n">Mail</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/favicon.ico&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">favicon</span><span class="p">():</span>
@@ -1446,6 +1465,13 @@
     <span class="c1"># if not hmac.compare_digest(mac.hexdigest(), signature):</span>
     <span class="c1">#     return &#39;Invalid signature&#39;, 400</span>
 
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="s2">&quot;GitHub Webhook&quot;</span><span class="p">,</span>
+                    <span class="n">sender</span><span class="o">=</span><span class="n">MAIL_SENDER</span><span class="p">,</span>
+                    <span class="n">recipients</span><span class="o">=</span><span class="n">MAIL_ADMIN_RECIPIENTS</span><span class="p">)</span>
+
+    <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A new commit was pushed to the GitHub repository.</span><span class="se">\n\n</span><span class="s2">View the changes here: https://github.com/TadeSF/fencing_tableau&quot;</span>
+    <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Execute the update script</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s1">&#39;/usr/bin/bash&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/pi/fencing_tableau/update_server.sh&#39;</span><span class="p">])</span>
@@ -1469,10 +1495,6 @@
 <span class="sd">    500 Error handler: Flask serves on a 500 Error the 500.html file from the templates folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;500.html&#39;</span><span class="p">),</span> <span class="mi">500</span>
-
-
-<span class="c1"># ------- Flask Mail -------</span>
-
 
 
 

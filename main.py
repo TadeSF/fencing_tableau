@@ -18,6 +18,7 @@ try:
     from flask import (Flask, Request, Response, abort, jsonify, make_response,
                        redirect, render_template, request, send_file,
                        send_from_directory, url_for)
+    from flask_mail import Mail, Message
 
     import _version
     import attr_checker
@@ -33,7 +34,11 @@ except ModuleNotFoundError:
 
 # ------- Dotenv -------
 load_dotenv()
-github_secret = os.getenv('GITHUB_SECRET')
+GITHUB_SECRET = os.getenv('GITHUB_SECRET')
+MAIL_SENDER = os.getenv('MAIL_SENDER')
+MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+MAIL_ADMIN_RECIPIENTS = os.getenv('MAIL_ADMIN_RECIPIENTS').split(',')
 
 # ------- Versioning -------
 APP_VERSION = _version.VERSION
@@ -351,8 +356,22 @@ def check_password(password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
-# ------- Flask -------
+
+
+
+
+# ------- Flask / Flask Mail -------
 app = Flask(__name__, static_folder='static', template_folder='templates')
+
+app.config['MAIL_SERVER'] = 'smtp.gmx.net'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -1372,6 +1391,13 @@ def handle_webhook():
     # if not hmac.compare_digest(mac.hexdigest(), signature):
     #     return 'Invalid signature', 400
 
+    msg = Message("GitHub Webhook",
+                    sender=MAIL_SENDER,
+                    recipients=MAIL_ADMIN_RECIPIENTS)
+
+    msg.body = f"A new commit was pushed to the GitHub repository.\n\nView the changes here: https://github.com/TadeSF/fencing_tableau"
+    mail.send(msg)
+
     try:
         # Execute the update script
         subprocess.call(['/usr/bin/bash', '/home/pi/fencing_tableau/update_server.sh'])
@@ -1395,10 +1421,6 @@ def internal_server_error(e):
     500 Error handler: Flask serves on a 500 Error the 500.html file from the templates folder.
     """
     return render_template('500.html'), 500
-
-
-# ------- Flask Mail -------
-
 
 
 
