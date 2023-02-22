@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Get Started</title>
+        <link rel="stylesheet" href="/static/css/get_started.css"></link>
+        <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+        <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+        <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="Wrapper">
+            <h1>Get Started</h1>
+            <div class="Section">
+                <h2>Start a new Tournament</h2>
+                <p>You can also Login to an already existing tournament as <a href=""><i class="fa-solid fa-key"></i>&nbspMaster</a>, <a href=""><i class="fa-solid fa-eye"></i>&nbspReferee</a> or <a href=""><i class="fa-solid fa-image-portrait"></i>&nbspFencer</a>.</p>
+                <p>For information on the whole process of creating a tournament and managing it as a <i class="fa-solid fa-key"></i> Master, please refer to our <a href="/docs/Userguide#creating-a-new-tournament">Userguide</a>. There you find in-depth informations and documentation.</p>
+                <p>If you need help or have any suggestions or problems, please <a href="/imprint">Contact&nbspUs</a>.</p>
+                <form id="start_form" onsubmit="submitStartForm(event)" method="POST">
+                    <div class="Form-Block" id="general_information_block">
+                        <h3>General Information</h3>
+                        <p>As a first step, please choose a name (required) and a location (optional) for the tournament.<br>The Name will be publically available at <a href="/tournaments">/tournaments</a>, so please don't give away any private information. The location will be only available if you login.</p>
+                        <input type="text" id="name" name="name" placeholder="Tournament Name" required>
+                        <input type="text" id="location" name="location" placeholder="Location">
+                    </div>
+
+                    <div class="Form-Block" id="startlist_block">
+                        <h3>Startlist</h3>
+                        <p>The Startlist file is a comma delimited CSV file, which contains all necessary and optional information about a Fencer. It must meet very strict formal requirements, such as very specific headers and alpha-3 Country Codes for the Nationality of the Fencer. We have explained everything about the Startlist CSV in our <a href="/docs/Userguide#the-startlist">Userguide</a>. You can also use our very easy Startlist-Builder or download the Template- or Example-File with the buttons below.</p>
+                        <input type="file" id="fencers" name="fencers" accept=".csv" required>
+                        <div class="button-grid" style="justify-content: center;">
+                            <div onclick="{window.open('build-your-startlist', '_blank')}" class="cta-button" style="background-color: red;">
+                                <div class="button-content">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                    <span>Startlist-Builder</span>
+                                </div>
+                            </div>
+                            <div onclick="{window.open('csv-template', '_blank')}" class="cta-button">
+                                <div class="button-content">
+                                    <i class="fa-solid fa-file-arrow-down"></i>
+                                    <span>CSV Template</span>
+                                </div>
+                            </div>
+                            <div onclick="{window.open('example-startlist', '_blank')}" class="cta-button">
+                                <div class="button-content">
+                                    <i class="fa-solid fa-file-arrow-down"></i>
+                                    <span>Example</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="Form-Block" id="piste_block">
+                        <h3>Fencing Pistes</h3>
+                        <p>Please specify how many fencing-pistes are available at your tournament. Usually (with the Piste-Assignment-Mode "Algorithmic"), the pistes are assigned dynamically to the matches of each round.<br>If you don't want that, there are two other optoins: In the Preliminary Rounds, the mode "Semi-Auto" assigns each group their individual piste. After that during Elimination, it works as described before. In "Manual" mode on the other hand, each piste must be assigned manually as suggested.</p>
+                        <label for="pistes">Number of Fencing Pistes:</label>
+                        <input type="number" id="pistes" name="pistes" min="1" max="20" required>
+                        <label for="piste_assignment">Piste Assignment:</label>
+                        <select id="piste_assignment" name="piste_assignment">
+                            <option value="auto">Algorithmic (Most Efficient)</option>
+                            <option value="semi" disabled>Semi-Auto (Each Preliminary Group its own Piste)</option>
+                            <option value="manual" disabled>Manual</option>
+                        </select>
+                    </div>
+
+                    <div class="Form-Block" id="configuration_block">
+                        <h3>Tournament Configuration</h3>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                        <div class="number_container">
+                            <label for="number_of_preliminary_rounds">Preliminary Rounds:</label>
+                            <select id="number_of_preliminary_rounds" name="number_of_preliminary_rounds">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="0">None</option>
+                            </select>
+                        </div>
+                        <div class="number_container">
+                            <label for="number_of_preliminary_groups">Preliminary Groups:</label>
+                            <select id="number_of_preliminary_groups" name="number_of_preliminary_groups">
+                                <option value="0">Auto</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="number_container">
+                            <label for="first_elimination_round">First Elimination Round:</label>
+                            <select id="first_elimination_round" name="first_elimination_round">
+                                <option value="0">Auto</option>
+                                <option value="128">Round of 128</option>
+                                <option value="64">Round of 64</option>
+                                <option value="32">Round of 32</option>
+                                <option value="16">Round of 16</option>
+                                <option value="8">Quarter Finals</option>
+                                <option value="4">Semi Finals</option>
+                                <option value="2">Final</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="Form-Block" id="elimination_block">
+                        <h3>Elimination Mode</h3>
+                        <p>Please specify which Elimination Mode the tournament shoud have. You have three options: KO, Repechage and Placements. In KO, fencers compete in a single-elimination tournament until only one fencer remains. In Repechage, fencers who lose early in the tournament are given a second chance to compete in a separate bracket. KO with Placement Matches is a combination of the previous two modes, where fencers who lose early in the tournament still have the chance to compete for their final tournament ranking. In each mode, all matchmaking is automatic.</p>
+                        <select id="elimination_mode" name="elimination_mode">
+                            <option value="KO">KO</option>
+                            <option value="Repechage" disabled>Repechage</option>
+                            <option value="Placement">Placement</option>
+                        </select>
+                    </div>
+
+                    <div class="Form-Block" id="additional_options_block">
+                        <h3>Additional Options</h3>
+                        <p>Enable this Option if you want to simulate whole rounds of the tournament. This Function exsists for testing purposes, but if you are curious how the Web-App works, you can test it out this way.</p>
+                        <div class="checkbox_container">
+                            <select id="simulation_active" name="simulation_active">
+                                <option value="false">Simulation Off</option>
+                                <option value="true">Simulation On</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="Form-Block" id="password_block">
+                        <h3>Password protection and E-Mail-Recovery</h3>
+                        <p>By setting a password, you protect your tournament from unwanted changes. If you provide an E-Mail, you get a confirmation with the Tournament ID so you don't have to remember it.</p>
+                        <label for="pw">Master Password</label>
+                        <input type="password" id="master_password" name="master_password" placeholder="Master Password" required>
+                        <input type="password" id="master_password_confirm" name="master_password_confirm" placeholder="Master Password" onkeyup="checkPasswordMatch();" required>
+                        <label for="email" required>E-Mail</label>
+                        <input type="email" id="master_email" name="email" placeholder="E-Mail">
+                    </div>
+                    <div class="Form-Block" id="submit_block">
+                        <h3>Create Tournament</h3>
+                        <p>By clicking on the button below, you agree to the <a href="terms-of-service">Terms&nbspof&nbspService</a> and <a href="privacy">Privacy&nbspPolicy</a>.</p>
+                        <div class="button-grid">
+                            <button class="cta-button" type="submit" value="submit" id="submit">
+                                <div class="button-content">
+                                    <i class="fa-solid fa-paper-plane" id="submit_icon"></i>
+                                    <span>Create Tournament</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <input type="checkbox" id="hidden_recaptcha" name="hidden_recaptcha" style="display:none">
+                </form>
+            </div>
+        </div>
+        <script src="/static/js/get_started.js"></script>
+    </body>
+</html>

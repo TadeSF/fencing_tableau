@@ -264,10 +264,11 @@ footer {
   color: white;
   padding: 2rem;
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto auto;
   justify-items: center;
   align-items: center;
   text-align: center;
+  line-height: 2em;
 }
 footer a {
   color: white;

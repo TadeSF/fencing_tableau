@@ -288,6 +288,7 @@ class Tournament:
         self,
         id: str,
         password: str,
+        master_email: str,
         name: str,
         fencers: List[Fencer],
         location: str,
@@ -303,6 +304,7 @@ class Tournament:
         self.created_at = datetime.datetime.now()
         self.id = id
         self.password = password
+        self.master_email = master_email
         self.name = name
         self.location = location
 

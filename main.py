@@ -394,12 +394,12 @@ def index():
     #     return redirect(url_for('mobile_index'))
     return render_template('index.html', version=APP_VERSION)
 
-@app.route('/m')
+@app.route('/fencer-login')
 def mobile_index():
     """
     Flask serves on GET request / the index.html file from the templates folder.
     """
-    return render_template('m_index.html', version=APP_VERSION)
+    return render_template('fencer_login.html', version=APP_VERSION)
 
 @app.route('/imprint')
 def imprint():
@@ -545,7 +545,14 @@ def tournaments():
         cards.append('<div class="grid-item" style="grid-column: span 3;"><div class="Name">No Tournaments</div></div>')
     return render_template('tournaments.html', cards=''.join(cards))
 
-@app.route('/', methods=['POST'])
+@app.route('/get-started')
+def get_started():
+    """
+    Flask serves on GET request /get-started the get_started.html file from the templates folder.
+    """
+    return render_template('get_started.html')
+
+@app.route('/get-started', methods=['POST'])
 def process_form():
     """
     Start a new Tournament:
@@ -576,8 +583,6 @@ def process_form():
     redirects to /dashboard/<tournament_id>
     """
 
-    global tournament_cache
-
     name = request.form['name']
     fencers_csv = request.files['fencers']
     location = request.form['location']
@@ -590,6 +595,7 @@ def process_form():
     print(simulation_active)
     print(bool(simulation_active == 'true'))
     password = request.form['master_password']
+    email = request.form['master_email']
     password = hash_password(password)
 
     # --- Process the data from the form
@@ -618,8 +624,16 @@ def process_form():
 
 
         # Generate and save the new tournament
-        tournament = Tournament(random_generator.id(6), password, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes, bool(simulation_active == 'true'))
+        tournament = Tournament(random_generator.id(6), password, email, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes, bool(simulation_active == 'true'))
         tournament_cache.append(tournament)
+
+        # Generate Mail
+        msg = Message('Your FenceWithFriends Tournament',
+                        sender=MAIL_SENDER,
+                        recipients=[tournament.master_email])
+        msg.body = f'Your Tournament ID is {tournament.id}. You can login as a manager at https://fencewithfriends.online/{tournament.id}/dashboard.'
+        mail.send(msg)
+
         save_tournament(tournament)
 
     except Exception as e:
@@ -1408,20 +1422,27 @@ def handle_webhook():
 
 
 
+# ------- Error handlers -------
+@app.errorhandler(400)
+@app.errorhandler(401)
+@app.errorhandler(403)
 @app.errorhandler(404)
+@app.errorhandler(404)
+@app.errorhandler(405)
+@app.errorhandler(406)
+@app.errorhandler(408)
+@app.errorhandler(409)
+@app.errorhandler(410)
+@app.errorhandler(500)
+@app.errorhandler(501)
+@app.errorhandler(502)
+@app.errorhandler(503)
+@app.errorhandler(504)
+@app.errorhandler(505)
 def page_not_found(e):
     """
-    404 Error handler: Flask serves on a 404 Error the 404.html file from the templates folder.
     """
-    return render_template('404.html'), 404
-
-@app.errorhandler(500)
-def internal_server_error(e):
-    """
-    500 Error handler: Flask serves on a 500 Error the 500.html file from the templates folder.
-    """
-    return render_template('500.html'), 500
-
+    return render_template('error.html', error=e.code, explain=e), e.code
 
 
 # ------- Testing locally -------

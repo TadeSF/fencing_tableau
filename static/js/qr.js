@@ -1,5 +1,5 @@
 const id = document.getElementById("body").dataset.tournament_id;
-const url = "https://fencewithfriends.online/m?tournament=" + id;
+const url = "https://fencewithfriends.online/fencer-login?tournament=" + id;
 
 window.onload = function() {
     let qr_code = new QRCode(document.getElementById("qr_code"), {

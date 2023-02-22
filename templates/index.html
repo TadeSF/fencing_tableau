@@ -145,92 +145,17 @@
         </div>
     </div>
     <footer>
-        <div><a href="/imprint">Imprint</a><br><a href="/privacy">Privacy Policy</a></div>
-        <div>Version:<br>{{ version }}</div>
-        <div>Copyright 2023 © Tade Strehk, Moritz Hellmich<br>
-            Licence: CC BY-NC</div>
-    </footer>
-    <div id="new_tournament_form">
-        <div class="form_container">
-            <form id="start_form" onsubmit="submitStartForm(event)" method="POST">
-                <input type="text" id="name" name="name" placeholder="Tournament Name" required><br>
-                <input type="text" id="location" name="location" placeholder="Location"><br>
-                <br>
-                <label for="fencers">Fencers:</label>
-                <input type="file" id="fencers" name="fencers" accept=".csv" required><br>
-                <br>
-                <label for="pistes">Number of Fencing Pistes:</label>
-                <input type="number" id="pistes" name="pistes" min="1" max="20" required><br>
-                <br>
-                <div class="form_flex">
-                    <div class="number_container">
-                        <label for="number_of_preliminary_rounds">Preliminary Rounds:</label>
-                        <select id="number_of_preliminary_rounds" name="number_of_preliminary_rounds">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="0">None</option>
-                        </select>
-                    </div>
-                    <div class="number_container">
-                        <label for="number_of_preliminary_groups">Preliminary Groups:</label>
-                        <select id="number_of_preliminary_groups" name="number_of_preliminary_groups">
-                            <option value="0">Auto</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
-                        </select>
-                    </div>
-                    <div class="number_container">
-                        <label for="first_elimination_round">First Elimination Round:</label>
-                        <select id="first_elimination_round" name="first_elimination_round">
-                            <option value="0">Auto</option>
-                            <option value="128">Round of 128</option>
-                            <option value="64">Round of 64</option>
-                            <option value="32">Round of 32</option>
-                            <option value="16">Round of 16</option>
-                            <option value="8">Quarter Finals</option>
-                            <option value="4">Semi Finals</option>
-                            <option value="2">Final</option>
-                        </select>
-                    </div>
-                </div>
-                <br>
-                <label for="elimination_mode">Elimination Mode:</label>
-                <select id="elimination_mode" name="elimination_mode">
-                    <option value="KO">KO</option>
-                    <option value="Repechage" disabled>Repechage</option>
-                    <option value="Placement">Placement</option>
-                </select><br>
-                <br>
-                <div class="checkbox_container">
-                    <div class="form_flex">
-                        <input type="checkbox" id="simulation_active" name="simulation_active">
-                        <label for="simulation_active">Simulation (for testing)</label><br>
-                    </div>
-                    <!-- <div class="form_flex">
-                        <input type="checkbox" id="no_intermediate" name="no_intermediate">
-                        <label for="no_intermediate">Dummy2</label><br>
-                    </div> -->
-                </div>
-                <br>
-                <label for="pw">Master Password</label>
-                <input type="password" id="master_password" name="master_password" placeholder="Password" required><br>
-                <br>
-                <button type="submit" value="submit">Create Tournament</button>
-            </form>
+        <div>
+            <a href="/imprint">Imprint</a><br>
+            <a href="/privacy">Privacy Policy</a><br>
+            <a href="/terms">Terms of Service</a>
         </div>
-    </div>
+        <div>
+            Version: {{ version }}<br>
+            Copyright 2023 © Tade Strehk, Moritz Hellmich<br>
+            Licence: CC BY-NC
+        </div>
+    </footer>
 
     <!-- Cookie Consent Banner -->
     <div class="cookie-banner" id="cookieBanner">

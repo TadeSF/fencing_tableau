@@ -148,7 +148,7 @@ function openTableau() {
 }
 
 function openQR() {
-    // open a new window (width 500px, heigth 800px) with a QR Code for the path /m?tournament=<tournament_id>
+    // open a new window (width 500px, heigth 800px) with a QR Code for the path /fencer-login?tournament=<tournament_id>
     window.open("/qr?tournament=" + tournament_id, "_blank", "width=400,height=480");
 }
 

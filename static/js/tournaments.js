@@ -3,5 +3,5 @@ function ManageTournament(tournament_id) {
 }
 
 function LoginAsFencer(tournament_id) {
-    window.open("/m?tournament=" + tournament_id, "_self")
+    window.open("/fencer-login?tournament=" + tournament_id, "_self")
 }

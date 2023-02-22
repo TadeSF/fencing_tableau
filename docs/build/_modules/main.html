@@ -468,12 +468,12 @@
     <span class="c1">#     return redirect(url_for(&#39;mobile_index&#39;))</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span></div>
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/m&#39;</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fencer-login&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">mobile_index</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flask serves on GET request / the index.html file from the templates folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;m_index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;fencer_login.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/imprint&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">imprint</span><span class="p">():</span>
@@ -619,7 +619,14 @@
         <span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;grid-item&quot; style=&quot;grid-column: span 3;&quot;&gt;&lt;div class=&quot;Name&quot;&gt;No Tournaments&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;tournaments.html&#39;</span><span class="p">,</span> <span class="n">cards</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cards</span><span class="p">))</span>
 
-<div class="viewcode-block" id="process_form"><a class="viewcode-back" href="../main.html#main.process_form">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get-started&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_started</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on GET request /get-started the get_started.html file from the templates folder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;get_started.html&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="process_form"><a class="viewcode-back" href="../main.html#main.process_form">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get-started&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
 <span class="k">def</span> <span class="nf">process_form</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Start a new Tournament:</span>
@@ -650,8 +657,6 @@
 <span class="sd">    redirects to /dashboard/&lt;tournament_id&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">global</span> <span class="n">tournament_cache</span>
-
     <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
     <span class="n">fencers_csv</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="s1">&#39;fencers&#39;</span><span class="p">]</span>
     <span class="n">location</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
@@ -664,6 +669,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">simulation_active</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">))</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_password&#39;</span><span class="p">]</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_email&#39;</span><span class="p">]</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
 
     <span class="c1"># --- Process the data from the form</span>
@@ -692,8 +698,16 @@
 
 
         <span class="c1"># Generate and save the new tournament</span>
-        <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span><span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">password</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fencers</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">preliminary_rounds</span><span class="p">,</span> <span class="n">preliminary_groups</span><span class="p">,</span> <span class="n">first_elimination_round</span><span class="p">,</span> <span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">num_pistes</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">))</span>
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span><span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">password</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fencers</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">preliminary_rounds</span><span class="p">,</span> <span class="n">preliminary_groups</span><span class="p">,</span> <span class="n">first_elimination_round</span><span class="p">,</span> <span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">num_pistes</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">))</span>
         <span class="n">tournament_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+
+        <span class="c1"># Generate Mail</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="s1">&#39;Your FenceWithFriends Tournament&#39;</span><span class="p">,</span>
+                        <span class="n">sender</span><span class="o">=</span><span class="n">MAIL_SENDER</span><span class="p">,</span>
+                        <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="n">tournament</span><span class="o">.</span><span class="n">master_email</span><span class="p">])</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Your Tournament ID is </span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">. You can login as a manager at https://fencewithfriends.online/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/dashboard.&#39;</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -1482,20 +1496,27 @@
 
 
 
+<span class="c1"># ------- Error handlers -------</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">400</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">401</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">405</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">406</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">408</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">409</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">410</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">501</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">502</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">503</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">504</span><span class="p">)</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">505</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">page_not_found</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    404 Error handler: Flask serves on a 404 Error the 404.html file from the templates folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;404.html&#39;</span><span class="p">),</span> <span class="mi">404</span>
-
-<span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">internal_server_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    500 Error handler: Flask serves on a 500 Error the 500.html file from the templates folder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;500.html&#39;</span><span class="p">),</span> <span class="mi">500</span>
-
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;error.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">explain</span><span class="o">=</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="o">.</span><span class="n">code</span>
 
 
 <span class="c1"># ------- Testing locally -------</span>
