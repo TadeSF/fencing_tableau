@@ -176,6 +176,10 @@ body {
                             "quotes quotes";
     column-gap: 1rem;
 
+    p {
+        font-size: 1.3rem;
+    }
+
     .img1, .img2, .img3, .img4 {
         width: 100%;
         height: 100%;
@@ -208,17 +212,20 @@ body {
     .quotes {
         grid-area: quotes;
     }
+
+    .cta-button {
+        width: 8rem;
+    }
 }
 
 
 
 .button-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;
     flex-direction: row;
-    align-items: stretch;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
     width: 100%;
 }
 
@@ -302,41 +309,32 @@ footer {
     background-color: #333;
     color: white;
     padding: 2rem;
-}
-
-footer ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-items: center;
     align-items: center;
-    justify-content: space-between;
+    text-align: center;
+
+    a {
+        color: white;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    &:first-child {
+        justify-self: start;
+        text-align: left;
+    }
+
+    &:last-child {
+        justify-self: end;
+        text-align: right;
+    }
 }
 
-footer li {
-    margin: 0 1rem 0 0;
-}
-
-footer a {
-    color: white;
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-footer ul ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-footer ul ul li {
-    margin: 0 0 0 1rem;
-}
 
 #new_tournament_form,
 #login_manager_form,
@@ -624,6 +622,38 @@ form .error {
     }
 }
 
+@media screen and (max-width: 1100px) {
+    .cookie-banner {
+        grid-template-columns: auto auto 1fr;
+        grid-template-rows: auto auto;
+
+        p {
+            grid-column: 1 / 4;
+        }
+        
+        button {
+            grid-row: 2 / 3;
+        }
+    }
+
+    .container {
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(7, auto);
+        grid-template-areas:    "text1"
+                                "img1"
+                                "text2"
+                                "img2"
+                                "text3"
+                                "img3"
+                                "text4"
+                                "img4"
+                                "quotes";
+    }
+}
+
 @media screen and (max-width: 800px) {
     #header {
         text-align: center;
@@ -653,26 +683,10 @@ form .error {
         }
     }
 
-    .container {
+    footer {
         grid-template-columns: 1fr;
-        grid-template-rows: repeat(7, auto);
-        grid-template-areas:    "text1"
-                                "img1"
-                                "text2"
-                                "img2"
-                                "text3"
-                                "img3"
-                                "text4"
-                                "img4"
-                                "quotes";
-    }
-
-    .button-grid {
-        grid-template-columns: 1fr 1fr;
-
-        .cta-button:first-child {
-            grid-column: span 2;
-        }
+        grid-template-rows: repeat(3, auto);
+        gap: 1rem;
     }
 }
 
@@ -693,10 +707,10 @@ form .error {
     }
 
     .button-grid {
-        grid-template-columns: 1fr;
-
-        .cta-button:first-child {
-            grid-column: span 1;
+        flex-direction: column;
+        
+        .cta-button {
+            width: 14rem;
         }
     }
 }

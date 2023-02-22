@@ -113,11 +113,11 @@
             <h1>The <span class="text-pop-up">Codebase</span></h1>
             <p>FenceWithFriends is a Python-based Web-Application hosted on a webserver in Germany. The Code is completely open source and available throug our documentation (where the code is explained) and Github (where we are collaborating and keeping our version history). We are very open to participation, so if you are a Programmer and interested in joining this fun project, reach out to us!</p>
             <p>Our Code is Licensed under the Creative Commons BY-NC 4.0 License. You can find details in our <a href="https://github.com/TadeSF/fencing_tableau">Github Repository</a>.</p>
-            <div class="button-grid" style="justify-content: center;">
+            <div class="button-grid">
                 <div onclick="openDocumentation()" class="cta-button">
                     <div class="button-content">
                         <i class="fa-solid fa-file-code"></i>
-                        <span>Code Documentation</span>
+                        <span>Documentation</span>
                     </div>
                 </div>
                 <div onclick="openGithub()" class="cta-button">
@@ -145,18 +145,10 @@
         </div>
     </div>
     <footer>
-        <ul>
-            <li>Contact: tade99@gmx.de</li>
-            <li>Follow us on:
-                <ul>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Twitter</a></li>
-                    <li><a href="#">Instagram</a></li>
-                </ul>
-            </li>
-            <li><a href="/imprint">Imprint</a> | <a href="/privacy">Privacy Policy</a></li>
-            <li>Version: {{ version }}</li>
-        </ul>
+        <div><a href="/imprint">Imprint</a><br><a href="/privacy">Privacy Policy</a></div>
+        <div>Version:<br>{{ version }}</div>
+        <div>Copyright 2023 © Tade Strehk, Moritz Hellmich<br>
+            Licence: CC BY-NC</div>
     </footer>
     <div id="new_tournament_form">
         <div class="form_container">
