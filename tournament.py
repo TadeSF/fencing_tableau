@@ -917,6 +917,11 @@ class Tournament:
         
         return tableau
 
+    def get_winner(self):
+        if self.stage != Stage.FINISHED:
+            raise SystemError("Tournament not finished yet.")
+        return sorting_fencers(self.fencers)[0]
+
 
     def approve_tableau(self, round, group, timestamp, fencer_id, device_id):
         # TODO need to implement a check if all approvals are in before advancing to the next stage
@@ -955,7 +960,7 @@ class Tournament:
             os.makedirs(f"results/{self.id}")
         
         document_number = len(os.listdir(f"results/{self.id}")) + 1
-        
+
         match_results = self.export_matches()
 
         if self.stage == Stage.PRELIMINARY_ROUND:
@@ -964,7 +969,7 @@ class Tournament:
                 tableaus.append(self.get_tableau_array(group))
 
         # Create a CSV file with the results
-        with open(f"results/{self.id}/{self.id}-{document_number}-{self.stage}-{self.preliminary_stage if self.stage == Stage.PRELIMINARY_ROUND else ''}.csv", "w", newline="") as csvfile:
+        with open(f"results/{self.id}/{document_number}-{self.id}-{str(self.stage).replace(' ', '_')}{('-' + str(self.preliminary_stage)) if self.stage == Stage.PRELIMINARY_ROUND else ''}.csv", "w", newline="") as csvfile:
             csvwriter = csv.writer(csvfile, delimiter=",", quotechar=" ", quoting=csv.QUOTE_MINIMAL)
             
             # General Information
@@ -1020,7 +1025,7 @@ class Tournament:
 
         if self.stage != Stage.FINISHED:
             raise Exception("Tournament is not finished yet")
-        with open(f"results/{self.id}/{self.id}-{document_number}-FinalStandings.csv", "w", newline="") as csvfile:
+        with open(f"results/{self.id}/{document_number}-{self.id}-FinalStandings.csv", "w", newline="") as csvfile:
             csvwriter = csv.writer(csvfile, delimiter=",", quotechar=" ", quoting=csv.QUOTE_MINIMAL)
             
             # General Information

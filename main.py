@@ -18,7 +18,7 @@ try:
     import bcrypt
     from flask import (Flask, Request, Response, abort, jsonify, make_response,
                        redirect, render_template, request, send_file,
-                       send_from_directory, url_for)
+                       send_from_directory, url_for, Markup)
     from flask_mail import Mail, Message
 
     import _version
@@ -1140,13 +1140,15 @@ def next_stage(tournament_id):
                         sender=MAIL_SENDER,
                         recipients=[tournament.master_email])
 
-            attached_files_string = os.listdir(f'results/{tournament.id}').join("<br>")
+            attached_files_string = os.listdir(f'results/{tournament.id}')
+            attached_files_string.sort()
+            attached_files_string = Markup("<br>".join(attached_files_string))
 
             msg.html = render_template('email/result_mail.html',
                                         tournament_id=tournament.id,
                                         tournament_name=tournament.name,
                                         tournament_location=tournament.location,
-                                        winner=tournament.get_standings()["standings"][0]["name"],
+                                        winner=tournament.get_winner().name,
                                         attached_files=attached_files_string,
                                         illustration_number=random.randint(1, 4))
 
