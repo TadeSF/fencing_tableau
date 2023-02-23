@@ -628,7 +628,7 @@ def process_form():
         tournament_cache.append(tournament)
 
         # Generate Mail
-        msg = Message('Your FenceWithFriends Tournament',
+        msg = Message(f'Tournament {tournament.id} created',
                         sender=MAIL_SENDER,
                         recipients=[tournament.master_email])
         msg.html = render_template('email/new_tournament.html',
@@ -1131,7 +1131,23 @@ def next_stage(tournament_id):
     else:
         tournament = get_tournament(tournament_id)
         tournament.next_stage()
+
         save_tournament(tournament)
+
+        if tournament.stage == Stage.FINISHED:
+            msg = Message(f'Tournament {tournament.id} Results',
+                        sender=MAIL_SENDER,
+                        recipients=[tournament.master_email])
+            msg.html = render_template('email/results.html',
+                                        tournament_id=tournament.id,
+                                        tournament_name=tournament.name,
+                                        tournament_location=tournament.location,
+                                        illustration_number=random.randint(1, 4))
+
+            for result in os.listdir(f'results/{tournament.id}'):
+                with open(f'results/{tournament.id}/{result}', 'rb') as f:
+                    msg.attach(result, 'application/csv', f.read())
+            mail.send(msg)
 
         return '', 200
 

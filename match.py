@@ -4,6 +4,7 @@ from typing import Literal
 from fencer import Fencer, Stage, Wildcard
 from piste import Piste
 import random_generator
+from datetime import datetime
 
 
 class Match:
@@ -21,7 +22,9 @@ class Match:
         self.piste: Piste = None
         self.priority = 0
         self.match_ongoing = False
+        self.match_ongoing_timestamp: datetime = None
         self.match_completed = False
+        self.match_completed_timestamp: datetime = None
         self.wildcard = False
 
         # Fencer Information
@@ -107,14 +110,19 @@ class Match:
             self.red_score = red_score
             self.match_ongoing = False
             self.match_completed = True
+            self.match_completed_timestamp = datetime.now()
 
             # Free Piste
-            self.piste.match_finished()
+            try:
+                self.piste.match_finished()
+            except AttributeError: # Piste is None, happens when wildcard. # TODO: Look into this
+                pass
 
 
     def set_active(self, staged: bool = False):
         self.piste.match_started(staged)
         self.match_ongoing = True
+        self.match_ongoing_timestamp = datetime.now()
 
     def assign_piste(self, piste: Piste):
         self.piste = piste

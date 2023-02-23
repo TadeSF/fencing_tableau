@@ -9,6 +9,7 @@ update_server_remote.sh
 tournaments/*
 tournament_cache/*
 approvals/*
+results/*
 build_your_startlist/*
 build_sphinx.txt
 static/img/stock/*

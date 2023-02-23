@@ -138,14 +138,16 @@
     <body>
         <div class="Wrapper">
             <div class="Section">
-                <h1>Tournament Created</h1>
+                <h1>Results</h1>
                 <div class="block-highlight">
                     <h3>{{ tournament_name }}</h3>
                     <p>{{ tournament_location }}</p>
                 </div>
                 <p>
-                    You have created a tournament on FenceWithFriends!<br>
-                    Please find your Tournament Details below.
+                    Congratulations to the winner of the your tournament!
+                </p>
+                <p>
+                    You can find the results as CSV tables of each Stage of the Tournament, as well as a final-standings-table attached below.
                 </p>
             </div>
             <img src="https://fencewithfriends.online/static/img/stock/illustration_{{ illustration_number }}.jpeg" alt="FenceWithFriends illustration">
@@ -155,20 +157,16 @@
                     <div id="main_id_description">Tournament ID</div>
                 </div>
                 <br>
-                <p>This is your Tournament ID. You and the individual Fencers have to enter this ID to log in.</p>
-                <p>
-                    Please share this ID with your Fencers. You can also share the link below with them.
-                </p>
-                <div class="block-highlight">
-                    <a href="{{ fencer_link }}">{{ fencer_link }}</a>
-                </div>
+                <p>This is your Tournament ID.</p>
             </div>
             <div class="Section">
-                <h2>You are the Master</h2>
+                <h2>Questions or Feedback?</h2>
                 <p>
-                    You are the Tournament Master. Please refer to our <a href="https://fencewithfriends.online/docs/Uderguide">Userguide</a> page if you have any question about your administrativ powers or how to application works.
+                    Please let us know if you have any questions or feedback about the tournament.
                 </p>
-                <button type="button"><a href="{{ tournament_link }}" style="text-decoration: none; color: #fff">Manage Tournament</a></button>
+                <p>
+                    You can reach out to us via our Github Page or via <a href="mailto:fencewithfriends@gmx.de">fencewithfriends@gmx.de</a>.
+                </p>
         </div>
     </body>
 </html>

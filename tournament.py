@@ -786,8 +786,11 @@ class Tournament:
 
 
     def next_stage(self) -> None:
+
         for piste in self.pistes:
             piste.reset()
+
+        self.export_stage_results()
 
         if self.stage == Stage.PRELIMINARY_ROUND:
             self.preliminary_stage += 1
@@ -806,6 +809,7 @@ class Tournament:
             self.stage = Stage.FINISHED
 
             save_final_ranking(self.elimination_fencers, self.elimination_mode)
+            self.export_final_ranking()
 
 
         elif self.stage == Stage.FINISHED:
@@ -938,7 +942,121 @@ class Tournament:
             return 0
 
 
+    # --- Exporting ---
 
+    def export_stage_results(self) -> list:      
+        document_number = len(os.listdir(f"results/{self.id}")) + 1
+
+        # Check if the results folder exists, if not create it
+        if not os.path.exists("results"):
+            os.makedirs("results")
+
+        # Check if the results folder for this tournament exists, if not create it
+        if not os.path.exists(f"results/{self.id}"):
+            os.makedirs(f"results/{self.id}")
+        
+        match_results = self.export_matches()
+
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            tableaus = []
+            for group in range(1, self.get_num_groups() + 1):
+                tableaus.append(self.get_tableau_array(group))
+
+        # Create a CSV file with the results
+        with open(f"results/{self.id}/{self.id}-{document_number}-{self.stage}-{self.preliminary_stage if self.stage == Stage.PRELIMINARY_ROUND else ''}.csv", "w", newline="") as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=",", quotechar=" ", quoting=csv.QUOTE_MINIMAL)
+            
+            # General Information
+            csvwriter.writerow(["Tournament", self.name])
+            csvwriter.writerow(["ID", self.id])
+            csvwriter.writerow(["Stage", self.stage])
+            if self.stage == Stage.PRELIMINARY_ROUND: csvwriter.writerow(["Preliminary Round", f"{self.preliminary_stage} of {self.num_preliminary_rounds}"])
+            csvwriter.writerow([""])
+            csvwriter.writerow([""])
+
+            # Append Match Results
+            csvwriter.writerow(["Results"])
+            csvwriter.writerow(["Match ID", "Group", "Red", "Red Score", "Green Score", "Green", "Match Started", "Match Completed"])
+            for match in match_results:
+                csvwriter.writerow([match["id"], match["group"], match["red"], match["red_score"], match["green_score"], match["green"], match["match_started"], match["match_completed"]])
+            
+            # Append Tableaus                
+            if self.stage == Stage.PRELIMINARY_ROUND: 
+                csvwriter.writerow([""])
+                csvwriter.writerow([""])
+                csvwriter.writerow(["Tableau"])
+                for tableau in tableaus:
+                    csvwriter.writerow([f""])
+                    temp_row = []
+                    temp_row.append(f"Group {tableaus.index(tableau) + 1}") # The first cell of the header is empty
+                    for row in tableau:
+                        for cell in row:
+                            if cell["cell_type"] == "header":
+                                temp_row.append(cell["name"])
+                            elif cell["cell_type"] == "blank":
+                                temp_row.append("-")
+                            elif cell["cell_type"] == "result":
+                                temp_row.append(cell["content"])
+                        csvwriter.writerow(temp_row)
+                        temp_row = []
+            
+            # Append Ranking
+            csvwriter.writerow([""])
+            csvwriter.writerow([""])
+            csvwriter.writerow(["Current Ranking"])
+            csvwriter.writerow(["Rank", "Name", "Club", "Nationality", "W%", "W-L", "PD", "P+", "P-", "Gender", "Handedness", "Age", "Eliminated"])
+            for fencer in sorting_fencers(self.fencers):
+                csvwriter.writerow([self.get_current_rank(fencer), fencer.short_str, fencer.club, fencer.nationality, fencer.win_percentage(), f'{fencer.statistics["overall"]["wins"]}-{fencer.statistics["overall"]["losses"]}', fencer.statistics["overall"]["points_for"] - fencer.statistics["overall"]["points_against"], fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"], fencer.gender, fencer.handedness, fencer.age, fencer.eliminated])
+
+            csvwriter.writerow([""])
+            csvwriter.writerow([""])
+            csvwriter.writerow([""])
+            csvwriter.writerow(["Created:", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+
+
+    def export_final_ranking(self) -> list:
+        document_number = len(os.listdir(f"results/{self.id}")) + 1
+
+        if self.stage != Stage.FINISHED:
+            raise Exception("Tournament is not finished yet")
+        with open(f"results/{self.id}/{self.id}-{document_number}-FinalStandings.csv", "w", newline="") as csvfile:
+            csvwriter = csv.writer(csvfile, delimiter=",", quotechar=" ", quoting=csv.QUOTE_MINIMAL)
+            
+            # General Information
+            csvwriter.writerow(["Tournament", self.name])
+            csvwriter.writerow(["ID", self.id])
+            csvwriter.writerow(["Final Standings"])
+            csvwriter.writerow([""])
+            csvwriter.writerow([""])
+
+            csvwriter.writerow(["Rank", "Name", "Club", "Nationality", "W%", "W-L", "PD", "P+", "P-", "Gender", "Handedness", "Age", "Eliminated"])
+            for fencer in sorting_fencers(self.fencers):
+                csvwriter.writerow([self.get_current_rank(fencer), fencer.short_str, fencer.club, fencer.nationality, fencer.win_percentage(), f'{fencer.statistics["overall"]["wins"]}-{fencer.statistics["overall"]["losses"]}', fencer.statistics["overall"]["points_for"] - fencer.statistics["overall"]["points_against"], fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"], fencer.gender, fencer.handedness, fencer.age, fencer.eliminated])
+
+
+        
+
+    def export_matches(self) -> list:
+        match_results: List[dict] = []
+        matches = []
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            matches = self.matches_of_current_preliminary_round
+        elif self.stage != Stage.GRAND_FINAL:
+            matches = self.elimination_matches
+        
+        for match in matches:
+            match_results.append({
+                "id": match.id,
+                "group": match.group,
+                "red": match.red.short_str,
+                "red_score": match.red_score,
+                "green_score": match.green_score,
+                "green": match.green.short_str,
+                "match_started": match.match_ongoing_timestamp.strftime("%Y-%m-%d %H:%M:%S") if match.match_ongoing_timestamp else "-",
+                "match_completed": match.match_completed_timestamp.strftime("%Y-%m-%d %H:%M:%S") if match.match_completed_timestamp else "-",
+            })
+
+        return match_results
 
 
     # --- Simulation ---
