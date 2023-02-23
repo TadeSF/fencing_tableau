@@ -87,6 +87,7 @@
     <span class="kn">import</span> <span class="nn">threading</span>
     <span class="kn">import</span> <span class="nn">traceback</span>
     <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span>
+    <span class="kn">import</span> <span class="nn">logging.handlers</span>
 
     <span class="kn">import</span> <span class="nn">bcrypt</span>
     <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Flask</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">abort</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">make_response</span><span class="p">,</span>
@@ -1517,10 +1518,7 @@
     <span class="k">return</span> <span class="s1">&#39;Webhook received&#39;</span><span class="p">,</span> <span class="mi">200</span>
 
 
-<span class="c1"># ------- Testing -------</span>
-<span class="c1"># @app.route(&#39;/test&#39;)</span>
-<span class="c1"># def test():</span>
-<span class="c1">#     return render_template(&#39;/email/new_tournament.html&#39;, tournament_id=&quot;XXXXXX&quot;)</span>
+<span class="c1"># -------  -------</span>
 
 
 
@@ -1558,11 +1556,7 @@
 
     <span class="c1"># ---------- Activate the following boolean to run the server in debug mode ---------- #</span>
     <span class="n">debug_flask</span> <span class="o">=</span> <span class="kc">True</span>
-
-
-    <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="s1">&#39;flask.log&#39;</span><span class="p">)</span>
-    <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    
 
     <span class="k">if</span> <span class="n">port_flask</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8080</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug_flask</span><span class="p">)</span>

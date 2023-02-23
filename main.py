@@ -13,6 +13,7 @@ try:
     import threading
     import traceback
     from typing import List, Literal
+    import logging.handlers
 
     import bcrypt
     from flask import (Flask, Request, Response, abort, jsonify, make_response,
@@ -1443,10 +1444,7 @@ def handle_webhook():
     return 'Webhook received', 200
 
 
-# ------- Testing -------
-# @app.route('/test')
-# def test():
-#     return render_template('/email/new_tournament.html', tournament_id="XXXXXX")
+# -------  -------
 
 
 
@@ -1484,11 +1482,7 @@ if __name__ == '__main__':
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
     debug_flask = True
-
-
-    handler = logging.FileHandler('flask.log')
-    handler.setLevel(logging.DEBUG)
-    app.logger.addHandler(handler)
+    
 
     if port_flask:
         app.run(host='0.0.0.0', port=8080, debug=debug_flask)
