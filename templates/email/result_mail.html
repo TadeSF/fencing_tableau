@@ -144,10 +144,14 @@
                     <p>{{ tournament_location }}</p>
                 </div>
                 <p>
-                    Congratulations to the winner of the your tournament!
+                    Congratulations to <strong>{{ winner }}</strong>, the winner of the your tournament!
                 </p>
                 <p>
                     You can find the results as CSV tables of each Stage of the Tournament, as well as a final-standings-table attached below.
+                </p>
+                <p>
+                    Here is an overview of what is attached:<br>
+                    {{ attached_files }}
                 </p>
             </div>
             <img src="https://fencewithfriends.online/static/img/stock/illustration_{{ illustration_number }}.jpeg" alt="FenceWithFriends illustration">

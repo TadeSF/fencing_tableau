@@ -1139,15 +1139,21 @@ def next_stage(tournament_id):
             msg = Message(f'Tournament {tournament.id} Results',
                         sender=MAIL_SENDER,
                         recipients=[tournament.master_email])
+
+            attached_files_string = os.listdir(f'results/{tournament.id}').join("<br>")
+
             msg.html = render_template('email/result_mail.html',
                                         tournament_id=tournament.id,
                                         tournament_name=tournament.name,
                                         tournament_location=tournament.location,
+                                        winner=tournament.get_standings()["standings"][0]["name"],
+                                        attached_files=attached_files_string,
                                         illustration_number=random.randint(1, 4))
 
             for result in os.listdir(f'results/{tournament.id}'):
                 with open(f'results/{tournament.id}/{result}', 'rb') as f:
                     msg.attach(result, 'application/csv', f.read())
+
             mail.send(msg)
 
         return '', 200
