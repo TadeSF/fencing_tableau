@@ -1,0 +1,57 @@
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: margin-mvb, sans-serif;
+  margin: 0;
+  background-color: #fff;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Wrapper {
+  width: calc(100% - 2rem);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.Section {
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.error-num {
+  font-size: 6rem;
+  margin: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+  padding: 1rem 5rem;
+  background-color: red;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.error-num h1 {
+  font-size: 1em;
+  margin: 0;
+  text-align: center;
+}
+
+p {
+  font-size: 1.5rem;
+  margin: 0;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  html {
+    font-size: 12px;
+  }
+}/*# sourceMappingURL=error.css.map */

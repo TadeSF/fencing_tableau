@@ -705,7 +705,12 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="s1">&#39;Your FenceWithFriends Tournament&#39;</span><span class="p">,</span>
                         <span class="n">sender</span><span class="o">=</span><span class="n">MAIL_SENDER</span><span class="p">,</span>
                         <span class="n">recipients</span><span class="o">=</span><span class="p">[</span><span class="n">tournament</span><span class="o">.</span><span class="n">master_email</span><span class="p">])</span>
-        <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Your Tournament ID is </span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">. You can login as a manager at https://fencewithfriends.online/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/dashboard.&#39;</span>
+        <span class="n">msg</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;email/new_tournament.html&#39;</span><span class="p">,</span>
+                                    <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                    <span class="n">tournament_link</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://fencewithfriends.online/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/dashboard&quot;</span><span class="p">,</span>
+                                    <span class="n">tournament_name</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                    <span class="n">tournament_location</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+                                    <span class="n">illustration_number</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
@@ -1483,16 +1488,22 @@
                     <span class="n">sender</span><span class="o">=</span><span class="n">MAIL_SENDER</span><span class="p">,</span>
                     <span class="n">recipients</span><span class="o">=</span><span class="n">MAIL_ADMIN_RECIPIENTS</span><span class="p">)</span>
 
-    <span class="n">msg</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;A new commit was pushed to the GitHub repository.</span><span class="se">\n\n</span><span class="s2">View the changes here: https://github.com/TadeSF/fencing_tableau&quot;</span>
+    <span class="n">msg</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;/email/github_webhook.html&#39;</span><span class="p">)</span>
     <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Execute the update script</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s1">&#39;/usr/bin/bash&#39;</span><span class="p">,</span> <span class="s1">&#39;/home/pi/fencing_tableau/update_server.sh&#39;</span><span class="p">])</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;Error: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="mi">500</span>
+    <span class="c1"># try:</span>
+    <span class="c1">#     # Execute the update script</span>
+    <span class="c1">#     subprocess.call([&#39;/usr/bin/bash&#39;, &#39;/home/pi/fencing_tableau/update_server.sh&#39;])</span>
+    <span class="c1"># except Exception as e:</span>
+    <span class="c1">#     return &#39;Error: {}&#39;.format(e), 500</span>
 
     <span class="k">return</span> <span class="s1">&#39;Webhook received&#39;</span><span class="p">,</span> <span class="mi">200</span>
+
+
+<span class="c1"># ------- Testing -------</span>
+<span class="c1"># @app.route(&#39;/test&#39;)</span>
+<span class="c1"># def test():</span>
+<span class="c1">#     return render_template(&#39;/email/new_tournament.html&#39;, tournament_id=&quot;XXXXXX&quot;)</span>
 
 
 

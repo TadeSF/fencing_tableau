@@ -631,7 +631,12 @@ def process_form():
         msg = Message('Your FenceWithFriends Tournament',
                         sender=MAIL_SENDER,
                         recipients=[tournament.master_email])
-        msg.body = f'Your Tournament ID is {tournament.id}. You can login as a manager at https://fencewithfriends.online/{tournament.id}/dashboard.'
+        msg.html = render_template('email/new_tournament.html',
+                                    tournament_id=tournament.id,
+                                    tournament_link=f"https://fencewithfriends.online/{tournament.id}/dashboard",
+                                    tournament_name=tournament.name,
+                                    tournament_location=tournament.location,
+                                    illustration_number=random.randint(1, 4))
         mail.send(msg)
 
         save_tournament(tournament)
@@ -1409,16 +1414,22 @@ def handle_webhook():
                     sender=MAIL_SENDER,
                     recipients=MAIL_ADMIN_RECIPIENTS)
 
-    msg.body = f"A new commit was pushed to the GitHub repository.\n\nView the changes here: https://github.com/TadeSF/fencing_tableau"
+    msg.html = render_template('/email/github_webhook.html')
     mail.send(msg)
 
-    try:
-        # Execute the update script
-        subprocess.call(['/usr/bin/bash', '/home/pi/fencing_tableau/update_server.sh'])
-    except Exception as e:
-        return 'Error: {}'.format(e), 500
+    # try:
+    #     # Execute the update script
+    #     subprocess.call(['/usr/bin/bash', '/home/pi/fencing_tableau/update_server.sh'])
+    # except Exception as e:
+    #     return 'Error: {}'.format(e), 500
 
     return 'Webhook received', 200
+
+
+# ------- Testing -------
+# @app.route('/test')
+# def test():
+#     return render_template('/email/new_tournament.html', tournament_id="XXXXXX")
 
 
 
