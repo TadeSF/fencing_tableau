@@ -708,18 +708,17 @@ class Tournament:
 
 
     def set_active(self, match_id: int) -> None:
-        if self.stage == Stage.PRELIMINARY_ROUND:
-            for match in self.all_matches:
-                if match.id == match_id:
-                    # Check if there are other active matches in on the same piste, if so, "staged" should not be set to True
-                    for match2 in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
-                        if match2.piste == match.piste and match2.match_ongoing:
-                            match.set_active(staged=True)
-                            break
-                    else:
-                        match.set_active()
+        for match in self.all_matches:
+            if match.id == match_id:
+                # Check if there are other active matches in on the same piste, if so, "staged" should not be set to True
+                for match2 in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
+                    if match2.piste == match.piste and match2.match_ongoing:
+                        match.set_active(staged=True)
+                        break
+                else:
+                    match.set_active()
 
-            self.assign_pistes(self.matches_of_current_preliminary_round)
+        self.assign_pistes(self.matches_of_current_preliminary_round)
 
 
     def prioritize_match(self, match_id, value) -> None:
