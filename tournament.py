@@ -709,7 +709,7 @@ class Tournament:
 
     def set_active(self, match_id: int) -> None:
         if self.stage == Stage.PRELIMINARY_ROUND:
-            for match in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:
+            for match in self.all_matches:
                 if match.id == match_id:
                     # Check if there are other active matches in on the same piste, if so, "staged" should not be set to True
                     for match2 in self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches:

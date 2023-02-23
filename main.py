@@ -899,9 +899,11 @@ def set_active(tournament_id):
         match_id = request.json['id']
         tournament.set_active(match_id)
         save_tournament(tournament)
-        return '', 200
+        return {'success': True}
     except PisteError:
-        return '', 400
+        return {'success': False, 'message': 'Piste is already in use by another match.'}, 400
+    except Exception as e:
+        return {'success': False, 'message': str(e)}, 400
 
 @app.route('/<tournament_id>/matches/push_score', methods=['POST'])
 def push_score(tournament_id):
