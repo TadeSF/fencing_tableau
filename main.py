@@ -1,3 +1,4 @@
+import zipfile
 from dotenv import load_dotenv
 
 
@@ -526,25 +527,25 @@ def save_startlist():
         return str(e)
 
 
-@app.route('/tournaments')
-def tournaments():
-    """
-    Flask serves on GET request /tournaments the tournaments.html file from the templates folder.
-    """
+# @app.route('/tournaments')
+# def tournaments():
+#     """
+#     Flask serves on GET request /tournaments the tournaments.html file from the templates folder.
+#     """
 
-    cards = []
-    i = 0
-    for tournament in load_all_tournaments(return_values=True):
-        i += 1
-        tournament_id = tournament.id
-        tournament_id_with_parenthesies = f"'{tournament_id}'"
-        name = tournament.name
-        date = tournament.created_at.strftime("%d.%m.%Y %H:%M")
-        cards.append(f'<div class="grid-item"><div class="ID-Block"><div class="ID-Block-Number">{tournament_id}</div><div class="ID-Block-Description">Tournament ID</div></div><div class="Name">{name}</div><div class="date">{date}</div><div class="button-box"><div class="button" onclick="ManageTournament({tournament_id_with_parenthesies})">Manage Tournament</div><div class="button" onclick="LoginAsFencer({tournament_id_with_parenthesies})">Login as Fencer</div></div></div>')
+#     cards = []
+#     i = 0
+#     for tournament in load_all_tournaments(return_values=True):
+#         i += 1
+#         tournament_id = tournament.id
+#         tournament_id_with_parenthesies = f"'{tournament_id}'"
+#         name = tournament.name
+#         date = tournament.created_at.strftime("%d.%m.%Y %H:%M")
+#         cards.append(f'<div class="grid-item"><div class="ID-Block"><div class="ID-Block-Number">{tournament_id}</div><div class="ID-Block-Description">Tournament ID</div></div><div class="Name">{name}</div><div class="date">{date}</div><div class="button-box"><div class="button" onclick="ManageTournament({tournament_id_with_parenthesies})">Manage Tournament</div><div class="button" onclick="LoginAsFencer({tournament_id_with_parenthesies})">Login as Fencer</div></div></div>')
 
-    if i == 0:
-        cards.append('<div class="grid-item" style="grid-column: span 3;"><div class="Name">No Tournaments</div></div>')
-    return render_template('tournaments.html', cards=''.join(cards))
+#     if i == 0:
+#         cards.append('<div class="grid-item" style="grid-column: span 3;"><div class="Name">No Tournaments</div></div>')
+#     return render_template('tournaments.html', cards=''.join(cards))
 
 @app.route('/get-started')
 def get_started():
@@ -1159,6 +1160,36 @@ def next_stage(tournament_id):
             mail.send(msg)
 
         return '', 200
+
+@app.route('/<tournament_id>/download-results')
+def download_results(tournament_id):
+    """
+    Flask processes a GET request to download the results of the tournament.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+
+    Returns
+    -------
+    200
+        On success
+    404
+        On tournament not found
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        tournament = get_tournament(tournament_id)
+
+        # Create a zip file
+        zip_file = zipfile.ZipFile(f'results/{tournament.id}.zip', 'w')
+        for result in os.listdir(f'results/{tournament.id}'):
+            zip_file.write(f'results/{tournament.id}/{result}', result)
+        zip_file.close()
+
+        return send_file(f'results/{tournament.id}.zip', as_attachment=True)
 
 
 @app.route('/<tournament_id>/fencer/<fencer_id>')

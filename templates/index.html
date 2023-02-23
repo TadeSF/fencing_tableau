@@ -34,7 +34,7 @@
             <button class="cta-button" id="button_manage" onclick="login_manager()">
                 <div class="button-content">
                     <i class="fa-solid fa-key"></i>
-                    <span>Master-Login</span>
+                    <span style="text-decoration:line-through;">Master-Login</span>
                 </div>
             </button>
             <button class="cta-button" id="button_referee" onclick="login_referee()">
@@ -59,15 +59,14 @@
         <div class="text-block" style="grid-area: text1" id="textblock-introduction">
             <h1>Easily organize and manage your <span class="text-pop-up">TOURNAMENTS</span></h1>
             <p>FenceWithFriends makes it easy to manage big and small fencing tournaments with different rulesets, including (multiple) preliminary groups, <del>repechage</del> and placement matches. It tracks scores and calculates standings and results in real-time. Save time and focus on what matters most - the competition.</p>
-            <p>It is free and open-source. There is no registration required.</p>
-            <p>You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
+            <p>All Fencers get access to their very own Fencer-Hub, where they can find detailed information about the upcoming matches, statistics about their perfomance and most importantly the next piste they are fencing on.</p>
+            <p>It is free and open-source. There is no registration required. You just need a Startlist as a comma delimited CSV file. You can download a template and sample file and read the <a href="#Startlist-Instructions">Instructions on how to format the Startlist CSV</a> below.</p>
         </div>
     
         <div class="text-block" style="grid-area: text2" id="textblock-get-started">
             <h1>How to get <span class="text-pop-up">started</span></h1>
-            <p>FenceWithFriends is a Python-based application that hosts a webserver in a local (wifi) network. This way, it
-                is possible for everyone to see current standings and matches from their mobile devices. It just needs one
-                person as a tournament manager with a computer.</p>
+            <p>To get started, you just click on "New Tournament" above. For any questions regarding the process or the Web-Application, please refer to our Userguide. We are still in the writing process, but you even now can find detailed information about the App.</p>
+            <p>If you have any questions or suggestions, please contact us via E-Mail or on Github.</p>
             <div class="button-grid" style="justify-content: center;">
                 <div onclick="openUserguide()" class="cta-button" style="background-color: blue;">
                     <div class="button-content">
@@ -86,7 +85,8 @@
         </div>
         <div class="text-block" style="grid-area: text3" id="textblock-startlist">
             <h1 id="Startlist-Instructions">The <span class="text-pop-up">Startlist</span> File</h1>
-            <p>The startlist file is a comma delimited CSV file. The first line contains the column names. The following columns (with one header line) are required:</p>
+            <p>The startlist file is a comma delimited CSV file. The first line contains the column names. If you don't want to spend hours in your text-editor counting and positioning commas, we recommend you our Startlist-Builder, that makes it very easy to create your Startlist-File on the go.</p>
+            <p>If you already have an EXCEL-Sheet or similar, you can also download the CSV-Template below. In case you just want to test how the App works, we also provided you a Startlist Example with imaginary fencers.</p>
             <div class="button-grid" style="justify-content: center;">
                 <div onclick="{window.open('build-your-startlist', '_blank')}" class="cta-button" style="background-color: red;">
                     <div class="button-content">

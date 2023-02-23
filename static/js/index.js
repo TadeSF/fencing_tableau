@@ -7,7 +7,8 @@ function new_tournament() {
 // When button "Manage existing Tournament" is clicked, this function is called
 function login_manager() {
   // Show the new_tournament_form div
-  window.open("/tournaments", "_self")
+  alert("Master login not yet implemented")
+  
 }
 
 
@@ -20,7 +21,7 @@ function login_fencer() {
 
 function login_referee() {
   // Show the new_tournament_form div
-  document.getElementById("login_referee_form").style.display = "block";
+  alert("Referee login not yet implemented")
 }
 
 function openGithub() {

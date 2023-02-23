@@ -45,6 +45,7 @@ function update() {
         if (response["stage"] === "Finished") {
             document.getElementById("Simulate").style.display = "none";
             document.getElementById("Advance").style.display = "none";
+            document.getElementById("Results").style.display = "block";
         }
 
         // if Simulation is disabled, hide the "Simulate" button
@@ -55,6 +56,12 @@ function update() {
 }
 
 function advance() {
+    const advance_button = document.getElementById("Advance");
+    advance_button.disabled = true;
+    advance_button.firstChild.classList.remove("fa-forward-fast");
+    advance_button.firstChild.classList.add("fa-spin");
+    advance_button.firstChild.classList.add("fa-spinner");
+
     fetch('matches-left')
     .then(response => response.text())
     .then(response => {
@@ -72,25 +79,51 @@ function advance() {
                 alert("There are still matches left to be completed!")
             }
         }
+
+        setTimeout(function() {
+            advance_button.disabled = false;
+            advance_button.firstChild.classList.remove("fa-spin");
+            advance_button.firstChild.classList.remove("fa-spinner");
+            advance_button.firstChild.classList.add("fa-forward-fast");
+        }, 1500);
     })
+
+    
 }
 
 function simulate() {
+    const simulate_button = document.getElementById("Simulate");
+    simulate_button.disabled = true;
+    simulate_button.firstChild.classList.remove("fa-gears");
+    simulate_button.firstChild.classList.add("fa-spin");
+    simulate_button.firstChild.classList.add("fa-spinner");
+
     let confirm = window.confirm("Are you sure you want to simulate this stage of the tournament?");
     if (confirm) {
-        document.getElementById("loading-screen").style.display = "flex";
         fetch('simulate-current')
         .then(response => {
             if (response.status === 200) {
                 setTimeout(function() {
                     update();
-                    document.getElementById("loading-screen").style.display = "none";
-            }, 1000);
+                }, 1000);
             } else {
                 alert("There are no matches left to be simulated!")
-                document.getElementById("loading-screen").style.display = "none";
             }
-        })
+
+            setTimeout(function() {
+                simulate_button.disabled = false;
+                simulate_button.firstChild.classList.remove("fa-spin");
+                simulate_button.firstChild.classList.remove("fa-spinner");
+                simulate_button.firstChild.classList.add("fa-gears");
+            }, 1500);
+        });
+    } else {
+        setTimeout(function() {
+            simulate_button.disabled = false;
+            simulate_button.firstChild.classList.remove("fa-spin");
+            simulate_button.firstChild.classList.remove("fa-spinner");
+            simulate_button.firstChild.classList.add("fa-gears");
+        }, 1500);
     }
 }
 
@@ -157,4 +190,30 @@ function copyID() {
     console.log(id);
     navigator.clipboard.writeText(id);
     alert('Copied ID "' + id + '" to clipboard!');
+}
+
+function home() {
+    window.location.href = "/";
+}
+
+function download_results() {
+    const results_button = document.getElementById("Results");
+    results_button.disabled = true;
+    results_button.firstChild.classList.remove("fa-download");
+    results_button.firstChild.classList.add("fa-spin");
+    results_button.firstChild.classList.add("fa-spinner");
+
+    window.open("/" + tournament_id + "/download-results", "_blank");
+
+    setTimeout(function() {
+        results_button.disabled = false;
+        results_button.firstChild.classList.remove("fa-spin");
+        results_button.firstChild.classList.remove("fa-spinner");
+        results_button.firstChild.classList.add("fa-check");
+    }, 1500);
+
+    setTimeout(function() {
+        results_button.firstChild.classList.remove("fa-check");
+        results_button.firstChild.classList.add("fa-download");
+    }, 3000);
 }

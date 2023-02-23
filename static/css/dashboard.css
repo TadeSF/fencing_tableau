@@ -35,7 +35,7 @@ button {
   text-decoration: none;
 }
 
-button:hover {
+button:hover, button:disabled {
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
   translate: 4px 4px;
 }

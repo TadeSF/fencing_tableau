@@ -72,7 +72,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for main</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
+<span></span><span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">dotenv</span> <span class="kn">import</span> <span class="n">load_dotenv</span>
 
 
 <span class="k">try</span><span class="p">:</span>
@@ -600,25 +601,25 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/tournaments&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">tournaments</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Flask serves on GET request /tournaments the tournaments.html file from the templates folder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c1"># @app.route(&#39;/tournaments&#39;)</span>
+<span class="c1"># def tournaments():</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Flask serves on GET request /tournaments the tournaments.html file from the templates folder.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
 
-    <span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">tournament</span> <span class="ow">in</span> <span class="n">load_all_tournaments</span><span class="p">(</span><span class="n">return_values</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">id</span>
-        <span class="n">tournament_id_with_parenthesies</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tournament_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">date</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">.%m.%Y %H:%M&quot;</span><span class="p">)</span>
-        <span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&lt;div class=&quot;grid-item&quot;&gt;&lt;div class=&quot;ID-Block&quot;&gt;&lt;div class=&quot;ID-Block-Number&quot;&gt;</span><span class="si">{</span><span class="n">tournament_id</span><span class="si">}</span><span class="s1">&lt;/div&gt;&lt;div class=&quot;ID-Block-Description&quot;&gt;Tournament ID&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;Name&quot;&gt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&lt;/div&gt;&lt;div class=&quot;date&quot;&gt;</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">&lt;/div&gt;&lt;div class=&quot;button-box&quot;&gt;&lt;div class=&quot;button&quot; onclick=&quot;ManageTournament(</span><span class="si">{</span><span class="n">tournament_id_with_parenthesies</span><span class="si">}</span><span class="s1">)&quot;&gt;Manage Tournament&lt;/div&gt;&lt;div class=&quot;button&quot; onclick=&quot;LoginAsFencer(</span><span class="si">{</span><span class="n">tournament_id_with_parenthesies</span><span class="si">}</span><span class="s1">)&quot;&gt;Login as Fencer&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">)</span>
+<span class="c1">#     cards = []</span>
+<span class="c1">#     i = 0</span>
+<span class="c1">#     for tournament in load_all_tournaments(return_values=True):</span>
+<span class="c1">#         i += 1</span>
+<span class="c1">#         tournament_id = tournament.id</span>
+<span class="c1">#         tournament_id_with_parenthesies = f&quot;&#39;{tournament_id}&#39;&quot;</span>
+<span class="c1">#         name = tournament.name</span>
+<span class="c1">#         date = tournament.created_at.strftime(&quot;%d.%m.%Y %H:%M&quot;)</span>
+<span class="c1">#         cards.append(f&#39;&lt;div class=&quot;grid-item&quot;&gt;&lt;div class=&quot;ID-Block&quot;&gt;&lt;div class=&quot;ID-Block-Number&quot;&gt;{tournament_id}&lt;/div&gt;&lt;div class=&quot;ID-Block-Description&quot;&gt;Tournament ID&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;Name&quot;&gt;{name}&lt;/div&gt;&lt;div class=&quot;date&quot;&gt;{date}&lt;/div&gt;&lt;div class=&quot;button-box&quot;&gt;&lt;div class=&quot;button&quot; onclick=&quot;ManageTournament({tournament_id_with_parenthesies})&quot;&gt;Manage Tournament&lt;/div&gt;&lt;div class=&quot;button&quot; onclick=&quot;LoginAsFencer({tournament_id_with_parenthesies})&quot;&gt;Login as Fencer&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&#39;)</span>
 
-    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">cards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;&lt;div class=&quot;grid-item&quot; style=&quot;grid-column: span 3;&quot;&gt;&lt;div class=&quot;Name&quot;&gt;No Tournaments&lt;/div&gt;&lt;/div&gt;&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;tournaments.html&#39;</span><span class="p">,</span> <span class="n">cards</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cards</span><span class="p">))</span>
+<span class="c1">#     if i == 0:</span>
+<span class="c1">#         cards.append(&#39;&lt;div class=&quot;grid-item&quot; style=&quot;grid-column: span 3;&quot;&gt;&lt;div class=&quot;Name&quot;&gt;No Tournaments&lt;/div&gt;&lt;/div&gt;&#39;)</span>
+<span class="c1">#     return render_template(&#39;tournaments.html&#39;, cards=&#39;&#39;.join(cards))</span>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/get-started&#39;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_started</span><span class="p">():</span>
@@ -1233,6 +1234,36 @@
             <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="mi">200</span></div>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/download-results&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">download_results</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask processes a GET request to download the results of the tournament.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    200</span>
+<span class="sd">        On success</span>
+<span class="sd">    404</span>
+<span class="sd">        On tournament not found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+
+        <span class="c1"># Create a zip file</span>
+        <span class="n">zip_file</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="n">zip_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">zip_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">send_file</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.zip&#39;</span><span class="p">,</span> <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/fencer/&lt;fencer_id&gt;&#39;</span><span class="p">)</span>
