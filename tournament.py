@@ -945,7 +945,6 @@ class Tournament:
     # --- Exporting ---
 
     def export_stage_results(self) -> list:      
-        document_number = len(os.listdir(f"results/{self.id}")) + 1
 
         # Check if the results folder exists, if not create it
         if not os.path.exists("results"):
@@ -954,6 +953,8 @@ class Tournament:
         # Check if the results folder for this tournament exists, if not create it
         if not os.path.exists(f"results/{self.id}"):
             os.makedirs(f"results/{self.id}")
+        
+        document_number = len(os.listdir(f"results/{self.id}")) + 1
         
         match_results = self.export_matches()
 
