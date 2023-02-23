@@ -8,6 +8,7 @@
                 font-size: 14px;
                 font-family: sans-serif;
                 text-align: center;
+                line-height: 1.5rem;
             }
 
             .Wrapper {
@@ -22,6 +23,19 @@
                 padding: 2rem;
                 margin-bottom: 2rem;
                 border-radius: 10px;
+            }
+
+            .block-highlight {
+                background-color: #fff;
+                padding: 1rem;
+                margin-bottom: 2rem;
+                border-radius: 10px;
+            }
+
+            .block-highlight a {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
             }
 
             img {
@@ -125,8 +139,10 @@
         <div class="Wrapper">
             <div class="Section">
                 <h1>Tournament Created</h1>
-                <h3>{{ tournament_name }}</h3>
-                <p>{{ tournament_location }}</p>
+                <div class="block-highlight">
+                    <h3>{{ tournament_name }}</h3>
+                    <p>{{ tournament_location }}</p>
+                </div>
                 <p>
                     You have created a tournament on FenceWithFriends!<br>
                     Please find your Tournament Details below.
@@ -143,7 +159,9 @@
                 <p>
                     Please share this ID with your Fencers. You can also share the link below with them.
                 </p>
-
+                <div class="block-highlight">
+                    <a href="{{ fencer_link }}">{{ fencer_link }}</a>
+                </div>
             </div>
             <div class="Section">
                 <h2>You are the Master</h2>

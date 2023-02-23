@@ -469,7 +469,7 @@
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span></div>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fencer-login&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">mobile_index</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">fencer_login</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Flask serves on GET request / the index.html file from the templates folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -708,6 +708,7 @@
         <span class="n">msg</span><span class="o">.</span><span class="n">html</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;email/new_tournament.html&#39;</span><span class="p">,</span>
                                     <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                                     <span class="n">tournament_link</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://fencewithfriends.online/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/dashboard&quot;</span><span class="p">,</span>
+                                    <span class="n">fencer_link</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;https://fencewithfriends.online/fencer-login?tournament=</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                                     <span class="n">tournament_name</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                                     <span class="n">tournament_location</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
                                     <span class="n">illustration_number</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>

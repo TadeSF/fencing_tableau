@@ -395,7 +395,7 @@ def index():
     return render_template('index.html', version=APP_VERSION)
 
 @app.route('/fencer-login')
-def mobile_index():
+def fencer_login():
     """
     Flask serves on GET request / the index.html file from the templates folder.
     """
@@ -634,6 +634,7 @@ def process_form():
         msg.html = render_template('email/new_tournament.html',
                                     tournament_id=tournament.id,
                                     tournament_link=f"https://fencewithfriends.online/{tournament.id}/dashboard",
+                                    fencer_link=f"https://fencewithfriends.online/fencer-login?tournament={tournament.id}",
                                     tournament_name=tournament.name,
                                     tournament_location=tournament.location,
                                     illustration_number=random.randint(1, 4))
