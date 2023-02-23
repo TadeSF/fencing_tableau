@@ -1139,7 +1139,7 @@ def next_stage(tournament_id):
             msg = Message(f'Tournament {tournament.id} Results',
                         sender=MAIL_SENDER,
                         recipients=[tournament.master_email])
-            msg.html = render_template('email/results.html',
+            msg.html = render_template('email/result_mail.html',
                                         tournament_id=tournament.id,
                                         tournament_name=tournament.name,
                                         tournament_location=tournament.location,
@@ -1482,7 +1482,7 @@ if __name__ == '__main__':
 
     # ---------- Activate the following boolean to run the server in debug mode ---------- #
     debug_flask = True
-    
+
 
     if port_flask:
         app.run(host='0.0.0.0', port=8080, debug=debug_flask)
