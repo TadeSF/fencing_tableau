@@ -6,6 +6,7 @@ body {
 
 .Wrapper {
   margin: 0 auto;
+  margin-top: 20px;
   width: calc(100vw - 40px);
   max-width: 1000px;
 }
@@ -14,4 +15,9 @@ body {
   padding: 20px;
   background-color: #fff;
   border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+h1:first-child {
+  margin-top: 0;
 }/*# sourceMappingURL=imprint.css.map */

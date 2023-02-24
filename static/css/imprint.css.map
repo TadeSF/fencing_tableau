@@ -1,1 +1,1 @@
-{"version":3,"sources":["imprint.scss","imprint.css"],"names":[],"mappings":"AAAA;EACI,mCAAA;EACA,eAAA;EACA,sBAAA;ACCJ;;ADEA;EACI,cAAA;EACA,yBAAA;EACA,iBAAA;ACCJ;;ADEA;EACI,aAAA;EACA,sBAAA;EACA,mBAAA;ACCJ","file":"imprint.css"}
+{"version":3,"sources":["imprint.scss","imprint.css"],"names":[],"mappings":"AAAA;EACI,mCAAA;EACA,eAAA;EACA,sBAAA;ACCJ;;ADEA;EACI,cAAA;EACA,gBAAA;EACA,yBAAA;EACA,iBAAA;ACCJ;;ADEA;EACI,aAAA;EACA,sBAAA;EACA,mBAAA;EACA,mBAAA;ACCJ;;ADGI;EACI,aAAA;ACAR","file":"imprint.css"}
