@@ -415,6 +415,12 @@ def privacy():
     """
     return render_template('privacy.html')
 
+@app.route('/terms')
+def terms():
+    """
+    """
+    return render_template('terms.html')
+
 @app.route('/csv-template')
 def csv_template_download():
     """
