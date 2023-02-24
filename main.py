@@ -365,6 +365,11 @@ def check_password(password: str, hashed_password: str) -> bool:
 # ------- Flask / Flask Mail -------
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
+
 app.config['MAIL_SERVER'] = 'smtp.gmx.net'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = MAIL_USERNAME
@@ -394,6 +399,7 @@ def index():
     # user_agent = request.headers.get("User-Agent")
     # if "mobile" in user_agent.lower() and request.args.get('no_mobile') is None:
     #     return redirect(url_for('mobile_index'))
+    app.logger.info(f"User agent: {request.headers.get('User-Agent')}")
     return render_template('index.html', version=APP_VERSION)
 
 @app.route('/fencer-login')
