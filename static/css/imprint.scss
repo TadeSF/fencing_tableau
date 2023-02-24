@@ -1,6 +1,19 @@
 body {
     font-family: margin-mvb, sans-serif;
     font-size: 14px;
+    background-color: #eee;
+}
+
+.Wrapper {
+    margin: 0 auto;
+    width: calc(100vw - 40px);
+    max-width: 1000px;
+}
+
+.Section {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
 }
 
 h1 {

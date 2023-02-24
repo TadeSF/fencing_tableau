@@ -594,11 +594,24 @@ def process_form():
     preliminary_rounds = request.form['number_of_preliminary_rounds']
     preliminary_groups = request.form['number_of_preliminary_groups']
     simulation_active = request.form['simulation_active']
-    print(simulation_active)
-    print(bool(simulation_active == 'true'))
     password = request.form['master_password']
     email = request.form['master_email']
     password = hash_password(password)
+
+    # Check if all required fields are filled
+    if (
+        name == '' or
+        fencers_csv.filename == '' or
+        location == '' or
+        num_pistes == '' or
+        first_elimination_round == '' or
+        elimination_mode == '' or
+        preliminary_rounds == '' or
+        preliminary_groups == '' or
+        password == '' or
+        email == ''
+    ):
+        return jsonify({'success': False, 'error': 'Missing Fields', 'message': 'Please fill out all required fields.'})
 
     # --- Process the data from the form
     # Process csv file

@@ -668,11 +668,24 @@
     <span class="n">preliminary_rounds</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;number_of_preliminary_rounds&#39;</span><span class="p">]</span>
     <span class="n">preliminary_groups</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;number_of_preliminary_groups&#39;</span><span class="p">]</span>
     <span class="n">simulation_active</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;simulation_active&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">simulation_active</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">))</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_password&#39;</span><span class="p">]</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_email&#39;</span><span class="p">]</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+
+    <span class="c1"># Check if all required fields are filled</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">fencers_csv</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">location</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">num_pistes</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">first_elimination_round</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">elimination_mode</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">preliminary_rounds</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">preliminary_groups</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">password</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span>
+        <span class="n">email</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Missing Fields&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Please fill out all required fields.&#39;</span><span class="p">})</span>
 
     <span class="c1"># --- Process the data from the form</span>
     <span class="c1"># Process csv file</span>
