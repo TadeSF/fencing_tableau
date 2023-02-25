@@ -30,6 +30,7 @@ try:
     from match import EliminationMatch, GroupMatch
     from piste import Piste
     from tournament import *
+    import log_parser
 
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
@@ -41,6 +42,7 @@ MAIL_SENDER = os.getenv('MAIL_SENDER')
 MAIL_USERNAME = os.getenv('MAIL_USERNAME')
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 MAIL_ADMIN_RECIPIENTS = os.getenv('MAIL_ADMIN_RECIPIENTS').split(',')
+PASSWORD_LOGS = os.getenv('PASSWORD_LOGS')
 
 # ------- Versioning -------
 APP_VERSION = _version.VERSION
@@ -1509,7 +1511,36 @@ def handle_webhook():
     return 'Webhook received', 200
 
 
-# -------  -------
+# ------- Logs -------
+
+@app.route('/logs')
+def logs():
+    """
+    Flask renders on a GET request /logs the logs.html template.
+    """
+    return render_template('logs.html')
+
+@app.route('/logs/get', methods=['POST'])
+def get_logs():
+    """
+    Flask processes a POST request to get the logs from the server.
+    """
+    try:
+        password = request.json['password']
+
+        if check_password(password, PASSWORD_LOGS):
+            tournament_logs = log_parser.parse_tournament_log()
+            response = make_response(jsonify({"success": True, "tournament_logs": tournament_logs}), 200)
+            # cookie_key = 'logs_access'
+            # cookie_value = random_generator.cookie()
+            # response.set_cookie(cookie_key, cookie_value)
+            return response
+        else:
+            return jsonify({'error': 'Wrong password'}), 401
+
+    
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 

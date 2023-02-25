@@ -15,3 +15,4 @@ build_sphinx.txt
 static/img/stock/*
 logs/*
 .vscode/*
+hash_my_pw.py

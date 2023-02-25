@@ -6,16 +6,33 @@ from typing import Literal
 from attr_checker import check_attr
 from random_generator import id
 
-# Logging
-# try: # Error catch for Sphinx Documentation
-#     logger = logging.getLogger(__name__)
-#     handler = logging.FileHandler('logs/tournament.log')
-#     handler.setLevel(logging.INFO)
-#     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#     handler.setFormatter(formatter)
-#     logger.addHandler(handler)
-# except FileNotFoundError:
-#     pass
+# ------- Logging -------
+try: # Error Catch for Sphinx Documentation
+    # create logger
+    logger = logging.getLogger('fencer')
+    logger.setLevel(logging.DEBUG)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    # create file handler and set level to debug
+    fh = logging.FileHandler('logs/tournament.log')
+    fh.setLevel(logging.DEBUG)
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+
+    # add ch to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+    
+except FileNotFoundError:
+    pass
 
 # Enum for the different advancement stages of a fencer
 class Stage(Enum):

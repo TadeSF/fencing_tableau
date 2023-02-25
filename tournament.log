@@ -1,0 +1,5 @@
+2023-02-25 14:20:50,764 - tournament - DEBUG - debug message
+2023-02-25 14:20:50,764 - tournament - INFO - info message
+2023-02-25 14:20:50,764 - tournament - WARNING - warn message
+2023-02-25 14:20:50,764 - tournament - ERROR - error message
+2023-02-25 14:20:50,764 - tournament - CRITICAL - critical message

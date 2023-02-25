@@ -17,7 +17,29 @@ import logging
 
 # ------- Logging -------
 try: # Error Catch for Sphinx Documentation
-    logging.basicConfig(filename='logs/tournament.log', filemode='w', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+    # create logger
+    logger = logging.getLogger('tournament')
+    logger.setLevel(logging.DEBUG)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    # create file handler and set level to debug
+    fh = logging.FileHandler('logs/tournament.log')
+    fh.setLevel(logging.DEBUG)
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+
+    # add ch to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+    
 except FileNotFoundError:
     pass
 
@@ -373,8 +395,8 @@ class Tournament:
 
         # --------------------
         # Logging
-        logging.info(f"Created tournament {self.name} ({self.id}) with {len(self.fencers)} fencers")
-        logging.debug(f"Simulation is {'active' if self.simulation_active else 'inactive'}")
+        logger.info(f"Created tournament {self.name} ({self.id}) with {len(self.fencers)} fencers")
+        logger.debug(f"Simulation is {'active' if self.simulation_active else 'inactive'}")
 
     
     # --- Properties ---
@@ -798,6 +820,12 @@ class Tournament:
 
 
     def next_stage(self) -> None:
+
+        # TODO remove this test code
+        try: 
+            x = 1/0
+        except:
+            logger.info("Next stage", exc_info=True)
 
         for piste in self.pistes:
             piste.reset()
