@@ -614,7 +614,6 @@ def process_form():
     if (
         name == '' or
         fencers_csv.filename == '' or
-        location == '' or
         num_pistes == '' or
         first_elimination_round == '' or
         elimination_mode == '' or

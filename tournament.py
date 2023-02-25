@@ -16,17 +16,10 @@ from exceptions import *
 import logging
 
 # ------- Logging -------
-logger = logging.getLogger(__name__)
-try: # Error catch for Sphinx Documentation
-    logger = logging.getLogger(__name__)
-    handler = logging.FileHandler('logs/tournament.log')
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+try: # Error Catch for Sphinx Documentation
+    logging.basicConfig(filename='logs/tournament.log', filemode='w', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 except FileNotFoundError:
     pass
-
 
 
 # ------- Groups -------
@@ -380,8 +373,8 @@ class Tournament:
 
         # --------------------
         # Logging
-        logger.info(f"Created tournament {self.name} ({self.id}) with {len(self.fencers)} fencers")
-        logger.debug(f"Simulation is {'active' if self.simulation_active else 'inactive'}")
+        logging.info(f"Created tournament {self.name} ({self.id}) with {len(self.fencers)} fencers")
+        logging.debug(f"Simulation is {'active' if self.simulation_active else 'inactive'}")
 
     
     # --- Properties ---
