@@ -473,7 +473,7 @@
     <span class="c1"># user_agent = request.headers.get(&quot;User-Agent&quot;)</span>
     <span class="c1"># if &quot;mobile&quot; in user_agent.lower() and request.args.get(&#39;no_mobile&#39;) is None:</span>
     <span class="c1">#     return redirect(url_for(&#39;mobile_index&#39;))</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User agent: </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Serving index.html&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span></div>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fencer-login&#39;</span><span class="p">)</span>

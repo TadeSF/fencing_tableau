@@ -5,6 +5,18 @@ from fencer import Fencer, Stage, Wildcard
 from piste import Piste
 import random_generator
 from datetime import datetime
+import logging
+
+# Logging
+try: # Error catch for Sphinx Documentation
+    logger = logging.getLogger(__name__)
+    handler = logging.FileHandler('logs/tournament.log')
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+except FileNotFoundError:
+    pass
 
 
 class Match:
@@ -37,6 +49,9 @@ class Match:
         # Score
         self.green_score = 0
         self.red_score = 0
+
+        # Logging
+        logger.info(f"Match created: {self.id}, {self.green.name} - {self.red.name}")
 
     
     def __getitem__(self, index: Literal["green", "red"]):

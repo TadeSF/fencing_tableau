@@ -399,7 +399,7 @@ def index():
     # user_agent = request.headers.get("User-Agent")
     # if "mobile" in user_agent.lower() and request.args.get('no_mobile') is None:
     #     return redirect(url_for('mobile_index'))
-    app.logger.info(f"User agent: {request.headers.get('User-Agent')}")
+    app.logger.info("Serving index.html")
     return render_template('index.html', version=APP_VERSION)
 
 @app.route('/fencer-login')
