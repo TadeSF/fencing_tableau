@@ -19,27 +19,26 @@ function get_logs(){
     .then(data => {
         let tournament_logs = data.tournament_logs;
 
-        for (let i = 0; i < tournament_logs.length; i++) {
-            let log_element = tournament_logs[i];
-
+        for (const element of tournament_logs) {
+            
             let log_element = document.createElement("div");
             log_element.classList.add("Log-Line");
 
             let datetime = document.createElement("div")
-            datetime.innerHTML = tournament_logs[i]["datetime"]
+            datetime.innerHTML = element["datetime"]
             datetime.classList.add("datetime")
 
             let log_module = document.createElement("div")
-            log_module.innerHTML = tournament_logs[i]["module"]
+            log_module.innerHTML = element["module"]
             log_module.classList.add("module")
 
             let log_level = document.createElement("div")
-            log_level.innerHTML = tournament_logs[i]["level"]
+            log_level.innerHTML = element["level"]
             log_level.classList.add("level")
-            log_level.classList.add(tournament_logs[i]["level"])
+            log_level.classList.add(element["level"])
 
             let log_message = document.createElement("div")
-            log_message.innerHTML = tournament_logs[i]["message"]
+            log_message.innerHTML = element["message"]
             log_message.classList.add("message")
             
             log_element.appendChild(datetime);
@@ -47,11 +46,11 @@ function get_logs(){
             log_element.appendChild(log_level);
             log_element.appendChild(log_message);
 
-            if (tournament_logs[i]["traceback"] != null) {
+            if (element["traceback"] != null) {
                 let traceback_array = []
                 
-                for (let j = 0; j < tournament_logs[i]["traceback"].length; j++) {
-                    traceback_array.push(tournament_logs[i]["traceback"][j])
+                for (let j = 0; j < element["traceback"].length; j++) {
+                    traceback_array.push(element["traceback"][j])
                 }
                 
                 let traceback = document.createElement("div")
