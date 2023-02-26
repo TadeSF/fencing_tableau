@@ -38,12 +38,6 @@ function get_logs(){
             log_level.classList.add(element["level"])
 
             let log_message = document.createElement("div")
-            // replace all HTML space characters
-            log_message.innerHTML = element["message"].replace(/&nbsp;/g, " ")
-            // replace all HTML line breaks
-            log_message.innerHTML = log_message.innerHTML.replace(/<br>/g, " ")
-            // replace all HTML tabs
-            log_message.innerHTML = log_message.innerHTML.replace(/&nbsp;&nbsp;&nbsp;&nbsp;/g, " ")
             log_message.innerHTML = element["message"]
             log_message.classList.add("message")
             
