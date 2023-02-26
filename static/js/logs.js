@@ -20,7 +20,7 @@ function get_logs(){
         let tournament_logs = data.tournament_logs;
 
         for (let i = 0; i < tournament_logs.length; i++) {
-            let log = tournament_logs[i];
+            let log_element = tournament_logs[i];
 
             let log_element = document.createElement("div");
             log_element.classList.add("Log-Line");
