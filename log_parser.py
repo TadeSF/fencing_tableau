@@ -37,13 +37,24 @@ def parse_tournament_log() -> dict:
 
         # Otherwise, it must be a new logline. Parse it and add it to the list
         raw_line = line.split(' - ')
-        logline = {
-            'datetime': raw_line[0],
-            'module': raw_line[1],
-            'level': raw_line[2],
-            'message': raw_line[3],
-            'traceback': None
-        }
-        loglines.append(logline)
+
+        try:
+            logline = {
+                'datetime': raw_line[0],
+                'module': raw_line[1],
+                'level': raw_line[2],
+                'message': raw_line[3],
+                'traceback': None
+            }
+            loglines.append(logline)
+        except IndexError:
+            logline = {
+                'datetime': "",
+                'module': "",
+                'level': "",
+                'message': "Line skipped, could not be parsed",
+                'traceback': None
+            }
+            loglines.append(logline)
 
     return loglines
