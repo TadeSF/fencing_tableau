@@ -1534,7 +1534,8 @@ def get_logs():
 
     
     except Exception as e:
-        app.logger.error('Error while getting logs: ' + str(e))
+        # Log the error and traceback
+        app.logger.error('Exception: %s', e, exc_info=True)
         return jsonify({"success": False, "message": str(e)}), 500
 
 
