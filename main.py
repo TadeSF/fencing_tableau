@@ -1469,14 +1469,6 @@ def redirect_docs():
     return redirect(url_for('serve_docs', filename='index.html'))
 
 
-@app.route('/logs/flask')
-def get_flask_logs():
-    """
-    Flask serves on a GET request /logs/flask the flask.log file from the logs folder.
-    """
-    return send_from_directory('logs', 'flask.log')
-
-
 @app.route('/github-webhook', methods=['POST'])
 def handle_webhook():
     """
@@ -1531,15 +1523,18 @@ def get_logs():
         if check_password(password, PASSWORD_LOGS):
             tournament_logs = log_parser.parse_tournament_log()
             response = make_response(jsonify({"success": True, "tournament_logs": tournament_logs}), 200)
+            app.logger.info('Logs accessed')
             # cookie_key = 'logs_access'
             # cookie_value = random_generator.cookie()
             # response.set_cookie(cookie_key, cookie_value)
             return response
         else:
+            app.logger.info('Wrong password for logs')
             return jsonify({'error': 'Wrong password'}), 401
 
     
     except Exception as e:
+        app.logger.error('Error while getting logs: ' + str(e))
         return jsonify({"success": False, "message": str(e)}), 500
 
 
