@@ -47,6 +47,34 @@ PASSWORD_LOGS = os.getenv('PASSWORD_LOGS')
 # ------- Versioning -------
 APP_VERSION = _version.VERSION
 
+# ------- Logging -------
+try: # Error Catch for Sphinx Documentation
+    # create logger
+    logger = logging.getLogger('main')
+    logger.setLevel(logging.DEBUG)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    # create file handler and set level to debug
+    fh = logging.FileHandler('logs/tournament.log')
+    fh.setLevel(logging.DEBUG)
+
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+
+    # add ch to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+    
+except FileNotFoundError:
+    pass
+
 
 # ------- Tournament Cache -------
 enable_tournament_cache = False
@@ -1522,17 +1550,12 @@ def get_logs():
 
         if check_password(password, PASSWORD_LOGS):
             tournament_logs = log_parser.parse_tournament_log()
-            response = make_response(jsonify({"success": True, "tournament_logs": tournament_logs}), 200)
             app.logger.info('Logs accessed')
-            # cookie_key = 'logs_access'
-            # cookie_value = random_generator.cookie()
-            # response.set_cookie(cookie_key, cookie_value)
-            return response
+            return jsonify({"success": True, "tournament_logs": tournament_logs}), 200
         else:
             app.logger.info('Wrong password for logs')
             return jsonify({'error': 'Wrong password'}), 401
-
-    
+        
     except Exception as e:
         # Log the error and traceback
         app.logger.error('Exception: %s', e, exc_info=True)

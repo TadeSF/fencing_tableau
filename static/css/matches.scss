@@ -506,3 +506,23 @@ i:hover {
 #match_options {
     grid-column: 5 / -1;
 }
+
+$disabled_color: #c1c1c1;
+.disabled {
+    opacity: 50% !important;
+    pointer-events: none !important;
+    color: $disabled_color;
+    transition: 0.3s ease-in-out;
+    
+    div {
+        opacity: 50% !important;
+        color: $disabled_color;
+        transition: 0.3s ease-in-out;
+        
+        div {
+            opacity: 50% !important;
+            color: $disabled_color;
+            transition: 0.3s ease-in-out;
+        }
+    }
+}

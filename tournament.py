@@ -101,8 +101,9 @@ def matchmaker_groups(fencers: List[Fencer], stage: Stage, prelim_round: int) ->
     for i in range(0, len(fencers)):
         for j in range(i + 1, len(fencers)):
             # Randomize the color of the fencers
-            red = fencers[i] if random.randint(0, 1) == 0 else fencers[j]
-            green = fencers[j] if red == fencers[i] else fencers[i]
+            if not type(fencers[i]) == "Wildcard" and not type(fencers[j]) == "Wildcard":
+                red = fencers[i] if random.randint(0, 1) == 0 else fencers[j]
+                green = fencers[j] if red == fencers[i] else fencers[i]
             # Create match
             matches.append(GroupMatch(green, red, stage, prelim_round=prelim_round))
 
@@ -430,7 +431,7 @@ class Tournament:
         self.preliminary_fencers = self.fencers
         self.preliminary_matches[self.preliminary_stage - 1] = create_group_matches(self.preliminary_fencers, self.stage, groups=self.num_preliminary_groups, prelim_round=self.preliminary_stage - 1)
         self.preliminary_matches[self.preliminary_stage - 1] = sort_matchups_in_preliminary_round(self.preliminary_fencers , self.matches_of_current_preliminary_round)
-        self.assign_pistes(self.matches_of_current_preliminary_round)
+        self.assign_pistes()
 
 
     def create_next_elimination_round(self, final: bool = False) -> None:
@@ -452,17 +453,40 @@ class Tournament:
 
         if self.elimination_matches != []: self.elimination_matches_archive.append(self.elimination_matches)
         self.elimination_matches = matchmaker_elimination(self.elimination_fencers, self.elimination_mode, self.stage)
-        self.assign_pistes(self.elimination_matches)
+        self.assign_pistes()
 
         for fencer in self.fencers:
             fencer.stage = self.stage
 
 
-    def assign_pistes(self, matches: List[Match]):
-        matches = sorted(matches, key=lambda match: match.priority, reverse=True)
+    def assign_pistes(self):
+        logger.debug("Piste assignment")
+        matches = sorted(self.all_matches, key=lambda match: match.priority, reverse=True)
         for match in matches:
-            if match.piste == None and match.wildcard == False:
-                for piste in self.pistes:
+
+            if (
+                match.piste == None
+                and
+                match.match_completed == False
+                and
+                match.wildcard == False
+                and
+
+                not (
+                    match.green.is_staged
+                    or
+                    match.red.is_staged
+                )
+
+                and
+
+                not (
+                    match.green.in_match
+                    and
+                    match.red.in_match
+                )
+            ):
+                for piste in sorted(self.pistes, key=lambda piste: piste.occupied):
                     if not piste.staged:
                         match.assign_piste(piste)
                         break
@@ -728,7 +752,7 @@ class Tournament:
                     match.green.update_rank(green_rank)
                     match.red.update_rank(red_rank)
 
-        self.assign_pistes(self.elimination_matches)
+        self.assign_pistes()
 
     
     def correct_score(self, match: int, green_score: int, red_score: int) -> None:
@@ -753,7 +777,7 @@ class Tournament:
                 else:
                     match.set_active()
 
-        self.assign_pistes(self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches)
+        self.assign_pistes()
 
 
     def prioritize_match(self, match_id, value) -> None:
@@ -807,25 +831,21 @@ class Tournament:
         # In all cases, the match is staged on the requested piste
         match.assign_piste(requested_piste)
 
-        self.assign_pistes(self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches)
+        self.assign_pistes()
 
     def remove_piste_assignment(self, match_id) -> None:
         match = self.get_match_by_id(match_id)
         if match.piste != None:
             match.piste.staged = False
             match.piste = None
+            match.green.is_staged = False
+            match.red.is_staged = False
         else:
             raise PisteError("Error in remove_piste_assignment: The match is not staged on a piste and therefore cannot be removed from a piste.")
 
 
 
     def next_stage(self) -> None:
-
-        # TODO remove this test code
-        try: 
-            x = 1/0
-        except:
-            logger.info("Next stage", exc_info=True)
 
         for piste in self.pistes:
             piste.reset()
@@ -1113,7 +1133,7 @@ class Tournament:
                 length = len(self.matches_of_current_preliminary_round)
                 for match in self.matches_of_current_preliminary_round:
 
-                    self.assign_pistes(self.matches_of_current_preliminary_round)
+                    self.assign_pistes()
 
                     # Set match active
                     if match.match_ongoing != True and match.match_completed != True:
@@ -1138,7 +1158,7 @@ class Tournament:
                 length = len(self.elimination_matches)
                 for match in self.elimination_matches:
 
-                    self.assign_pistes(self.elimination_matches)
+                    self.assign_pistes()
 
                     if match.match_ongoing != True:
                         self.set_active(match.id)

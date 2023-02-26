@@ -272,6 +272,8 @@ class Fencer:
         self.group_opponents = [] # This is needed for matchmaking in the direct elimination stage when repechage is used.
 
         # Stage information
+        self.in_match = False # Tracks if the fencer is currently in a match
+        self.is_staged = False # Tracks if the fencer is staged for a match
         self.stage: Stage = Stage.PRELIMINARY_ROUND # Tracks the advancement of the fencer (to determine standings)
         self.eliminated = False # Tracks if the fencer has been eliminated from the tournament
 
@@ -381,6 +383,9 @@ class Fencer:
         return [match["win"] for match in self.last_matches][-8:]
 
 
+    def match_started(self):
+        self.in_match = True
+        self.is_staged = False
 
     # statistics
     def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0, skip_last_matches: bool = False) -> None:

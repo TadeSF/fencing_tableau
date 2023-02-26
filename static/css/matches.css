@@ -484,4 +484,21 @@ i:hover {
 
 #match_options {
   grid-column: 5/-1;
+}
+
+.disabled {
+  opacity: 50% !important;
+  pointer-events: none !important;
+  color: #c1c1c1;
+  transition: 0.3s ease-in-out;
+}
+.disabled div {
+  opacity: 50% !important;
+  color: #c1c1c1;
+  transition: 0.3s ease-in-out;
+}
+.disabled div div {
+  opacity: 50% !important;
+  color: #c1c1c1;
+  transition: 0.3s ease-in-out;
 }/*# sourceMappingURL=matches.css.map */

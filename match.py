@@ -140,6 +140,8 @@ class Match:
         else:
             self.green_score = green_score
             self.red_score = red_score
+            self.green.in_match = False
+            self.red.in_match = False
             self.match_ongoing = False
             self.match_completed = True
             self.match_completed_timestamp = datetime.now()
@@ -153,15 +155,16 @@ class Match:
 
     def set_active(self, staged: bool = False):
         self.piste.match_started(staged)
+        self.green.match_started()
+        self.red.match_started()
         self.match_ongoing = True
         self.match_ongoing_timestamp = datetime.now()
 
     def assign_piste(self, piste: Piste):
         self.piste = piste
         self.piste.staged = True
-        print("Piste assigned to match")
-        print(self.piste.number)
-        print(self.piste.staged)
+        self.green.is_staged = True
+        self.red.is_staged = True
 
 
 

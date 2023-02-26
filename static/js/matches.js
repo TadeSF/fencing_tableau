@@ -56,22 +56,24 @@ function parseSVG(svgString) {
 async function update_matches(matches) {
     // render placeholders for all matches
     const matches_table = document.getElementById("tablebody")
-    let num_matches = function() {
-        let num_matches = 0
-        for (const element of matches_table.children) {
-            if (element.style.display != "none") {
-                num_matches++
-            }
-        }
-        return num_matches
-    }()
+    // let num_matches = function() {
+    //     let num_matches = 0
+    //     for (const element of matches_table.children) {
+    //         if (element.style.display != "none") {
+    //             num_matches++
+    //         }
+    //     }
+    //     return num_matches
+    // }()
 
-    matches_table.innerHTML = ""
-    for (let i = 0; i < num_matches; i++) {
-        let placeholder = document.createElement('div')
-        placeholder.classList.add("cell", "placeholder")
-        matches_table.appendChild(placeholder)
-    }
+    // matches_table.innerHTML = ""
+    // for (let i = 0; i < num_matches; i++) {
+    //     let placeholder = document.createElement('div')
+    //     placeholder.classList.add("cell", "placeholder")
+    //     matches_table.appendChild(placeholder)
+    // }
+
+    matches_table.classList.add("disabled")
 
     let matches_array = []
     
@@ -265,6 +267,8 @@ async function update_matches(matches) {
     }
     
     clearTable();
+
+    matches_table.classList.remove("disabled")
 
     for (const element of matches_array) {
         matches_table.appendChild(element)
@@ -729,3 +733,9 @@ function savePDF() {
 window.onerror = function(error, url, line) {
     alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
 };
+
+// prevent disabled buttons from being clicked
+// document.querySelector('.disabled').addEventListener('click', function(event) {
+//     event.stopPropagation();
+//     event.preventDefault();
+// });
