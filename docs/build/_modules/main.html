@@ -713,6 +713,10 @@
     <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_password&#39;</span><span class="p">]</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;master_email&#39;</span><span class="p">]</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">allow_fencers_to_start_matches</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;allow_fencers_to_start_matches&#39;</span><span class="p">]</span>
+    <span class="n">allow_fencers_to_input_scores</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;allow_fencers_to_input_scores&#39;</span><span class="p">]</span>
+    <span class="n">allow_fencers_to_referee</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;allow_fencers_to_referee&#39;</span><span class="p">]</span>
+    
 
     <span class="c1"># Check if all required fields are filled</span>
     <span class="k">if</span> <span class="p">(</span>
@@ -754,7 +758,28 @@
 
 
         <span class="c1"># Generate and save the new tournament</span>
-        <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span><span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">password</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fencers</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">preliminary_rounds</span><span class="p">,</span> <span class="n">preliminary_groups</span><span class="p">,</span> <span class="n">first_elimination_round</span><span class="p">,</span> <span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">num_pistes</span><span class="p">,</span> <span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">))</span>
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">Tournament</span><span class="p">(</span>
+            <span class="n">random_generator</span><span class="o">.</span><span class="n">id</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">location</span><span class="p">,</span>
+            <span class="n">email</span><span class="p">,</span>
+            <span class="n">password</span><span class="p">,</span>
+
+            <span class="n">fencers</span><span class="p">,</span>
+
+            <span class="n">num_preliminary_rounds</span><span class="o">=</span><span class="n">preliminary_rounds</span><span class="p">,</span>
+            <span class="n">num_preliminary_groups</span><span class="o">=</span><span class="n">preliminary_groups</span><span class="p">,</span>
+            <span class="n">first_elimination_round</span><span class="o">=</span><span class="n">first_elimination_round</span><span class="p">,</span>
+            <span class="n">elimination_mode</span><span class="o">=</span><span class="n">elimination_mode</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+
+            <span class="n">number_of_pistes</span><span class="o">=</span><span class="n">num_pistes</span><span class="p">,</span>
+
+            <span class="n">allow_fencers_to_start_matches</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">allow_fencers_to_start_matches</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">allow_fencers_to_input_scores</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">allow_fencers_to_input_scores</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">allow_fencers_to_referee</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">allow_fencers_to_referee</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span> <span class="k">else</span> <span class="kc">False</span><span class="p">,</span>
+
+            <span class="n">simulation_active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">simulation_active</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
         <span class="n">tournament_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
 
         <span class="c1"># Generate Mail</span>

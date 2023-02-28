@@ -110,6 +110,32 @@
                         </div>
                     </div>
 
+                    <div class="Form-Block" id="permissions_block">
+                        <h3>Permissions</h3>
+                        <p>Here you can specify certain permissions / rights for user groups of the tournament.</p>
+                        <div class="number_container">
+                            <label for="first_elimination_round">Allow Fencers to start matches</label>
+                            <select id="first_elimination_round" name="first_elimination_round">
+                                <option value="false">Disallow</option>
+                                <option value="true" disabled>Allow</option>
+                            </select>
+                        </div>
+                        <div class="number_container">
+                            <label for="first_elimination_round">Allow Fencers to input scores</label>
+                            <select id="first_elimination_round" name="first_elimination_round">
+                                <option value="false">Disallow</option>
+                                <option value="true" disabled>Allow</option>
+                            </select>
+                        </div>
+                        <div class="number_container">
+                            <label for="first_elimination_round">Allow Fencers to referee other matches</label>
+                            <select id="first_elimination_round" name="first_elimination_round">
+                                <option value="false">Disallow</option>
+                                <option value="true" disabled>Allow</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="Form-Block" id="elimination_block">
                         <h3>Elimination Mode</h3>
                         <p>Please specify which Elimination Mode the tournament shoud have. You have three options: KO, Repechage and Placements. In KO, fencers compete in a single-elimination tournament until only one fencer remains. In Repechage, fencers who lose early in the tournament are given a second chance to compete in a separate bracket. KO with Placement Matches is a combination of the previous two modes, where fencers who lose early in the tournament still have the chance to compete for their final tournament ranking. In each mode, all matchmaking is automatic.</p>

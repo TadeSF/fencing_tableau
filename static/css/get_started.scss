@@ -60,7 +60,7 @@ form {
                             "general_information general_information"
                             "startlist piste"
                             "configuration elimination"
-                            "configuration additional_options"
+                            "permissions additional_options"
                             "password password"
                             "submit submit";
 }
@@ -95,6 +95,10 @@ form {
 
 #configuration_block {
     grid-area: configuration;
+}
+
+#permissions_block {
+    grid-area: permissions;
 }
 
 #elimination_block {

@@ -318,16 +318,24 @@ class Tournament:
     def __init__(
         self,
         id: str,
-        password: str,
-        master_email: str,
         name: str,
-        fencers: List[Fencer],
         location: str,
+        master_email: str,
+        password: str,
+    
+        fencers: List[Fencer],
+    
         num_preliminary_rounds: str,
         num_preliminary_groups: str,
         first_elimination_round: str,
         elimination_mode: Literal["ko", "repechage", "placement"],
+    
         number_of_pistes: str,
+
+        allow_fencers_to_start_matches = False,
+        allow_fencers_to_input_scores = False,
+        allow_fencers_to_referee = False,
+
         simulation_active: bool = False,
         ):
 
@@ -348,6 +356,18 @@ class Tournament:
         self.first_elimination_round = int(first_elimination_round) if first_elimination_round != "0" else None
         self.elimination_mode = elimination_mode
         self.only_elimination = True if self.num_preliminary_rounds == 0 else False
+
+        # Permissions / Rights of the fencers
+        self.allow_fencers_to_start_matches = allow_fencers_to_start_matches
+        self.allow_fencers_to_input_scores = allow_fencers_to_input_scores
+        self.allow_fencers_to_referee = allow_fencers_to_referee
+
+        # Advanced Configuration
+        self.simulation_active = simulation_active
+        
+
+
+        # --------------------
 
         # Pistes
         self.num_pistes: int = int(number_of_pistes)
@@ -384,10 +404,6 @@ class Tournament:
             self.create_preliminary_round()
         else:
             self.create_next_elimination_round()
-
-        # --------------------
-        # Simulation
-        self.simulation_active = simulation_active
 
         # --------------------
         # Cookies

@@ -639,6 +639,10 @@ def process_form():
     password = request.form['master_password']
     email = request.form['master_email']
     password = hash_password(password)
+    allow_fencers_to_start_matches = request.form['allow_fencers_to_start_matches']
+    allow_fencers_to_input_scores = request.form['allow_fencers_to_input_scores']
+    allow_fencers_to_referee = request.form['allow_fencers_to_referee']
+    
 
     # Check if all required fields are filled
     if (
@@ -680,7 +684,28 @@ def process_form():
 
 
         # Generate and save the new tournament
-        tournament = Tournament(random_generator.id(6), password, email, name, fencers, location, preliminary_rounds, preliminary_groups, first_elimination_round, elimination_mode.lower(), num_pistes, bool(simulation_active == 'true'))
+        tournament = Tournament(
+            random_generator.id(6),
+            name,
+            location,
+            email,
+            password,
+
+            fencers,
+
+            num_preliminary_rounds=preliminary_rounds,
+            num_preliminary_groups=preliminary_groups,
+            first_elimination_round=first_elimination_round,
+            elimination_mode=elimination_mode.lower(),
+
+            number_of_pistes=num_pistes,
+
+            allow_fencers_to_start_matches=True if allow_fencers_to_start_matches == 'true' else False,
+            allow_fencers_to_input_scores=True if allow_fencers_to_input_scores == 'true' else False,
+            allow_fencers_to_referee=True if allow_fencers_to_referee == 'true' else False,
+
+            simulation_active=bool(simulation_active == 'true'),
+        )
         tournament_cache.append(tournament)
 
         # Generate Mail
