@@ -227,7 +227,7 @@ form button {
 @media screen and (max-width: 1100px) {
   form {
     grid-template-columns: 1fr;
-    grid-template-areas: "header" "general_information" "startlist" "piste" "configuration" "elimination" "additional_options" "password" "submit";
+    grid-template-areas: "header" "general_information" "startlist" "piste" "configuration" "elimination" "permissions" "additional_options" "password" "submit";
   }
 }
 @media screen and (max-width: 600px) {
