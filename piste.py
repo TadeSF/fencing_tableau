@@ -34,6 +34,7 @@ class Piste:
         self.number = number_assigend
         self.staged = False
         self.occupied = False
+        self.disabled = False
 
     @property
     def index(self):
@@ -42,6 +43,17 @@ class Piste:
     @property
     def free_now(self) -> bool:
         return True if not self.staged and not self.occupied else False
+    
+    @property
+    def status(self) -> str:
+        if self.disabled:
+            return 'disabled'
+        elif self.occupied:
+            return 'occupied'
+        elif self.staged:
+            return 'staged'
+        else:
+            return 'free'
 
     def match_finished(self):
         self.occupied = False
@@ -51,5 +63,10 @@ class Piste:
         self.occupied = True
 
     def reset(self):
+        self.staged = False
+        self.occupied = False
+
+    def disable(self):
+        self.disabled = True
         self.staged = False
         self.occupied = False

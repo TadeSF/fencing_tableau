@@ -570,6 +570,11 @@ function push_score(id, green_score, red_score) {
             reciever_iframe.contentWindow.postMessage("should_update_standings", "*");
         }
     })
+
+    // Notify the iframe parent window that the it should update the dashboard statistics
+    if (window.parent !== window) {
+        window.parent.postMessage("should_update_dashboard", "*");
+    }
 }
 
 function match_set_active(id) {

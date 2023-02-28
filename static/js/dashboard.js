@@ -4,7 +4,7 @@ window.onerror = function(error, url, line) {
     alert("An error occurred: " + error + "\nOn line: " + line + "\nIn file: " + url);
   };
 
-function update() {
+function update(update_iframes=true) {
     fetch('dashboard/update')
     .then(response => response.json())
     .then(response => {
@@ -25,12 +25,20 @@ function update() {
         document.getElementById("num_pistes").innerHTML = response["num_pistes"]
         document.getElementById("num_matches").innerHTML = response["num_matches"]
         document.getElementById("num_matches_completed").innerHTML = response["num_matches_completed"]
-        
 
-        // Update the "Matches" table
-        let iframe1 = document.getElementById('matches_frame');
-        let iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
-        iframeWindow1.postMessage('update', '*'); // Send a message to the iframe
+        // If all matches of the current stage are completed, show the "Advance" button
+        if (parseInt(response["num_matches"]) - parseInt(response["num_matches_completed"]) == 0) {
+            document.getElementById("Advance").style.display = "block";
+        } else {
+            document.getElementById("Advance").style.display = "none";
+        }
+        
+        if (update_iframes === true) {
+            // Update the "Matches" table
+            let iframe1 = document.getElementById('matches_frame');
+            let iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
+            iframeWindow1.postMessage('update', '*'); // Send a message to the iframe
+        }
 
         // Update the "Standings" table
         let iframe2 = document.getElementById('standings_frame');
@@ -149,7 +157,13 @@ window.onload = async function() {
     } else {
       document.getElementById("login-overlay").style.display = "none";
     }
-    setTimeout(function() {update()}, 1000);
+    setTimeout(function () {
+        update();
+    }, 2000);
+    
+    setInterval(function () {
+        update(update_iframes = false);
+    }, 5000);
 };
   
 // overlay-form submit
@@ -192,6 +206,10 @@ function copyID() {
     alert('Copied ID "' + id + '" to clipboard!');
 }
 
+function pistes() {
+    window.open("/" + tournament_id + "/piste-overview", "_blank");
+}
+
 function home() {
     window.location.href = "/";
 }
@@ -217,3 +235,11 @@ function download_results() {
         results_button.firstChild.classList.add("fa-download");
     }, 3000);
 }
+
+// listen for iframe message "should_update_dashboard" and update dashboard
+window.addEventListener("message", function (event) {
+    if (event.data === "should_update_dashboard") {
+        console.log("Received message from iframe, updating dashboard...")
+        update();
+    }
+});

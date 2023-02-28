@@ -1,0 +1,181 @@
+html {
+    font-family: margin-mvb, sans-serif;
+    font-size: 14px;
+}
+
+body {
+    margin: 0;
+    text-align: center;
+}
+
+.Wrapper {
+    margin: 20px;
+    padding: 60px;
+    padding-top: 10px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow-x: scroll;
+}
+
+$Piste-Width: 220px;
+$Block-Length: 100px;
+$Bar-Length: 5px;
+
+.Container {
+    display: grid;
+    grid-template-columns: repeat(7, minmax($Piste-Width, 1fr)) 1px;
+    grid-template-rows: 1fr;
+    grid-gap: 50px;
+}
+
+.Piste {
+    padding: 20px;
+    border-radius: 10px;
+    height: 70vh;
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease-in-out;
+    background-color: #ccc;
+
+    &:hover {
+        box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.2);
+        transform: translate(-2px, -2px);
+    }
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr $Bar-Length $Block-Length $Bar-Length auto;
+
+    .Fencer-Banner {
+        display: none;
+    }
+}
+
+.Disabled, .Loading {
+    background-color: #fff;
+    cursor: not-allowed;
+
+    .Button {
+        background-color: #ccc;
+        color: #fff;
+        cursor: not-allowed;
+    }
+}
+
+.Ongoing,
+.Staged {
+    .Button {
+        color: #fff;
+        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        
+        &:hover {
+            box-shadow: 0px 0px 0 rgba(0, 0, 0, 0.2);
+            transform: translate(3px, 3px);
+        }
+    }
+
+    .Fencer-Banner {
+        display: flex;
+    }
+}
+
+.Ongoing {
+    background-color: green;
+    .Button {
+        background-color: green;
+    }
+}
+
+.Staged {
+    background-color: orangered;
+    .Button {
+            background-color: orangered;
+        }
+}
+
+.Section {
+    background-color: #ffffff;
+}
+
+.S-1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(6rem, auto) 4rem 4rem 1fr;
+    row-gap: 10px;
+    padding: 10px;
+
+    .Button {
+        padding: 10px;
+        border-radius: 10px;
+        transition: 0.3s ease-in-out;
+        margin-bottom: 10px;
+        
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    
+        i {
+            font-size: 2em;
+        }
+    }
+
+    .Button-Grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 1fr;
+        grid-auto-flow: row-reverse;
+        grid-gap: 6px;
+        grid-row: 4 / 5;
+    }
+
+    .Toggle-Piste {
+        grid-column: span 2;
+        background-color: #eee;
+        color: #000;
+        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        
+        &:hover {
+            box-shadow: 0px 0px 0 rgba(0, 0, 0, 0.2);
+            transform: translate(3px, 3px);
+        }
+    }
+    
+}
+
+.Bar {
+    background-color: #000;
+}
+
+.S-2 {
+    background-color: #fff;
+    padding: 5px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.S-3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    padding: 5px;
+    border-radius: 0 0 10px 10px;
+}
+
+.Fencer-Banner {
+    background-color: #eee;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+}

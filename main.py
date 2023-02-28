@@ -957,6 +957,7 @@ def set_active(tournament_id):
     except PisteError:
         return {'success': False, 'message': 'Piste is already in use by another match.'}, 400
     except Exception as e:
+        app.logger.error(e, exc_info=True)
         return {'success': False, 'message': str(e)}, 400
 
 @app.route('/<tournament_id>/matches/push_score', methods=['POST'])
@@ -1042,8 +1043,8 @@ def assign_piste(tournament_id):
         return jsonify({"success": True}), 200
 
     except Exception as e:
-        traceback.print_exc()
-        return jsonify({"success": False, "message": {e}}), 400
+        app.logger.error(e, exc_info=True)
+        return jsonify({"success": False, "message": str(e)}), 400
 
 @app.route('/<tournament_id>/matches/remove_piste_assignment', methods=['POST'])
 def remove_piste_assignment(tournament_id):
@@ -1216,6 +1217,51 @@ def next_stage(tournament_id):
             mail.send(msg)
 
         return '', 200
+    
+@app.route('/<tournament_id>/piste-overview')
+def piste_overview(tournament_id):
+    """
+    """
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        tournament = get_tournament(tournament_id)
+        return render_template('/piste_overview.html', tournament_id=tournament_id, num_pistes=tournament.num_pistes)
+
+
+@app.route('/<tournament_id>/piste-overview/get-status')
+def get_piste_overview_status(tournament_id):
+    """
+    """
+    piste = request.args.get('piste')
+
+    if not check_tournament_exists(tournament_id):
+        return jsonify({"success": False, "message": "Tournament not found"})
+    else:
+        try:
+            tournament = get_tournament(tournament_id)
+            return jsonify({"success": True, "message": tournament.get_piste_status(piste)})
+        except Exception as e:
+            app.logger.error(e, exc_info=True)
+            return jsonify({"success": False, "message": str(e)})
+
+@app.route('/<tournament_id>/piste-overview/toggle-piste', methods=['POST'])
+def toggle_piste(tournament_id):
+    """
+    """
+    piste = request.json['piste']
+
+    if not check_tournament_exists(tournament_id):
+        return jsonify({"success": False, "message": "Tournament not found"})
+    else:
+        try:
+            tournament = get_tournament(tournament_id)
+            tournament.toggle_piste(piste)
+            save_tournament(tournament)
+            return jsonify({"success": True})
+        except Exception as e:
+            app.logger.error(e, exc_info=True)
+            return jsonify({"success": False, "message": str(e)})
 
 @app.route('/<tournament_id>/download-results')
 def download_results(tournament_id):

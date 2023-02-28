@@ -15,7 +15,7 @@ from piste import Piste
 from exceptions import *
 import logging
 
-# ------- Logging -------
+# -------| Logging |-------
 try: # Error Catch for Sphinx Documentation
     # create logger
     logger = logging.getLogger('tournament')
@@ -44,7 +44,7 @@ except FileNotFoundError:
     pass
 
 
-# ------- Groups -------
+# -------| Groups |-------
 
 def assign_groups(fencers: List[Fencer], groups: int = None) -> List[List[Fencer]]:
 
@@ -91,7 +91,7 @@ def assign_groups(fencers: List[Fencer], groups: int = None) -> List[List[Fencer
     return grouping
 
 
-# ------- Matchmaking Logic -------
+# -------| Matchmaking Logic |-------
 
 def matchmaker_groups(fencers: List[Fencer], stage: Stage, prelim_round: int) -> List[Match]:
     # Create matchups
@@ -137,7 +137,7 @@ def matchmaker_elimination(fencers: list, mode: Literal["ko", "repechage", "plac
     return matches
 
 
-# ------- Tournament Logic -------
+# -------| Tournament Logic |-------
 
 def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int = None, prelim_round: int = None) -> List[Match]:
     # Create groups
@@ -156,7 +156,7 @@ def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int 
     return all_matches
 
 
-# ------- Sorting Algorithms -------
+# -------| Sorting Algorithms |-------
 
 def sorting_fencers(fencers: List[Fencer]) -> List[Fencer]:
     # This method sorts fencers by overall score
@@ -291,7 +291,7 @@ def save_final_ranking(fencers_list: List[List[Fencer]], mode: Literal["ko", "pl
             fencers_list[1][0].final_rank = 4
 
 
-# ------- Approval procedure and logging -------
+# -------| Approval procedure and logging |-------
 
 def register_approval(fencer_id, fencer_name, tournamnet_id, timestamp, round, group, device_id):
     # Check if folder /approvals exists
@@ -309,11 +309,11 @@ def register_approval(fencer_id, fencer_name, tournamnet_id, timestamp, round, g
     return True
 
 
-# ------- Tournament Base Class -------
+# -------| Tournament Base Class |-------
 
 class Tournament:
 
-    # --- CONSTRUCTOR ---
+    # ---| CONSTRUCTOR |---
 
     def __init__(
         self,
@@ -391,8 +391,8 @@ class Tournament:
 
         # --------------------
         # Cookies
-        self.master_cookies = []
-        self.referee_cookies = []
+        self.master_cookies = [] 
+        self.referee_cookies = [] 
 
         # --------------------
         # Logging
@@ -400,7 +400,7 @@ class Tournament:
         logger.debug(f"Simulation is {'active' if self.simulation_active else 'inactive'}")
 
     
-    # --- Properties ---
+    # ---| Properties |---
     
     @property
     def matches_of_current_preliminary_round(self) -> List[Match]:
@@ -416,7 +416,7 @@ class Tournament:
         return matches
 
 
-    # --- Misc ---
+    # ---| Misc |---
     def get_fencer_rank(self, fencer_id: str) -> int:
         fencers = sorting_fencers(self.fencers)
         for i, fencer in enumerate(fencers):
@@ -463,7 +463,6 @@ class Tournament:
         logger.debug("Piste assignment")
         matches = sorted(self.all_matches, key=lambda match: match.priority, reverse=True)
         for match in matches:
-
             if (
                 match.piste == None
                 and
@@ -487,11 +486,12 @@ class Tournament:
                 )
             ):
                 for piste in sorted(self.pistes, key=lambda piste: piste.occupied):
-                    if not piste.staged:
+                    if not piste.staged and not piste.disabled:
                         match.assign_piste(piste)
                         break
                 else:
-                    break
+                    # break
+                    pass
 
 
     def generate_matches(self) -> None:
@@ -650,7 +650,64 @@ class Tournament:
             "num_matches_completed": len([match for match in self.matches_of_current_preliminary_round if match.match_completed]) if self.stage == Stage.PRELIMINARY_ROUND else len([match for match in self.elimination_matches if match.match_completed]), # TODO Implement calculation for all matches
             "simulation_active": self.simulation_active,
         }
+    
+    def get_piste_status(self, requested_piste: int) -> list:
+        if requested_piste != None:
+            piste_list = [self.pistes[requested_piste - 1]]
+        else:
+            piste_list = self.pistes
+        
+        piste_status = []
+        for piste in piste_list:
+            match_on_piste = None
 
+            if piste.disabled:
+                match_on_piste = None
+
+            elif piste.occupied:
+                for match in self.all_matches:
+                    if match.piste == piste and match.match_ongoing:
+                        match_on_piste = match
+                        break
+
+            elif piste.staged:
+                for match in self.all_matches:
+                    if match.piste == piste and not match.match_completed and not match.match_ongoing:
+                        match_on_piste = match
+                        break
+            
+            piste_status.append({
+                "status": piste.status,
+                "match_id": match_on_piste.id if piste.staged and not piste.disabled else None,
+                "green": match_on_piste.green.short_str if match_on_piste else None,
+                "green_id": match_on_piste.green.id if match_on_piste else None,
+                "red": match_on_piste.red.short_str if match_on_piste else None,
+                "red_id": match_on_piste.red.id if match_on_piste else None,
+            })
+
+        return piste_status if requested_piste == None else piste_status[0]
+
+    def toggle_piste(self, piste: int) -> None:
+        if self.pistes[piste - 1].occupied:
+            raise OccupiedPisteError("Piste is occupied and cannot be disabled. Clear the piste first.")
+        elif self.pistes[piste - 1].disabled:
+            self.pistes[piste - 1].disabled = False
+            print(f"Piste {piste} enabled.")
+        else:
+            for match in self.all_matches:
+                if (
+                    match.piste == self.pistes[piste - 1]
+                    and
+                    not match.match_completed
+                ):
+                    match.piste = None
+                    match.green.is_staged = False
+                    match.red.is_staged = False
+            self.pistes[piste - 1].disable()
+                
+
+
+        self.assign_pistes()
 
     def get_fencer_object(self, fencer_id: int) -> Fencer:
         for fencer in self.fencers:
@@ -792,6 +849,10 @@ class Tournament:
         requested_piste = self.pistes[piste - 1]
         old_piste = match.piste
 
+        # If the requested piste is disabled, the match is not assigned to it
+        if requested_piste.disabled:
+            raise PisteError("Piste " + str(piste) + " is disabled.")
+
         # There are 4 cases:
 
         if old_piste != None:
@@ -883,7 +944,7 @@ class Tournament:
             fencer.approved_tableau = False
 
     
-    # --- Search ---
+    # ---| Search |---
     def get_fencer_by_id(self, fencer_id) -> Fencer:
         for fencer in self.fencers:
             if fencer.id == fencer_id:
@@ -1007,7 +1068,7 @@ class Tournament:
             return 0
 
 
-    # --- Exporting ---
+    # ---| Exporting |---
 
     def export_stage_results(self) -> list:      
 
@@ -1125,7 +1186,7 @@ class Tournament:
         return match_results
 
 
-    # --- Simulation ---
+    # ---| Simulation |---
 
     def simulate_current(self) -> None:
         if self.simulation_active:
@@ -1181,7 +1242,7 @@ class Tournament:
 
 
 
-# ------- Different Tournament Class Modes -------
+# -------| Different Tournament Class Modes |-------
 
 class KnockoutTournament(Tournament):
     pass

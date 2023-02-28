@@ -9,3 +9,6 @@ class SearchError(Exception):
 
 class PisteError(Exception):
     pass
+
+class OccupiedPisteError(PisteError):
+    pass
