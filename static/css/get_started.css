@@ -51,7 +51,7 @@ form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
-  grid-template-areas: "header header" "general_information general_information" "startlist piste" "configuration elimination" "configuration additional_options" "password password" "submit submit";
+  grid-template-areas: "header header" "general_information general_information" "startlist piste" "configuration elimination" "permissions additional_options" "password password" "submit submit";
 }
 
 .Form-Block {
@@ -81,6 +81,10 @@ form {
 
 #configuration_block {
   grid-area: configuration;
+}
+
+#permissions_block {
+  grid-area: permissions;
 }
 
 #elimination_block {

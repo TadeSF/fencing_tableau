@@ -29,6 +29,9 @@ function submitStartForm(event) {
         formData.append('simulation_active', document.getElementById('simulation_active').value);
         formData.append('master_password', document.getElementById('master_password').value);
         formData.append('master_email', document.getElementById('master_email').value);
+        formData.append('allow_fencers_to_start_matches', document.getElementById('allow_fencers_to_start_matches').value);
+        formData.append('allow_fencers_to_input_scores', document.getElementById('allow_fencers_to_input_scores').value);
+        formData.append('allow_fencers_to_referee', document.getElementById('allow_fencers_to_referee').value);
 
         fetch('/get-started', {
             method: 'POST',
