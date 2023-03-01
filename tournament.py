@@ -779,6 +779,9 @@ class Tournament:
                 "club": fencer.club,
                 "nationality": fencer.nationality,
                 "start_number": fencer.start_number,
+                "allow_fencers_to_start_matches": self.allow_fencers_to_start_matches,
+                "allow_fencers_to_input_scores": self.allow_fencers_to_input_scores,
+                "allow_fencers_to_referee": self.allow_fencers_to_referee,
                 "gender": fencer.gender if fencer.gender else "–",
                 "age": fencer.age if fencer.age else "–",
                 "handedness": fencer.handedness if fencer.handedness else "–",
@@ -839,12 +842,14 @@ class Tournament:
         red_fencer.correct_statistics(match, green_fencer, old_red_score, old_green_score, red_score, green_score, match.prelim_round if self.stage == Stage.PRELIMINARY_ROUND else 0)
 
 
-    def set_active(self, match_id: int) -> None:
+    def set_active(self, match_id: int, override_flag=False) -> None:
         for match in self.all_matches:
             if match.id == match_id:
                 # If there is a match on the same piste, the piste staged status is not set to False
                 for match2 in self.all_matches:
                     if match2.piste == match.piste and match2.match_ongoing:
+                        if not override_flag:
+                            raise OccupiedPisteError("Piste " + str(match.piste.number) + " is already occupied by match " + match2.id)
                         match.set_active(staged=True)
                         break
                 else:

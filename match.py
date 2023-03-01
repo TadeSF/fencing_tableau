@@ -6,6 +6,7 @@ from piste import Piste
 import random_generator
 from datetime import datetime
 import logging
+import exceptions
 
 # ------- Logging -------
 try: # Error Catch for Sphinx Documentation
@@ -151,7 +152,6 @@ class Match:
                 self.piste.match_finished()
             except AttributeError: # Piste is None, happens when wildcard. # TODO: Look into this
                 pass
-
 
     def set_active(self, staged: bool = False):
         self.piste.match_started(staged)

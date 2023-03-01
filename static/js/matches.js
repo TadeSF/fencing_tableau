@@ -578,6 +578,7 @@ function push_score(id, green_score, red_score) {
 }
 
 function match_set_active(id) {
+    let override_flag = false
     // check if a match on the same piste is already active
     const all_matches = document.getElementsByClassName("item")
     for (const element of all_matches) {
@@ -590,6 +591,7 @@ function match_set_active(id) {
                 if (confirm("Are you sure you want to set the match active?") == false) {
                     return;
                 } else {
+                    override_flag = true
                     break;
                 }
             }
@@ -599,6 +601,7 @@ function match_set_active(id) {
     // send JSON to server (POST)
     let data = {}
     data["id"] = id
+    data["override"] = override_flag
     fetch('matches/set_active', { 
         method: 'POST',
         headers: {

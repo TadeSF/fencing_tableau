@@ -976,14 +976,15 @@ def set_active(tournament_id):
         tournament = get_tournament(tournament_id)
         # Get the match id from application/json response
         match_id = request.json['id']
-        tournament.set_active(match_id)
+        override_flag = request.json['override']
+        tournament.set_active(match_id, override_flag)
         save_tournament(tournament)
         return {'success': True}
-    except PisteError:
-        return {'success': False, 'message': 'Piste is already in use by another match.'}, 400
+    except OccupiedPisteError:
+        return {'success': False, 'message': 'Piste is already in use by another match.'}, 200
     except Exception as e:
         app.logger.error(e, exc_info=True)
-        return {'success': False, 'message': str(e)}, 400
+        return {'success': False, 'message': str(e)}, 200
 
 @app.route('/<tournament_id>/matches/push_score', methods=['POST'])
 def push_score(tournament_id):
@@ -1371,11 +1372,20 @@ def get_fencer(tournament_id, fencer_id):
     -------
     json object (from tournament.get_fencer_object()
     """
+    logged_in_as_fencer = check_logged_in(request, tournament_id, 'fencer', fencer_id)
+    logged_in_as_master = check_logged_in(request, tournament_id, 'master')
+
+    print(logged_in_as_fencer, logged_in_as_master)
+
     tournament = get_tournament(tournament_id)
     if tournament is None:
         return jsonify({"success": False})
-        
-    return jsonify(tournament.get_fencer_hub_information(fencer_id))
+    
+    fencer_hub_information = tournament.get_fencer_hub_information(fencer_id)
+    fencer_hub_information['logged_in_as_fencer'] = logged_in_as_fencer
+    fencer_hub_information['logged_in_as_master'] = logged_in_as_master
+
+    return jsonify(fencer_hub_information)
 
 @app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
 def change_fencer_attribute(tournament_id, fencer_id):

@@ -378,46 +378,60 @@ $fencer-green: #007000;
 @keyframes blink-red {
     0% {
         background-color: $fencer-red;
-        color: white
+        color: white;
+        scale: 1;
     }
     25% {
         background-color: $fencer-red;
-        color: white
+        color: white;
+        scale: 1;
     }
     50% {
-        background-color: #ffffff;
-        color: black;
+        background-color: orangered;
+        color: white;
+        scale: 1.05;
     }
     75% {
-        background-color: #ffffff;
-        color: black;
+        background-color: $fencer-red;
+        color: white;
+        scale: 1;
     }
     100% {
         background-color: $fencer-red;
         color: white;
+        scale: 1;
     }
 }
 
 @keyframes blink-green {
     0% {
         background-color: $fencer-green;
-        color: white
+        color: white;
+        scale: 1;
     }
+
     25% {
         background-color: $fencer-green;
-        color: white
+        color: white;
+        scale: 1;
     }
+
     50% {
-        background-color: #ffffff;
-        color: black;
+        background-color: rgb(0, 174, 0);
+        color: white;
+        scale: 1.05;
     }
+
     75% {
-        background-color: #ffffff;
-        color: black;
+        background-color: $fencer-green;
+        color: white;
+        scale: 1;
     }
+
     100% {
         background-color: $fencer-green;
         color: white;
+        scale: 1;
     }
 }
 
@@ -508,5 +522,51 @@ $fencer-green: #007000;
         grid-column: 1 / 2;
         grid-row: 8 / 9;
         justify-self: stretch;
+    }
+}
+
+.Button-Wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1em;
+}
+
+.Button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    max-width: 25rem;
+    padding: 1em;
+    font-size: 1em;
+    font-weight: bold;
+    color: #000;
+    background-color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    text-decoration: none;
+
+    &:hover {
+        box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
+        transform: translate(4px, 4px);
+        transition: 0.3s ease-in-out;
+    }
+
+    .Button-Content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        i {
+            font-size: 2em;
+            margin-bottom: 0.4em;
+        }
     }
 }

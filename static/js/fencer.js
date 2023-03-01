@@ -113,7 +113,13 @@ async function update() {
                     document.getElementById("No-More-Matches").style.display = "none";
                 }
 
-                document.getElementById("Next-Piste-Number").innerHTML = next_match["piste"];
+                document.getElementById("Next-Match-Section").dataset.id = next_match["id"];
+
+                if (next_match["piste"] != "TBA") {
+                    document.getElementById("Next-Piste-Number").innerHTML = next_match["piste"];
+                } else {
+                    document.getElementById("Next-Piste-Number").innerHTML = '<i class="fa-solid fa-clock"></i>';
+                }
 
                 let opponent_fencer_box = document.getElementById("Next-Match-Fencer")
 
@@ -161,7 +167,7 @@ async function update() {
                     }
                 }
 
-                let tableau_wrapper = document.getElementById("tableau-wrapper-matches");
+                let tableau_wrapper = document.getElementById("button_view_tableau");
                 if (data["group_stage"] === true) {
                     tableau_wrapper.style.display = "block";
                 } else {
@@ -193,6 +199,8 @@ async function update() {
                     piste_block.classList.add("piste-tba");
                     document.getElementById("Next-Piste-Title").innerHTML = "Upcoming Match";
                     piste_helper.innerHTML = "The piste number will be announced later.<br>Come back regularly to check the piste number.";
+                    document.getElementById("button_start_match").style.display = "none";
+                    document.getElementById("button_input_score").style.display = "none";
                 } else if (next_match["ongoing"] === true) {
                     if (next_match["color"] === "green") {
                         piste_block.classList.add("piste-ongoing-green");
@@ -201,6 +209,13 @@ async function update() {
                     }
                     document.getElementById("Next-Piste-Title").innerHTML = "Ongoing Match";
                     piste_helper.innerHTML = "The match is ongoing.<br>You are fencing on this piste right now.<br>The color of the piste indicates your color.";
+                    if ((data["logged_in_as_fencer"] === true && data["allow_fencers_to_input_scores"] === true) || data["logged_in_as_master"] === true) {
+                        document.getElementById("button_input_score").style.display = "flex";
+                    } else {
+                        document.getElementById("button_input_score").style.display = "none";
+                    }
+                    document.getElementById("button_start_match").style.display = "none";
+
                 } else {
                     document.getElementById("Next-Piste-Title").innerHTML = "Upcoming Match";
                     piste_helper.innerHTML = "You are fencing on this piste next, but there is still another match ongoing.<br>Please stand by and get ready.";
@@ -210,6 +225,12 @@ async function update() {
                         piste_block.classList.add("piste-staged-red");
                     }
                     piste_helper.innerHTML = "You are fencing on this piste next.<br>The previous match has finished.<br>The color of the piste indicates your color.";
+                    if ((data["logged_in_as_fencer"] === true && data["allow_fencers_to_start_matches"] === true) || data["logged_in_as_master"] === true) {
+                        document.getElementById("button_start_match").style.display = "flex";
+                    } else {
+                        document.getElementById("button_start_match").style.display = "none";
+                    }
+                    document.getElementById("button_input_score").style.display = "none";
                 }
             } else {
                 document.getElementById("Next-Match-Section").style.display = "none";
@@ -223,9 +244,12 @@ async function update() {
                         document.getElementById("approval-needed").style.display = "none";
                     }
                 } else {
+
                     document.getElementById("tableau-wrapper").style.display = "none";
                     document.getElementById("approval-needed").style.display = "none";
                 }
+                document.getElementById("button_start_match").style.display = "none";
+                document.getElementById("button_input_score").style.display = "none";
             }
 
             let statistics_matches = document.getElementById("Matches");
@@ -636,6 +660,36 @@ function viewTableau() {
     window.open("/" + tournament_id + "/tableau?group=" + group, "_blank");
 }
 
+function startMatch() {
+    fetch("/" + tournament_id + "/matches/set_active", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "id": document.getElementById("Next-Match-Section").dataset.id,
+            "override": false,
+        })
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data["success"] === true) {
+                update();
+            } else {
+                alert(data["message"]);
+            }
+        }
+    );
+}
+
+function inputScore() {
+
+}
+
+function pushScore() {
+
+}
+
 function report_issue() {
     alert("Please report the issue directly to the tournament director.");
 }
@@ -709,3 +763,4 @@ function displayChangeInformationForm() {
         changeInformationWrapper.style.display = "block";
     }
 }
+

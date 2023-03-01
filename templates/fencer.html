@@ -44,13 +44,13 @@
                 </div>
                 <div style="font-size: 12px; text-align: right; padding-right: 10px;">recent</div>
             </div>
-            <div class="Section" id="Next-Match-Section">
+            <div class="Section" id="Next-Match-Section" data-id="">
                 <div class="Next-Match">
                     <h2 id="Next-Piste-Title">Upcoming Match</h2>
                     <div class="Next-Piste-Wrapper">
                         <div class="Next-Piste-Block" id="Next-Piste-Block">
                             <div class="Next-Piste-Block-Description">Piste</div>
-                            <div class="Next-Piste-Block-Number" id="Next-Piste-Number">TBA</div>
+                            <div class="Next-Piste-Block-Number" id="Next-Piste-Number"><i class="fa-solid fa-clock fa-shake"></i></div>
                         </div>
                     </div>
                     <div class="piste_helper" id="piste_helper">Hello World</div>
@@ -64,9 +64,30 @@
                         </div>
                     </div>
                     <br>
-                    <div class="Standing-Wrapper" id="tableau-wrapper-matches" style="margin-bottom: 10px;">
-                        <div class="Standing-Block" id="view_tableau" style="margin-right: auto; margin-left: auto;" onclick="viewTableau()">View Tableau</div>
+                    <div class="Button-Wrapper">
+                        <div class="Button" id="button_start_match" onclick="startMatch()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-play fa-beat"></i>
+                                <span>Start Match</span>
+                            </div>
+                        </div>
+                        <div class="Button" id="button_input_score" onclick="inputScore()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-edit"></i>
+                                <span>Report Score</span>
+                            </div>
+                        </div>
+                        <div class="Button" id="button_view_tableau" onclick="viewTableau()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-table-cells"></i>
+                                <span>View Tableau</span>
+                            </div>
+                        </div>
                     </div>
+                    <div class="Score-Form" id="score-form" style="display: none;">
+                        # TODO: Add score form
+                    </div>
+
                 </div>
             </div>
             <div class="Section" id="Next-Opponents">
