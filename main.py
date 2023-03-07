@@ -410,6 +410,10 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
+# ------- Static Routes -------
+
+# --- Index, Fencer_Login, Favicon ---
+
 @app.route('/favicon.ico')
 def favicon():
     """
@@ -439,6 +443,9 @@ def fencer_login():
     """
     return render_template('fencer_login.html', version=APP_VERSION)
 
+
+# --- Imprint, Privacy, Terms ---
+
 @app.route('/imprint')
 def imprint():
     """
@@ -457,6 +464,9 @@ def terms():
     """
     return render_template('terms.html')
 
+
+# --- Downloads ---
+
 @app.route('/csv-template')
 def csv_template_download():
     """
@@ -474,6 +484,9 @@ def example_startlist_download():
         return send_file("static/example_startlist.csv", as_attachment=True)
     except Exception as e:
         return str(e)
+
+
+# --- Build Your Startlist ---
 
 @app.route('/build-your-startlist')
 def build_your_startlist():
@@ -509,7 +522,6 @@ def get_startlist():
     # except Exception as e:
     #     return {"success": False, "message": str(e)}
 
-
 @app.route('/build-your-startlist/add-fencer', methods=['POST'])
 def add_fencer():
     """
@@ -529,7 +541,6 @@ def add_fencer():
 
     except Exception as e:
         return {"success": False, "message": str(e)}
-
 
 @app.route('/build-your-startlist/delete-fencer', methods=['POST'])
 def delete_fencer():
@@ -552,8 +563,6 @@ def delete_fencer():
     except Exception as e:
         return {"success": False, "message": str(e)}
 
-
-
 @app.route('/build-your-startlist/save-startlist', methods=['GET'])
 def save_startlist():
     """
@@ -569,25 +578,7 @@ def save_startlist():
         return str(e)
 
 
-# @app.route('/tournaments')
-# def tournaments():
-#     """
-#     Flask serves on GET request /tournaments the tournaments.html file from the templates folder.
-#     """
-
-#     cards = []
-#     i = 0
-#     for tournament in load_all_tournaments(return_values=True):
-#         i += 1
-#         tournament_id = tournament.id
-#         tournament_id_with_parenthesies = f"'{tournament_id}'"
-#         name = tournament.name
-#         date = tournament.created_at.strftime("%d.%m.%Y %H:%M")
-#         cards.append(f'<div class="grid-item"><div class="ID-Block"><div class="ID-Block-Number">{tournament_id}</div><div class="ID-Block-Description">Tournament ID</div></div><div class="Name">{name}</div><div class="date">{date}</div><div class="button-box"><div class="button" onclick="ManageTournament({tournament_id_with_parenthesies})">Manage Tournament</div><div class="button" onclick="LoginAsFencer({tournament_id_with_parenthesies})">Login as Fencer</div></div></div>')
-
-#     if i == 0:
-#         cards.append('<div class="grid-item" style="grid-column: span 3;"><div class="Name">No Tournaments</div></div>')
-#     return render_template('tournaments.html', cards=''.join(cards))
+# --- Start-Form ---
 
 @app.route('/get-started')
 def get_started():
@@ -642,7 +633,6 @@ def process_form():
     allow_fencers_to_start_matches = request.form['allow_fencers_to_start_matches']
     allow_fencers_to_input_scores = request.form['allow_fencers_to_input_scores']
     allow_fencers_to_referee = request.form['allow_fencers_to_referee']
-    
 
     # Check if all required fields are filled
     if (
@@ -679,9 +669,9 @@ def process_form():
             fencer_handedness = row[4] if row[4] != '' else None
             fencer_age = row[5] if row[5] != '' else None
 
-            fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality, fencer_gender, fencer_handedness, fencer_age, i, int(preliminary_rounds)))
+            fencers.append(Fencer(fencer_name, fencer_club, fencer_nationality,
+                           fencer_gender, fencer_handedness, fencer_age, i, int(preliminary_rounds)))
             i += 1
-
 
         # Generate and save the new tournament
         tournament = Tournament(
@@ -710,15 +700,15 @@ def process_form():
 
         # Generate Mail
         msg = Message(f'Tournament {tournament.id} created',
-                        sender=MAIL_SENDER,
-                        recipients=[tournament.master_email])
+                      sender=MAIL_SENDER,
+                      recipients=[tournament.master_email])
         msg.html = render_template('email/new_tournament.html',
-                                    tournament_id=tournament.id,
-                                    tournament_link=f"https://fencewithfriends.online/{tournament.id}/dashboard",
-                                    fencer_link=f"https://fencewithfriends.online/fencer-login?tournament={tournament.id}",
-                                    tournament_name=tournament.name,
-                                    tournament_location=tournament.location,
-                                    illustration_number=random.randint(1, 4))
+                                   tournament_id=tournament.id,
+                                   tournament_link=f"https://fencewithfriends.online/{tournament.id}/dashboard",
+                                   fencer_link=f"https://fencewithfriends.online/fencer-login?tournament={tournament.id}",
+                                   tournament_name=tournament.name,
+                                   tournament_location=tournament.location,
+                                   illustration_number=random.randint(1, 4))
         mail.send(msg)
 
         save_tournament(tournament)
@@ -728,125 +718,12 @@ def process_form():
         traceback.print_exc()
         return jsonify({'success': False, 'error': 'Server Error', 'message': str(e)})
 
-    response = make_response(jsonify({'success': True, 'tournament_id': tournament.id}))
+    response = make_response(
+        jsonify({'success': True, 'tournament_id': tournament.id}))
     return create_cookie(response, tournament.id, "master")
-    
 
 
-@app.route('/<tournament_id>/check-login')
-@app.route('/<tournament_id>/dashboard/check-login')
-def check_login(tournament_id):
-    """
-    Flask processes a GET request to check if the user is logged in.
-    """
-    if check_logged_in(request, tournament_id, "master"):
-        return jsonify({'success': True}), 200
-    return jsonify({'success': False}), 200
-
-@app.route('/master-login', methods=['POST'])
-def master_login():
-    """
-    Flask processes a POST request to login as a manager.
-
-    Returns
-    -------
-    redirects to /dashboard/<tournament_id>, 200
-        On success
-    404
-        On tournament not found
-    401
-        On wrong password
-    """
-    data = request.get_json()
-    tournament_id = data['tournament']
-    password = data['password']
-
-    print("Login attempt as master")
-    print(tournament_id)
-
-    if not check_tournament_exists(tournament_id):
-        print("Tournament not found")
-        return jsonify({'error': 'Tournament not found'}), 404
-    else:
-        tournament = get_tournament(tournament_id)
-        if check_password(password, tournament.password):
-            response = make_response(redirect(url_for('dashboard', tournament_id=tournament_id)))
-            return create_cookie(response, tournament_id, "master")
-        else:
-            return jsonify({'error': 'Wrong password'}), 401
-
-
-@app.route('/login-fencer', methods=['POST'])
-def login_fencer():
-    """
-    Flask processes a POST request to login as a fencer.
-    Note: This is not implemented yet.
-
-    Returns
-    -------
-    404
-    """
-    data = request.get_json()
-    tournament_id = data['tournament_id']
-    search = data['search']
-
-    try: 
-        start_number = int(search)
-        name = None
-    except ValueError:
-        start_number = None
-        name = search
-    
-
-    if not check_tournament_exists(tournament_id):
-        print(tournament_id)
-        print("Tournament not found")
-        return jsonify({'error': 'Tournament not found'}), 404
-    else:
-        tournament = get_tournament(tournament_id)
-        if start_number is None and name is None:
-            return jsonify({'error': 'No start number or name given'}), 400
-        elif name and name != "":
-            fencer_id = tournament.get_fencer_id_by_name(name)
-        elif start_number and start_number != "":
-            fencer_id = tournament.get_fencer_id_by_start_number(start_number)
-
-        if fencer_id is None:
-            return jsonify({'error': 'Fencer not found'}), 404
-        else:
-            fencer = tournament.get_fencer_by_id(fencer_id)
-            response = make_response(jsonify({
-            'success': 'Fencer found',
-            'tournament_id': tournament_id,
-            'fencer_id': fencer.id,
-            'description': str(fencer),
-            }), 200)
-            return create_cookie(response, tournament_id, "fencer", fencer_id=fencer.id)
-
-@app.route('/<tournament_id>/check-fencer-login')
-def check_fencer_login(tournament_id):
-    """
-    Flask processes a GET request to check if the user is logged in.
-    """
-    fencer_id = request.args.get('fencer_id')
-    if check_logged_in(request, tournament_id, "fencer", fencer_id=fencer_id):
-        return jsonify({'success': True}), 200
-    return jsonify({'success': False}), 200
-
-
-
-@app.route('/login-referee', methods=['POST'])
-def login_referee():
-    """
-    Flask processes a POST request to login as a referee.
-    Note: This is not implemented yet.
-
-    Returns
-    -------
-    404
-    """
-    # TODO Implement
-    abort(404)
+# --- Web-App-Pages ---
 
 @app.route('/<tournament_id>/dashboard')
 def dashboard(tournament_id):
@@ -884,31 +761,6 @@ def qr():
     tournament_id = request.args.get('tournament')
     return render_template('qr.html', tournament_id=tournament_id)
 
-@app.route('/<tournament_id>/dashboard/update', methods=['GET'])
-def get_dashboard_infos(tournament_id):
-    """
-    Flask serves on GET request /<tournament_id>/dashboard/update the dashboard infos as a json object.
-    This includes general information about the tournament.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-
-    Returns
-    -------
-    json object (from tournament.get_dashboard_infos()), 200
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        tournament = get_tournament(tournament_id)
-    return jsonify(tournament.get_dashboard_infos())
-
-
 @app.route('/<tournament_id>/matches')
 def matches(tournament_id):
     """
@@ -931,173 +783,6 @@ def matches(tournament_id):
         abort(404)
     else:
         return render_template('/dashboard/matches.html', tournament_id=tournament_id, num_pistes=get_tournament(tournament_id).num_pistes)
-
-@app.route('/<tournament_id>/matches/update', methods=['GET'])
-def get_matches(tournament_id):
-    """
-    Flask serves on a GET request /<tournament_id>/matches/update all matches of the current state as a json object.
-    
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-
-    Returns
-    -------
-    json object (from tournament.get_matches())
-    """
-    tournament = get_tournament(tournament_id)
-    if tournament is None:
-        return jsonify([])
-    return jsonify(tournament.get_matches())
-
-@app.route('/<tournament_id>/matches/set_active', methods=['POST'])
-def set_active(tournament_id):
-    """
-    Flask processes a POST request to set a certain match as active.
-
-    .. warning::
-    The function will return a 400 Error Code, when the Piste that was assigned to the Match
-    is still in use by another match.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    match_id : str
-        The id of the match.
-    
-    Returns
-    -------
-    200 (on success)
-    400 (on PisteError)
-    """
-    try:
-        tournament = get_tournament(tournament_id)
-        # Get the match id from application/json response
-        match_id = request.json['id']
-        override_flag = request.json['override']
-        tournament.set_active(match_id, override_flag)
-        save_tournament(tournament)
-        return {'success': True}
-    except OccupiedPisteError:
-        return {'success': False, 'message': 'Piste is already in use by another match.'}, 200
-    except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return {'success': False, 'message': str(e)}, 200
-
-@app.route('/<tournament_id>/matches/push_score', methods=['POST'])
-def push_score(tournament_id):
-    """
-    Flask processes a POST request to push a score of a finished match.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    match_id : str
-        The id of the match.
-    green_score : int
-        The score of the green fencer.
-    red_score : int
-        The score of the red fencer.
-    
-    Returns
-    -------
-    200
-    """
-    tournament = get_tournament(tournament_id)
-    match_id = request.form['id']
-
-    # Check if logged in as referee or master
-    if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master'):
-        return jsonify({"success": False, "message": "User must be logged in as Master or Referee to input results!"}), 401
-
-    green_score = int(request.form['green_score'])
-    red_score = int(request.form['red_score'])
-    tournament.push_score(match_id, green_score, red_score)
-    save_tournament(tournament)
-    return jsonify({"success": True}), 200
-
-@app.route('/<tournament_id>/matches/prioritize', methods=['POST'])
-def prioritize(tournament_id):
-    """
-    Flask processes a POST request to prioritize a match in the piste-assignment-process.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    match_id : str
-        The id of the match.
-    
-    Returns
-    -------
-    200
-    """
-    tournament = get_tournament(tournament_id)
-    match_id = request.json['id']
-    value = request.json['value']
-    tournament.prioritize_match(match_id, value)
-    save_tournament(tournament)
-    return jsonify({"success": True}), 200
-
-@app.route('/<tournament_id>/matches/assign_piste', methods=['POST'])
-def assign_piste(tournament_id):
-    """
-    Flask processes a POST request to assign a piste to a match.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    match_id : str
-        The id of the match.
-    piste : int
-        The number of the piste.
-    
-    Returns
-    -------
-    200
-    """
-    try:
-        tournament = get_tournament(tournament_id)
-        match_id = request.json['id']
-        piste = int(request.json['piste'])
-        tournament.assign_certain_piste(match_id, piste)
-        save_tournament(tournament)
-        return jsonify({"success": True}), 200
-
-    except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return jsonify({"success": False, "message": str(e)}), 400
-
-@app.route('/<tournament_id>/matches/remove_piste_assignment', methods=['POST'])
-def remove_piste_assignment(tournament_id):
-    """
-    Flask processes a POST request to remove a piste assignment from a match.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    match_id : str
-        The id of the match.
-    
-    Returns
-    -------
-    200
-    """
-    try:
-        tournament = get_tournament(tournament_id)
-        match_id = request.json['id']
-        tournament.remove_piste_assignment(match_id)
-        save_tournament(tournament)
-        return jsonify({"success": True}), 200
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 400
-
-
 
 @app.route('/<tournament_id>/standings')
 def standings(tournament_id):
@@ -1125,200 +810,6 @@ def standings(tournament_id):
         if group is None:
             group = ""
         return render_template('/dashboard/standings.html', requested_group=group, num_groups=tournament.get_num_groups(), tournament_id=tournament_id)
-
-@app.route('/<tournament_id>/standings/update')
-def get_standings(tournament_id):
-    """
-    Flask serves on a GET request /<tournament_id>/standings/update the standings of the current state as a json object.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    group : str
-        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
-
-    Returns
-    -------
-    json object (from tournament.get_standings()
-    """
-    tournament = get_tournament(tournament_id)
-    group = request.args.get('group')
-    gender = request.args.get('gender')
-    handedness = request.args.get('handedness')
-    age_group = request.args.get('age')
-
-
-    if tournament is None:
-        return jsonify([])
-
-    return jsonify(tournament.get_standings(group, gender, handedness, age_group))
-
-@app.route('/<tournament_id>/standings/fencer/<fencer_id>')
-def redirict_fencer_from_standings(tournament_id, fencer_id):
-    """
-    Flask processes a GET request to redirect to the fencer page from the standings page.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    fencer_id : str
-        The id of the fencer.
-
-    Returns
-    -------
-    302
-    """
-    return redirect(f'/{tournament_id}/fencer/{fencer_id}')
-
-@app.route('/<tournament_id>/matches-left', methods=['GET'])
-def matches_left(tournament_id):
-    """
-    Flask serves on a GET request /<tournament_id>/matches-left the number of matches left in the current stage as a string.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    
-    Returns
-    -------
-    str (from tournament.get_matches_left()
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        return get_tournament(tournament_id).get_matches_left()
-
-@app.route('/<tournament_id>/next-stage')
-def next_stage(tournament_id):
-    """
-    Flask processes a GET request to go to the next stage.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-
-    Returns
-    -------
-    200
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        tournament = get_tournament(tournament_id)
-        tournament.next_stage()
-
-        save_tournament(tournament)
-
-        if tournament.stage == Stage.FINISHED:
-            msg = Message(f'Tournament {tournament.id} Results',
-                        sender=MAIL_SENDER,
-                        recipients=[tournament.master_email])
-
-            attached_files_string = os.listdir(f'results/{tournament.id}')
-            attached_files_string.sort()
-            attached_files_string = Markup("<br>".join(attached_files_string))
-
-            msg.html = render_template('email/result_mail.html',
-                                        tournament_id=tournament.id,
-                                        tournament_name=tournament.name,
-                                        tournament_location=tournament.location,
-                                        winner=tournament.get_winner().name,
-                                        attached_files=attached_files_string,
-                                        illustration_number=random.randint(1, 4))
-
-            for result in os.listdir(f'results/{tournament.id}'):
-                with open(f'results/{tournament.id}/{result}', 'rb') as f:
-                    msg.attach(result, 'application/csv', f.read())
-
-            mail.send(msg)
-
-        return '', 200
-    
-@app.route('/<tournament_id>/piste-overview')
-def piste_overview(tournament_id):
-    """
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        tournament = get_tournament(tournament_id)
-        return render_template('/piste_overview.html', tournament_id=tournament_id, num_pistes=tournament.num_pistes)
-
-
-@app.route('/<tournament_id>/piste-overview/get-status')
-def get_piste_overview_status(tournament_id):
-    """
-    """
-    piste = request.args.get('piste')
-
-    if not check_tournament_exists(tournament_id):
-        return jsonify({"success": False, "message": "Tournament not found"})
-    else:
-        try:
-            tournament = get_tournament(tournament_id)
-            return jsonify({"success": True, "message": tournament.get_piste_status(piste)})
-        except Exception as e:
-            app.logger.error(e, exc_info=True)
-            return jsonify({"success": False, "message": str(e)})
-
-@app.route('/<tournament_id>/piste-overview/toggle-piste', methods=['POST'])
-def toggle_piste(tournament_id):
-    """
-    """
-    piste = request.json['piste']
-
-    if not check_tournament_exists(tournament_id):
-        return jsonify({"success": False, "message": "Tournament not found"})
-    else:
-        try:
-            tournament = get_tournament(tournament_id)
-            tournament.toggle_piste(piste)
-            save_tournament(tournament)
-            return jsonify({"success": True})
-        except Exception as e:
-            app.logger.error(e, exc_info=True)
-            return jsonify({"success": False, "message": str(e)})
-
-@app.route('/<tournament_id>/download-results')
-def download_results(tournament_id):
-    """
-    Flask processes a GET request to download the results of the tournament.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-
-    Returns
-    -------
-    200
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
-        tournament = get_tournament(tournament_id)
-
-        # Create a zip file
-        zip_file = zipfile.ZipFile(f'results/{tournament.id}.zip', 'w')
-        for result in os.listdir(f'results/{tournament.id}'):
-            zip_file.write(f'results/{tournament.id}/{result}', result)
-        zip_file.close()
-
-        return send_file(f'results/{tournament.id}.zip', as_attachment=True)
-
 
 @app.route('/<tournament_id>/fencer/<fencer_id>')
 def fencer(tournament_id, fencer_id):
@@ -1348,72 +839,12 @@ def fencer(tournament_id, fencer_id):
             abort(404)
         else:
             return render_template('/fencer.html',
-                name=fencer.short_str,
-                club=fencer.club,
-                tournament_id=tournament.id,
-                fencer_id=fencer.id,
-                version=APP_VERSION
-                )
-
-
-@app.route('/<tournament_id>/fencer/<fencer_id>/update', methods=['GET'])
-def get_fencer(tournament_id, fencer_id):
-    """
-    Flask serves on a GET request /<tournament_id>/fencer/<fencer_id>/update the fencer object as a json object.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    fencer_id : str
-        The id of the fencer.
-
-    Returns
-    -------
-    json object (from tournament.get_fencer_object()
-    """
-    logged_in_as_fencer = check_logged_in(request, tournament_id, 'fencer', fencer_id)
-    logged_in_as_master = check_logged_in(request, tournament_id, 'master')
-
-    print(logged_in_as_fencer, logged_in_as_master)
-
-    tournament = get_tournament(tournament_id)
-    if tournament is None:
-        return jsonify({"success": False})
-    
-    fencer_hub_information = tournament.get_fencer_hub_information(fencer_id)
-    fencer_hub_information['logged_in_as_fencer'] = logged_in_as_fencer
-    fencer_hub_information['logged_in_as_master'] = logged_in_as_master
-
-    return jsonify(fencer_hub_information)
-
-@app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
-def change_fencer_attribute(tournament_id, fencer_id):
-    """
-    """
-    tournament = get_tournament(tournament_id)
-    if tournament is None:
-        return jsonify({"success": False})
-    
-    # TODO Check if logged in as fencer or manager
-
-    attribute = request.json.get('attribute')
-
-    if attribute not in ["name", "club", "nationality", "gender", "handedness", "age"]:
-        return jsonify({"success": False, "message": "Invalid attribute name"})
-    
-    value = request.json.get('value')
-    if value is None:
-        return jsonify({"success": False, "message": "Invalid value"})
-    
-    try:
-        tournament.get_fencer_by_id(fencer_id).change_attribute(attribute, value)
-        save_tournament(tournament)
-        return jsonify({"success": True})
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)})
-    
-
+                                   name=fencer.short_str,
+                                   club=fencer.club,
+                                   tournament_id=tournament.id,
+                                   fencer_id=fencer.id,
+                                   version=APP_VERSION
+                                   )
 
 @app.route('/<tournament_id>/tableau')
 def tableau(tournament_id):
@@ -1440,120 +871,622 @@ def tableau(tournament_id):
         abort(404)
     else:
         return render_template('/tableau.html',
-            round=request.args.get('round') if request.args.get('round') is not None else get_tournament(tournament_id).preliminary_stage,
-            group=request.args.get('group'),
-            tournament_id=tournament_id,
-            num_groups=get_tournament(tournament_id).get_num_groups()
-            )
+                               round=request.args.get('round') if request.args.get(
+                                   'round') is not None else get_tournament(tournament_id).preliminary_stage,
+                               group=request.args.get('group'),
+                               tournament_id=tournament_id,
+                               num_groups=get_tournament(
+                                   tournament_id).get_num_groups()
+                               )
 
-@app.route('/<tournament_id>/tableau/update', methods=['GET'])
-def get_tableau(tournament_id):
+@app.route('/<tournament_id>/piste-overview')
+def piste_overview(tournament_id):
     """
-    Flask serves on a GET request /<tournament_id>/tableau/<round>/<group>/update the tableau object as a json object.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    round : str
-        The requested round (only if in Preliminary Stage). If ``round`` is "all", overall standings are reported.
-    group : str
-        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
-
-    Returns
-    -------
-    json object (from tournament.get_tableau_object()
-    """
-    tournament = get_tournament(tournament_id)
-    if tournament is None:
-        return jsonify([]), 404
-    response = tournament.get_tableau_array(request.args.get('group'))
-    return jsonify(response), 200
-
-@app.route('/<tournament_id>/tableau/approve', methods=['POST'])
-def approve_tableau(tournament_id):
-    """
-    Flask processes a POST request to approve the tableau by a certain Fencer.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-    round : str
-        The requested round (only if in Preliminary Stage). If ``round`` is "all", overall standings are reported.
-    group : str
-        The requested group (only if in Preliminary Stage). If ``group`` is "all", overall standings are reported.
-
-    Returns
-    -------
-    200
-        On success
-    304
-        On already approved tableau
-    404
-        On tournament not found
     """
     if not check_tournament_exists(tournament_id):
         abort(404)
     else:
-        data = request.get_json()
-        prelim_round = request.args.get('round')
-        if prelim_round is None or prelim_round == (1,):
-            prelim_round = get_tournament(tournament_id).preliminary_stage
+        tournament = get_tournament(tournament_id)
+        return render_template('/piste_overview.html', tournament_id=tournament_id, num_pistes=tournament.num_pistes)
+
+
+# --- Login-Methods ---
+
+@app.route('/master-login', methods=['POST'])
+def master_login():
+    """
+    Flask processes a POST request to login as a manager.
+
+    Returns
+    -------
+    redirects to /dashboard/<tournament_id>, 200
+        On success
+    404
+        On tournament not found
+    401
+        On wrong password
+    """
+    data = request.get_json()
+    tournament_id = data['tournament']
+    password = data['password']
+
+    print("Login attempt as master")
+    print(tournament_id)
+
+    if not check_tournament_exists(tournament_id):
+        print("Tournament not found")
+        return jsonify({'error': 'Tournament not found'}), 404
+    else:
+        tournament = get_tournament(tournament_id)
+        if check_password(password, tournament.password):
+            response = make_response(
+                redirect(url_for('dashboard', tournament_id=tournament_id)))
+            return create_cookie(response, tournament_id, "master")
+        else:
+            return jsonify({'error': 'Wrong password'}), 401
+
+
+@app.route('/<tournament_id>/check-login')
+@app.route('/<tournament_id>/dashboard/check-login')
+def check_login(tournament_id):
+    """
+    Flask processes a GET request to check if the user is logged in.
+    """
+    if check_logged_in(request, tournament_id, "master"):
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 200
+
+@app.route('/login-fencer', methods=['POST'])
+def login_fencer():
+    """
+    Flask processes a POST request to login as a fencer.
+    Note: This is not implemented yet.
+
+    Returns
+    -------
+    404
+    """
+    data = request.get_json()
+    tournament_id = data['tournament_id']
+    search = data['search']
+
+    try:
+        start_number = int(search)
+        name = None
+    except ValueError:
+        start_number = None
+        name = search
+
+    if not check_tournament_exists(tournament_id):
+        print(tournament_id)
+        print("Tournament not found")
+        return jsonify({'error': 'Tournament not found'}), 404
+    else:
+        tournament = get_tournament(tournament_id)
+        if start_number is None and name is None:
+            return jsonify({'error': 'No start number or name given'}), 400
+        elif name and name != "":
+            fencer_id = tournament.get_fencer_id_by_name(name)
+        elif start_number and start_number != "":
+            fencer_id = tournament.get_fencer_id_by_start_number(start_number)
+
+        if fencer_id is None:
+            return jsonify({'error': 'Fencer not found'}), 404
+        else:
+            fencer = tournament.get_fencer_by_id(fencer_id)
+            response = make_response(jsonify({
+                'success': 'Fencer found',
+                'tournament_id': tournament_id,
+                'fencer_id': fencer.id,
+                'description': str(fencer),
+            }), 200)
+            return create_cookie(response, tournament_id, "fencer", fencer_id=fencer.id)
+
+@app.route('/<tournament_id>/check-fencer-login')
+def check_fencer_login(tournament_id):
+    """
+    Flask processes a GET request to check if the user is logged in.
+    """
+    fencer_id = request.args.get('fencer_id')
+    if check_logged_in(request, tournament_id, "fencer", fencer_id=fencer_id):
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False}), 200
+
+@app.route('/login-referee', methods=['POST'])
+def login_referee():
+    """
+    Flask processes a POST request to login as a referee.
+    Note: This is not implemented yet.
+
+    Returns
+    -------
+    404
+    """
+    # TODO Implement
+    abort(404)
+
+
+
+
+# ------- API --------
+
+# --- Error Responses ---
+def default_error(e: Exception = None, traceback = None, code = "DEFAULT_ERROR", message = "An error occured", status_code = 500):
+    response = {"error": {'code': code, 'message': message}}
+    if e is not None:
+        response["error"]["exception"] = str(e)
+    if traceback is not None:
+        response["error"]["traceback"] = traceback
+
+    return jsonify(response), status_code
+
+def tournament_not_found_error():
+    return default_error(code = "TOURNAMENT_NOT_FOUND", message = "Tournament not found", status_code = 404)
+
+# --- Dashboard ---
+
+# @app.route('/<tournament_id>/dashboard/update', methods=['GET'])
+@app.route('/api/dashboard/update', methods=['GET']) # BEARBEITET
+def get_dashboard_infos():
+    """
+    """
+    tournament_id = request.args.get('tournament_id')
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
+        return tournament_not_found_error(), 404
+    return jsonify(tournament.get_dashboard_infos())
+
+
+# --- Matches ---
+
+# @app.route('/<tournament_id>/matches/update', methods=['GET'])
+@app.route('/api/matches/update', methods=['GET']) # BEARBEITET
+def get_matches():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error(), 404
+        return jsonify(tournament.get_matches())
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e)
+
+# @app.route('/<tournament_id>/matches/set_active', methods=['POST'])
+@app.route('/api/matches/set-active', methods=['POST']) # BEARBEITET
+def set_active():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        match_id = request.args.get('match_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error(), 404
+        
+        override_flag = request.form['override']
+
+        tournament.set_active(match_id, override_flag)
+        save_tournament(tournament)
+        return 200
+    
+    except OccupiedPisteError:
+        return default_error(code = "PISTE_OCCUPIED", message = "Piste is already in use by another match.", status_code = 400)
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+        
+# @app.route('/<tournament_id>/matches/push_score', methods=['POST'])
+@app.route('/api/matches/push-score', methods=['POST']) # BEARBEITET
+def push_score():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        match_id = request.args.get('match_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error(), 404
+        
+
+        # Check if logged in as referee or master
+        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master'):
+            return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!", status_code = 401)
+
+        green_score = int(request.form['green_score'])
+        red_score = int(request.form['red_score'])
+
+        tournament.push_score(match_id, green_score, red_score)
+        save_tournament(tournament)
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/matches/prioritize', methods=['POST'])
+@app.route('/api/matches/prioritize', methods=['POST']) # BEARBEITET
+def prioritize():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        match_id = request.args.get('match_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        value = request.form['value']
+
+        tournament.prioritize_match(match_id, value)
+        save_tournament(tournament)
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/matches/assign_piste', methods=['POST'])
+@app.route('/api/matches/assign-piste', methods=['POST']) # BEARBEITET
+def assign_piste():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        match_id = request.args.get('match_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        piste = int(request.json['piste'])
+
+        tournament.assign_certain_piste(match_id, piste)
+        save_tournament(tournament)
+        return 200
+
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/matches/remove_piste_assignment', methods=['POST'])
+@app.route('/api/matches/remove-piste-assignment', methods=['POST']) # BEARBEITET
+def remove_piste_assignment():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        match_id = request.args.get('match_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        tournament.remove_piste_assignment(match_id)
+        save_tournament(tournament)
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/matches-left', methods=['GET'])
+
+
+@app.route('/api/matches/matches-left', methods=['GET']) # BEARBEITET
+def matches_left():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        return jsonify(tournament.get_matches_left()), 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+
+# --- Standings ---
+
+# @app.route('/<tournament_id>/standings/update')
+@app.route('/api/standings/update', methods=['GET']) # BEARBEITET
+def get_standings():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        group = request.args.get('group')
+        gender = request.args.get('gender')
+        handedness = request.args.get('handedness')
+        age_group = request.args.get('age')
+
+        return jsonify(tournament.get_standings(group, gender, handedness, age_group)), 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+
+# --- Master Requests ---
+
+# @app.route('/<tournament_id>/next-stage')
+@app.route('/api/next-stage', methods=['GET']) # BEARBEITET
+def next_stage():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        tournament.next_stage()
+        save_tournament(tournament)
+
+        # Send all results to master via Email
+        if tournament.stage == Stage.FINISHED:
+            msg = Message(f'Tournament {tournament.id} Results',
+                        sender=MAIL_SENDER,
+                        recipients=[tournament.master_email])
+
+            attached_files_string = os.listdir(f'results/{tournament.id}')
+            attached_files_string.sort()
+            attached_files_string = Markup("<br>".join(attached_files_string))
+
+            msg.html = render_template('email/result_mail.html',
+                                        tournament_id=tournament.id,
+                                        tournament_name=tournament.name,
+                                        tournament_location=tournament.location,
+                                        winner=tournament.get_winner().name,
+                                        attached_files=attached_files_string,
+                                        illustration_number=random.randint(1, 4))
+
+            for result in os.listdir(f'results/{tournament.id}'):
+                with open(f'results/{tournament.id}/{result}', 'rb') as f:
+                    msg.attach(result, 'application/csv', f.read())
+
+            mail.send(msg)
+
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+@app.route('/<tournament_id>/download-results')
+@app.route('/api/download-results', methods=['GET']) # BEARBEITET
+def download_results():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        # Create a zip file
+        zip_file = zipfile.ZipFile(f'results/{tournament.id}.zip', 'w')
+        for result in os.listdir(f'results/{tournament.id}'):
+            zip_file.write(f'results/{tournament.id}/{result}', result)
+        zip_file.close()
+
+        return send_file(f'results/{tournament.id}.zip', as_attachment=True)
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+
+# --- Piste ---
+
+# @app.route('/<tournament_id>/piste-overview/get-status')
+@app.route('/api/piste/update', methods=['GET']) # BEARBEITET
+def piste_overview_update():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        piste = request.args.get('piste')
+
+        tournament = get_tournament(tournament_id)
+        return jsonify(tournament.get_piste_status(piste))
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/piste-overview/toggle-piste', methods=['POST'])
+@app.route('/api/piste/toggle', methods=['POST']) # BEARBEITET
+def toggle_piste():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        piste = request.args.get('piste')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        tournament.toggle_piste(piste)
+        save_tournament(tournament)
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_info = 500)
+
+
+# --- Fencer ---
+
+# @app.route('/<tournament_id>/fencer/<fencer_id>/update', methods=['GET'])
+@app.route('/api/fencer/update', methods=['GET']) # BEARBEITET
+def get_fencer():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        fencer_id = request.args.get('fencer_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        logged_in_as_fencer = check_logged_in(request, tournament_id, 'fencer', fencer_id)
+        logged_in_as_master = check_logged_in(request, tournament_id, 'master')
+        
+        fencer_hub_information = tournament.get_fencer_hub_information(fencer_id)
+        fencer_hub_information['logged_in_as_fencer'] = logged_in_as_fencer
+        fencer_hub_information['logged_in_as_master'] = logged_in_as_master
+
+        return jsonify(fencer_hub_information)
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
+@app.route('/api/fencer/change-attribute', methods=['POST']) # BEARBEITET
+def change_fencer_attribute():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        fencer_id = request.args.get('fencer_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        logged_in_as_fencer = check_logged_in(request, tournament_id, 'fencer', fencer_id)
+        logged_in_as_master = check_logged_in(request, tournament_id, 'master')
+
+        if not logged_in_as_fencer and not logged_in_as_master:
+            return default_error(code="NOT_LOGGED_IN", message='Client is not logged in. As Master or corresponding Fencer', status_code=401)
+
+
+        attribute = request.form['attribute']
+        value = request.form['value']
+
+        if attribute not in ["name", "club", "nationality", "gender", "handedness", "age"]:
+            return default_error(code="INVALID_ATTRIBUTE_NAME", message='Client provided an invalid attribute name. Attribute name must be one of these: ["name", "club", "nationality", "gender", "handedness", "age"]', status_code=400)
+        
+        if value is None:
+            return default_error(code="INVALID_ATTRIBUTE_VALUE", message='Client provided an invalid attribute value. Attribute value must not be None.', status_code=400)
+    
+        tournament.get_fencer_by_id(fencer_id).change_attribute(attribute, value)
+        save_tournament(tournament)
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+# @app.route('/<tournament_id>/tableau/approve', methods=['POST'])
+@app.route('/api/fencer/approve-tableau', methods=['POST']) # BEARBEITET
+def approve_tableau():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        fencer_id = request.args.get('fencer_id')
         group = request.args.get('group')
 
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
+        data = request.get_json()
+        prelim_round = request.args.get('round')
+        if prelim_round is None or prelim_round == (1,): # TODO Bugfix this
+            prelim_round = get_tournament(tournament_id).preliminary_stage
+
         # Check if Cookie for logged in fencer exists
-        if not check_logged_in(request, tournament_id, "fencer", data['fencer_id']):
-            return jsonify({"success": False, "message": "You are not logged in as the correct fencer."}), 403
-        
+        if not check_logged_in(request, tournament_id, "fencer", fencer_id):
+            return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as fencer", status_code=401)
+
         # Check if Cookie with device_id exists
         if 'device_id' in request.cookies:
             device_id = request.cookies['device_id']
         else:
             device_id = random_generator.id(16)
 
-        response = make_response(get_tournament(tournament_id).approve_tableau(prelim_round, group, data['timestamp'], data['fencer_id'], device_id), 200)
-        
+        response = make_response(get_tournament(tournament_id).approve_tableau(
+            prelim_round, group, data['timestamp'], fencer_id, device_id), 200)
+
         if 'device_id' not in request.cookies:
             response.set_cookie('device_id', device_id)
         return response
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
 
-@app.route('/get-my-device-id', methods=['GET'])
-def get_my_device_id():
+
+# --- Tableau ---
+
+# @app.route('/<tournament_id>/tableau/update', methods=['GET'])
+@app.route('/api/tableau/update', methods=['GET']) # BEARBEITET
+def get_tableau():
     """
     """
-    if 'device_id' in request.cookies:
-        return jsonify({"success": True, "device_id": request.cookies['device_id']})
-    else:
-        return jsonify({"success": False, "message": "No device_id cookie found"})
+    try:
+        tournament_id = request.args.get('tournament_id')
+        group = request.args.get('group')
 
-
-@app.route('/<tournament_id>/simulate-current')
-def simulate_current(tournament_id):
-    """
-    Flask processes a GET request to simulate all matches of the current stage.
-    This is only used for testing purposes and will be deprecated in later versions.
-
-    Parameters
-    ----------
-    tournament_id : str
-        The id of the tournament.
-
-    Returns
-    -------
-    200
-        On success
-    404
-        On tournament not found
-    """
-    if not check_tournament_exists(tournament_id):
-        abort(404)
-    else:
         tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        response = tournament.get_tableau_array(group)
+        
+        return jsonify(response), 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
+
+
+# --- Helpers ---
+
+# @app.route('/<tournament_id>/simulate-current')
+@app.route('/api/simulate', methods=['GET']) # BEARBEITET
+def simulate():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+
         tournament.simulate_current()
         save_tournament(tournament)
-        return '', 200
+        return 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc(), status_code = 500)
 
+
+# ------- Docs -------
 
 @app.route('/docs/<path:filename>')
 def serve_docs(filename):
@@ -1578,6 +1511,10 @@ def redirect_docs():
     return redirect(url_for('serve_docs', filename='index.html'))
 
 
+
+
+# ------- Logs and Utility -------
+
 @app.route('/github-webhook', methods=['POST'])
 def handle_webhook():
     """
@@ -1597,8 +1534,8 @@ def handle_webhook():
     #     return 'Invalid signature', 400
 
     msg = Message("GitHub Webhook",
-                    sender=MAIL_SENDER,
-                    recipients=MAIL_ADMIN_RECIPIENTS)
+                  sender=MAIL_SENDER,
+                  recipients=MAIL_ADMIN_RECIPIENTS)
 
     msg.html = render_template('/email/github_webhook.html')
     mail.send(msg)
@@ -1610,9 +1547,6 @@ def handle_webhook():
     #     return 'Error: {}'.format(e), 500
 
     return 'Webhook received', 200
-
-
-# ------- Logs -------
 
 @app.route('/logs')
 def logs():
