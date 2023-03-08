@@ -5,61 +5,65 @@ window.onerror = function(error, url, line) {
   };
 
 function update(update_iframes=true) {
-    fetch('dashboard/update')
-    .then(response => response.json())
-    .then(response => {
-        document.getElementById("main_id_text").innerHTML = response["id"]
-        document.getElementById("main_id_text_pw").innerHTML = response["id"]
-        document.getElementById("Tournament_Name").innerHTML = response["name"]
-        document.getElementById("Tournament_Location").innerHTML = response["location"]
-        document.getElementById("Tournament_Stage").innerHTML = response["stage"]
-        document.getElementById("elimination_mode").innerHTML = response["elimination_mode"]
+    fetch('/api/dashboard/update?tournament_id=' + tournament_id)
+        .then(response => response.json())
+        .then(response => {
+            if (Object.keys(response).includes("error")) {
+                alert(response["error"]);
+            } else {
+                document.getElementById("main_id_text").innerHTML = response["id"]
+                document.getElementById("main_id_text_pw").innerHTML = response["id"]
+                document.getElementById("Tournament_Name").innerHTML = response["name"]
+                document.getElementById("Tournament_Location").innerHTML = response["location"]
+                document.getElementById("Tournament_Stage").innerHTML = response["stage"]
+                document.getElementById("elimination_mode").innerHTML = response["elimination_mode"]
 
-        document.getElementById("num_fencers").innerHTML = response["num_fencers"]
-        document.getElementById("num_clubs").innerHTML = response["num_clubs"]
-        document.getElementById("num_nationalities").innerHTML = response["num_nationalities"]
-        document.getElementById("num_prelim_groups").innerHTML = response["num_prelim_groups"]
-        document.getElementById("num_prelim_rounds").innerHTML = response["num_prelim_rounds"]
-        document.getElementById("first_elimination_round").innerHTML = response["first_elimination_round"]
-        document.getElementById("num_wildcards").innerHTML = response["num_wildcards"]
-        document.getElementById("num_pistes").innerHTML = response["num_pistes"]
-        document.getElementById("num_matches").innerHTML = response["num_matches"]
-        document.getElementById("num_matches_completed").innerHTML = response["num_matches_completed"]
+                document.getElementById("num_fencers").innerHTML = response["num_fencers"]
+                document.getElementById("num_clubs").innerHTML = response["num_clubs"]
+                document.getElementById("num_nationalities").innerHTML = response["num_nationalities"]
+                document.getElementById("num_prelim_groups").innerHTML = response["num_prelim_groups"]
+                document.getElementById("num_prelim_rounds").innerHTML = response["num_prelim_rounds"]
+                document.getElementById("first_elimination_round").innerHTML = response["first_elimination_round"]
+                document.getElementById("num_wildcards").innerHTML = response["num_wildcards"]
+                document.getElementById("num_pistes").innerHTML = response["num_pistes"]
+                document.getElementById("num_matches").innerHTML = response["num_matches"]
+                document.getElementById("num_matches_completed").innerHTML = response["num_matches_completed"]
 
-        // If all matches of the current stage are completed, show the "Advance" button
-        if (parseInt(response["num_matches"]) - parseInt(response["num_matches_completed"]) == 0) {
-            document.getElementById("Advance").style.display = "block";
-        } else {
-            document.getElementById("Advance").style.display = "none";
-        }
-        
-        if (update_iframes === true) {
-            // Update the "Matches" table
-            let iframe1 = document.getElementById('matches_frame');
-            let iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
-            iframeWindow1.postMessage('update', '*'); // Send a message to the iframe
-        }
+                // If all matches of the current stage are completed, show the "Advance" button
+                if (parseInt(response["num_matches"]) - parseInt(response["num_matches_completed"]) == 0) {
+                    document.getElementById("Advance").style.display = "block";
+                } else {
+                    document.getElementById("Advance").style.display = "none";
+                }
+            
+                if (update_iframes === true) {
+                    // Update the "Matches" table
+                    let iframe1 = document.getElementById('matches_frame');
+                    let iframeWindow1 = iframe1.contentWindow; // Get a reference to the window object of the iframe
+                    iframeWindow1.postMessage('update', '*'); // Send a message to the iframe
+                }
 
-        // Update the "Standings" table
-        let iframe2 = document.getElementById('standings_frame');
-        let iframeWindow2 = iframe2.contentWindow; // Get a reference to the window object of the iframe
-        iframeWindow2.postMessage('update', '*'); // Send a message to the iframe
+                // Update the "Standings" table
+                let iframe2 = document.getElementById('standings_frame');
+                let iframeWindow2 = iframe2.contentWindow; // Get a reference to the window object of the iframe
+                iframeWindow2.postMessage('update', '*'); // Send a message to the iframe
 
-        // if Stage does not contain Preliminary Round (it always has a number afterwards), hide the "Tableau" button 
-        if (response["stage"].split(" ")[0] !== "Preliminary") {
-            document.getElementById("Tableau").style.display = "none";
-        }
+                // if Stage does not contain Preliminary Round (it always has a number afterwards), hide the "Tableau" button 
+                if (response["stage"].split(" ")[0] !== "Preliminary") {
+                    document.getElementById("Tableau").style.display = "none";
+                }
 
-        if (response["stage"] === "Finished") {
-            document.getElementById("Simulate").style.display = "none";
-            document.getElementById("Advance").style.display = "none";
-            document.getElementById("Results").style.display = "block";
-        }
+                if (response["stage"] === "Finished") {
+                    document.getElementById("Simulate").style.display = "none";
+                    document.getElementById("Advance").style.display = "none";
+                    document.getElementById("Results").style.display = "block";
+                }
 
-        // if Simulation is disabled, hide the "Simulate" button
-        if (response["simulation_active"] === false) {
-            document.getElementById("Simulate").style.display = "none";
-        }
+                // if Simulation is disabled, hide the "Simulate" button
+                if (response["simulation_active"] === false) {
+                    document.getElementById("Simulate").style.display = "none";
+                }
+            }
     })
 }
 
@@ -70,14 +74,17 @@ function advance() {
     advance_button.firstChild.classList.add("fa-spin");
     advance_button.firstChild.classList.add("fa-spinner");
 
-    fetch('matches-left')
+    fetch('/api/matches/matches-left?tournament_id=' + tournament_id)
     .then(response => response.text())
     .then(response => {
         if (response === "0") {
-            fetch('next-stage')
+            fetch('/api/next-stage?tournament_id=' + tournament_id)
             .then(response => {
                 if (response.status === 200) {
                     setTimeout(function() {update()}, 1000);
+                } else {
+                    console.log(response)
+                    alert("An error occurred!")
                 }
             })
         } else {
@@ -86,6 +93,7 @@ function advance() {
             } else {
                 alert("There are still matches left to be completed!")
             }
+            console.log(response)
         }
 
         setTimeout(function() {
@@ -108,7 +116,7 @@ function simulate() {
 
     let confirm = window.confirm("Are you sure you want to simulate this stage of the tournament?");
     if (confirm) {
-        fetch('simulate-current')
+        fetch('/api/simulate?tournament_id=' + tournament_id)
         .then(response => {
             if (response.status === 200) {
                 setTimeout(function() {

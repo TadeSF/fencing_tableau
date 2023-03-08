@@ -8,12 +8,16 @@ if (window.self === window.top) {
 
 
 function get_matches() {
-    fetch('matches/update')
+    fetch('/api/matches/update?tournament_id=' + tournament_id)
     .then(response => response.json())
     .then(response => {
         console.log(response)
-        let matches = response["matches"]
-        update_matches(matches)
+        if (Object.keys(response).includes("error")) {
+            alert(response["error"]);
+        } else {
+            let matches = response["matches"]
+            update_matches(matches)
+        }
     })
 }
 
@@ -546,28 +550,31 @@ function openScoreOptions(siblingElement, parentElement, match_id) {
 
 function push_score(id, green_score, red_score) {
     
-    const data = new URLSearchParams();
-    data.append('id', id);
-    data.append('green_score', green_score);
-    data.append('red_score', red_score);
+    let data = {
+        'green_score': green_score,
+        'red_score': red_score
+    }
 
-    fetch('matches/push_score', {
+    fetch('/api/matches/push-score?tournament_id=' + tournament_id + '&match_id=' + id, {
         method: 'POST',
-        body: data
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(data => {
-        if(data.success == false) {
-            alert(data.message)
-        }
-    })
-    .then(data => {
-        get_matches()
-        // if window is an iframe, send message to parent window
-        if (window.parent !== window) {
-            let reciever_iframe = window.parent.document.getElementById("standings_frame");
-            // Send the message to the "standings_frame" iframe, allowing the message to be sent to any origin
-            reciever_iframe.contentWindow.postMessage("should_update_standings", "*");
+        if (Object.keys(data).includes("error")) {
+            console.log(data["error"])
+            alert(data["error"]);
+        } else {
+            get_matches()
+            // if window is an iframe, send message to parent window
+            if (window.parent !== window) {
+                let reciever_iframe = window.parent.document.getElementById("standings_frame");
+                // Send the message to the "standings_frame" iframe, allowing the message to be sent to any origin
+                reciever_iframe.contentWindow.postMessage("should_update_standings", "*");
+            }
         }
     })
 
@@ -600,20 +607,20 @@ function match_set_active(id) {
 
     // send JSON to server (POST)
     let data = {}
-    data["id"] = id
-    data["override"] = override_flag
-    fetch('matches/set_active', { 
+    data["override_flag"] = override_flag
+    fetch('/api/matches/set-active?tournament_id=' + tournament_id + '&match_id=' + id, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({"override_flag" : override_flag})
     })
     .then(response => {
-        if (response.ok) {
-            get_matches()
+        if (Object.keys(response).includes("error")) {
+            console.log(response["error"]);
+            alert(response["error"]);
         } else {
-            alert("A match on the same piste is already ongoing")
+            get_matches()
         }
     })
     .catch(error => {
@@ -624,9 +631,8 @@ function match_set_active(id) {
 function prioritize_match(id, value) {
     // send JSON to server (POST)
     let data = {}
-    data["id"] = id
     data["value"] = value
-    fetch('matches/prioritize', { 
+    fetch('/api/matches/prioritize?tournament_id=' + tournament_id + '&match_id=' + id, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -635,8 +641,9 @@ function prioritize_match(id, value) {
     })
     .then(response => response.json())
     .then(data => {
-        if(data.success === false) {
-            alert(data.message)
+        if (Object.keys(data).includes("error")) {
+            console.log(data["error"]);
+            alert(data["error"]);
         } else {
             get_matches()
         }
@@ -646,9 +653,8 @@ function prioritize_match(id, value) {
 function assign_piste(match_id, piste) {
     // send JSON to server (POST)
     let data = {}
-    data["id"] = match_id
     data["piste"] = piste
-    fetch('matches/assign_piste', { 
+    fetch('/api/matches/assign-piste?tournament_id=' + tournament_id + '&match_id=' + match_id, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -657,8 +663,9 @@ function assign_piste(match_id, piste) {
     })
     .then(response => response.json())
     .then(data => {
-        if(data.success === false) {
-            alert(data.message)
+        if (Object.keys(data).includes("error")) {
+            console.log(data["error"]);
+            alert(data["error"]);
         } else {
             get_matches()
         }
@@ -666,24 +673,21 @@ function assign_piste(match_id, piste) {
 }
 
 function remove_piste_assignment(match_id) {
-    // send JSON to server (POST)
-    let data = {}
-    data["id"] = match_id
-    fetch('matches/remove_piste_assignment', { 
+    fetch('/api/matches/remove-piste-assignment?tournament_id=' + tournament_id + '&match_id=' + match_id, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success === false) {
-            alert(data.message)
-        } else {
-            get_matches()
-        }
-    })
+        .then(response => response.json())
+        .then(data => {
+            if (Object.keys(data).includes("error")) {
+                console.log(data["error"]);
+                alert(data["error"]);
+            } else {
+                get_matches()
+            }
+        })
 }
 
 

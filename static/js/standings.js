@@ -1,3 +1,5 @@
+const tournament_id = document.body.dataset.tournament_id
+
 if (window.self === window.top) {
     document.body.classList.add('not-in-iframe');
 } else {
@@ -6,61 +8,28 @@ if (window.self === window.top) {
 
 
 function get_standings() {
-    let group_query = document.getElementById("group_filter").value
-    let gender_query = document.getElementById("gender_filter").value
-    let handedness_query = document.getElementById("handedness_filter").value
-    let age_query= document.getElementById("age_filter").value
+    const filterInputs = [
+        { id: 'group_filter', prefix: 'group=' },
+        { id: 'gender_filter', prefix: 'gender=' },
+        { id: 'handedness_filter', prefix: 'handedness=' },
+        { id: 'age_filter', prefix: 'age=' },
+    ]
+
+    let full_query = filterInputs
+        .map(input => {
+            const value = document.getElementById(input.id).value
+            return value ? input.prefix + value : null
+        })
+        .filter(Boolean)
+        .join('&')
+
+    if (full_query.length > 0) {
+        full_query = '&' + full_query
+    }
     
-    if (group_query === "all" || group_query === "") {
-        group_query = ""
-    } else {
-        group_query = "group=" + group_query
-    }
+    console.log('/api/standings/update?tournament_id=' + tournament_id + full_query)
 
-    if (gender_query != "") {
-        gender_query = "gender=" + gender_query
-    }
-
-    if (handedness_query != "") {
-        handedness_query = "handedness=" + handedness_query
-    }
-
-    if (age_query != "") {
-        age_query = "age=" + age_query
-    }
-
-    full_query = ""
-    if (group_query != "" || gender_query != "" || handedness_query != "" || age_query != "") {
-        full_query = "?"
-    }
-
-    if (group_query != "") {
-        full_query += group_query
-    }
-
-    if (gender_query != "") {
-        if (full_query != "?") {
-            full_query += "&"
-        }
-        full_query += gender_query
-    }
-
-    if (handedness_query != "") {
-        if (full_query != "?") {
-            full_query += "&"
-        }
-        full_query += handedness_query
-    }
-
-    if (age_query != "") {
-        if (full_query != "?") {
-            full_query += "&"
-        }
-        full_query += age_query
-    }
-
-
-    fetch('standings/update' + full_query)
+    fetch('/api/standings/update?tournament_id=' + tournament_id + full_query)
     .then(response => response.json())
     .then(response => {
         let standings = response["standings"]

@@ -90,120 +90,114 @@ window.onload = function () {
 };
 
 function get_piste_status() {
-    fetch("/" + tournament_id + "/piste-overview/get-status")
+    fetch("/api/piste/update?tournament_id=" + tournament_id)
         .then(response => response.json())
         .then(data => {
-            if (data["success"] === false) {
-                alert("Error while getting piste status: " + data["message"]);
-                return;
-            }
+            if (Object.keys(data).includes("error")) {
+                console.log(data["error"]);
+                alert(data["error"]);
 
-            data = data["message"];
-            console.log(data);
-            for (let i = 0; i < data.length; i++) {
-                let piste = document.getElementById(`piste_${i}`);
-                piste.className = "Piste";
-                let button_icon = piste.getElementsByClassName("fa-solid")[0]
-                button_icon.className = "fa-solid";
-                let button = piste.getElementsByClassName("Button")[0];
-                let toggle_button = piste.getElementsByClassName("Toggle-Piste")[0];
-                toggle_button.onclick = function () {
-                    fetch("/" + tournament_id + "/piste-overview/toggle-piste", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            "piste": i + 1
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data["success"] === false) {
-                                alert("Error while toggling piste: " + data["message"]);
-                            } else {
-                                get_piste_status();
-                            }
-                        });
-                }
-                let toggle_icon = toggle_button.getElementsByClassName("fa-solid")[0];
-                toggle_icon.className = "fa-solid fa-toggle-on";
-                
-                
-                if (data[i]["status"] === "occupied") {
-                    piste.classList.add("Ongoing");
-                    button_icon.classList.add("fa-spinner");
-                    button_icon.classList.add("fa-spin");
-                    
-                } else if (data[i]["status"] === "staged") {
-                    piste.classList.add("Staged");
-                    button_icon.classList.add("fa-play");
-                    button_icon.classList.add("fa-beat");
-                    button.onclick = function () {
-                        button_icon.classList.remove("fa-play");
-                        button_icon.classList.remove("fa-beat");
-                        button_icon.classList.add("fa-spinner");
-                        button_icon.classList.add("fa-spin");
-                        console.log(data[i]["match_id"]);
-                        fetch("/" + tournament_id + "/matches/set_active", {
+            } else {
+                console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    let piste = document.getElementById(`piste_${i}`);
+                    piste.className = "Piste";
+                    let button_icon = piste.getElementsByClassName("fa-solid")[0]
+                    button_icon.className = "fa-solid";
+                    let button = piste.getElementsByClassName("Button")[0];
+                    let toggle_button = piste.getElementsByClassName("Toggle-Piste")[0];
+                    toggle_button.onclick = function () {
+                        let requested_piste = i + 1;
+                        fetch("/api/piste/toggle?tournament_id=" + tournament_id + "&piste=" + toString(requested_piste), {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
                             },
-                            body: JSON.stringify({
-                                "id": data[i]["match_id"]
-                            })
                         })
                             .then(response => response.json())
                             .then(data => {
                                 if (data["success"] === false) {
-                                    alert("Error while setting match as active: " + data["message"]);
+                                    alert("Error while toggling piste: " + data["message"]);
                                 } else {
                                     get_piste_status();
                                 }
                             });
-                    };
-
-                } else if (data[i]["status"] === "disabled") {
-                    piste.classList.add("Disabled");
-                    button_icon.classList.add("fa-ban");
-                    toggle_icon.classList.remove("fa-toggle-on");
-                    toggle_icon.classList.add("fa-toggle-off");
+                    }
+                    let toggle_icon = toggle_button.getElementsByClassName("fa-solid")[0];
+                    toggle_icon.className = "fa-solid fa-toggle-on";
                     
+                    
+                    if (data[i]["status"] === "occupied") {
+                        piste.classList.add("Ongoing");
+                        button_icon.classList.add("fa-spinner");
+                        button_icon.classList.add("fa-spin");
+                        
+                    } else if (data[i]["status"] === "staged") {
+                        piste.classList.add("Staged");
+                        button_icon.classList.add("fa-play");
+                        button_icon.classList.add("fa-beat");
+                        button.onclick = function () {
+                            button_icon.classList.remove("fa-play");
+                            button_icon.classList.remove("fa-beat");
+                            button_icon.classList.add("fa-spinner");
+                            button_icon.classList.add("fa-spin");
+                            console.log(data[i]["match_id"]);
+                            fetch("/api/matches/set-active?tournament_id=" + tournament_id, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    "id": data[i]["match_id"]
+                                })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (Object.keys(data).includes("error")) {
+                                        console.log(data["error"]);
+                                        alert(data["error"]);
+                                    } else {
+                                        get_piste_status();
+                                    }
+                                });
+                        };
 
-                } else if (data[i]["status"] === "free") {
-                    button_icon.classList.add("fa-user-xmark");
+                    } else if (data[i]["status"] === "disabled") {
+                        piste.classList.add("Disabled");
+                        button_icon.classList.add("fa-ban");
+                        toggle_icon.classList.remove("fa-toggle-on");
+                        toggle_icon.classList.add("fa-toggle-off");
+                        
 
-                } else {
-                    alert("Unknown piste status for piste " + i + ": " + data[i]["status"])
-                    piste.classList.add("Loading");
-                }
+                    } else if (data[i]["status"] === "free") {
+                        button_icon.classList.add("fa-user-xmark");
 
-                if (data[i]["status"] === "occupied" || data[i]["status"] === "staged") {
-                    let fencer_1 = piste.getElementsByClassName("Fencer-Red")[0];
-                    let fencer_2 = piste.getElementsByClassName("Fencer-Green")[0];
+                    } else {
+                        alert("Unknown piste status for piste " + i + ": " + data[i]["status"])
+                        piste.classList.add("Loading");
+                    }
 
-                    fencer_1.innerHTML = data[i]["red"];
-                    fencer_2.innerHTML = data[i]["green"];
+                    if (data[i]["status"] === "occupied" || data[i]["status"] === "staged") {
+                        let fencer_1 = piste.getElementsByClassName("Fencer-Red")[0];
+                        let fencer_2 = piste.getElementsByClassName("Fencer-Green")[0];
+
+                        fencer_1.innerHTML = data[i]["red"];
+                        fencer_2.innerHTML = data[i]["green"];
+                    }
                 }
             }
         });
 }
 
 function toggle_piste(piste_id) {
-    fetch("/" + tournament_id + "/piste-overview/toggle-piste", {
+    fetch("/api/piste/toggle?tournament_id=" + tournament_id + "&piste=" + piste_id, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            "id": piste_id
-        })
     })
         .then(response => response.json())
         .then(data => {
-            if (data["success"] === false) {
-                alert("Error while toggling piste: " + data["message"]);
+            if (Object.keys(data).includes("error")) {
+                console.log(data["error"]);
+                alert(data["error"]);
             } else {
                 get_piste_status();
             }

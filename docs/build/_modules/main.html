@@ -876,10 +876,10 @@
 <span class="sd">    404</span>
 <span class="sd">        On tournament not found</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+    <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;group&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">group</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -1141,11 +1141,11 @@
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">(),</span> <span class="mi">404</span>
         
-        <span class="n">override_flag</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;override&#39;</span><span class="p">]</span>
+        <span class="n">override_flag</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;override_flag&#39;</span><span class="p">]</span>
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">override_flag</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="n">OccupiedPisteError</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;PISTE_OCCUPIED&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Piste is already in use by another match.&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">400</span><span class="p">)</span>
@@ -1171,12 +1171,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;referee&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s1">&#39;master&#39;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;User must be logged in to input Results!&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">401</span><span class="p">)</span>
 
-        <span class="n">green_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;green_score&#39;</span><span class="p">])</span>
-        <span class="n">red_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;red_score&#39;</span><span class="p">])</span>
+        <span class="n">green_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;green_score&#39;</span><span class="p">])</span>
+        <span class="n">red_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;red_score&#39;</span><span class="p">])</span>
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">push_score</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">green_score</span><span class="p">,</span> <span class="n">red_score</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1195,11 +1195,11 @@
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">()</span>
         
-        <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">prioritize_match</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1222,7 +1222,7 @@
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">assign_certain_piste</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">piste</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1243,7 +1243,7 @@
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">remove_piste_assignment</span><span class="p">(</span><span class="n">match_id</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1336,7 +1336,7 @@
 
             <span class="n">mail</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1400,7 +1400,7 @@
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">toggle_piste</span><span class="p">(</span><span class="n">piste</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1455,8 +1455,8 @@
             <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client is not logged in. As Master or corresponding Fencer&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
 
 
-        <span class="n">attribute</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;attribute&#39;</span><span class="p">]</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;attribute&#39;</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;club&quot;</span><span class="p">,</span> <span class="s2">&quot;nationality&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;handedness&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ATTRIBUTE_NAME&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client provided an invalid attribute name. Attribute name must be one of these: [&quot;name&quot;, &quot;club&quot;, &quot;nationality&quot;, &quot;gender&quot;, &quot;handedness&quot;, &quot;age&quot;]&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
@@ -1466,7 +1466,7 @@
     
         <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_id</span><span class="p">(</span><span class="n">fencer_id</span><span class="p">)</span><span class="o">.</span><span class="n">change_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1553,7 +1553,7 @@
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">simulate_current</span><span class="p">()</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

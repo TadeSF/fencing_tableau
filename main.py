@@ -802,10 +802,10 @@ def standings(tournament_id):
     404
         On tournament not found
     """
-    if not check_tournament_exists(tournament_id):
+    tournament = get_tournament(tournament_id)
+    if tournament is None:
         abort(404)
     else:
-        tournament = get_tournament(tournament_id)
         group = request.args.get('group')
         if group is None:
             group = ""
@@ -1067,11 +1067,11 @@ def set_active():
         if tournament is None:
             return tournament_not_found_error(), 404
         
-        override_flag = request.form['override']
+        override_flag = request.json['override_flag']
 
         tournament.set_active(match_id, override_flag)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except OccupiedPisteError:
         return default_error(code = "PISTE_OCCUPIED", message = "Piste is already in use by another match.", status_code = 400)
@@ -1097,12 +1097,12 @@ def push_score():
         if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master'):
             return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!", status_code = 401)
 
-        green_score = int(request.form['green_score'])
-        red_score = int(request.form['red_score'])
+        green_score = int(request.json['green_score'])
+        red_score = int(request.json['red_score'])
 
         tournament.push_score(match_id, green_score, red_score)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1121,11 +1121,11 @@ def prioritize():
         if tournament is None:
             return tournament_not_found_error()
         
-        value = request.form['value']
+        value = request.json['value']
 
         tournament.prioritize_match(match_id, value)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1148,7 +1148,7 @@ def assign_piste():
 
         tournament.assign_certain_piste(match_id, piste)
         save_tournament(tournament)
-        return 200
+        return {}, 200
 
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1169,7 +1169,7 @@ def remove_piste_assignment():
 
         tournament.remove_piste_assignment(match_id)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1262,7 +1262,7 @@ def next_stage():
 
             mail.send(msg)
 
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1326,7 +1326,7 @@ def toggle_piste():
 
         tournament.toggle_piste(piste)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1381,8 +1381,8 @@ def change_fencer_attribute():
             return default_error(code="NOT_LOGGED_IN", message='Client is not logged in. As Master or corresponding Fencer', status_code=401)
 
 
-        attribute = request.form['attribute']
-        value = request.form['value']
+        attribute = request.json['attribute']
+        value = request.json['value']
 
         if attribute not in ["name", "club", "nationality", "gender", "handedness", "age"]:
             return default_error(code="INVALID_ATTRIBUTE_NAME", message='Client provided an invalid attribute name. Attribute name must be one of these: ["name", "club", "nationality", "gender", "handedness", "age"]', status_code=400)
@@ -1392,7 +1392,7 @@ def change_fencer_attribute():
     
         tournament.get_fencer_by_id(fencer_id).change_attribute(attribute, value)
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1479,7 +1479,7 @@ def simulate():
 
         tournament.simulate_current()
         save_tournament(tournament)
-        return 200
+        return {}, 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)

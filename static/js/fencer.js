@@ -61,8 +61,7 @@ async function parse_flag(country) {
 }
 
 async function update() {
-    let url = window.location.href;
-    fetch(url + '/update')
+    fetch('/api/fencer/update?tournament_id=' + tournament_id + '&fencer_id=' + fencer_id)
         .then(response => response.json())
         .then(data => {
             console.log(data);
@@ -661,22 +660,19 @@ function viewTableau() {
 }
 
 function startMatch() {
-    fetch("/" + tournament_id + "/matches/set_active", {
+    fetch("/api/matches/set-active?tournament_id=" + tournament_id + "&match_id=" + document.getElementById("Next-Match-Section").dataset.id, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            "id": document.getElementById("Next-Match-Section").dataset.id,
-            "override": false,
-        })
+        body: {"override_flag": "false"},
     })
         .then((response) => response.json())
         .then((data) => {
-            if (data["success"] === true) {
-                update();
+            if (Object.keys(data).includes("error")) {
+                alert(data["error"]);
             } else {
-                alert(data["message"]);
+                update();
             }
         }
     );
@@ -710,8 +706,8 @@ function approve_tableau() {
         "tournament": tournament,
         "fencer_id": fencer_id
     }
-    // POST request
-    fetch("/" + tournament + "/tableau/approve?group=" + group, {
+
+    fetch("/api/fencer/approve-tableau?tournament_id=" + tournament_id + "&fencer_id=" + fencer_id, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -733,7 +729,7 @@ function approve_tableau() {
 function changeInformationForm(event) {
     event.preventDefault();
     
-    fetch("/" + tournament_id + "/fencer/" + fencer_id + "/change_attribute", {
+    fetch("/api/fencer/change-attribute?tournament_id=" + tournament_id + "&fencer_id=" + fencer_id, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -746,11 +742,11 @@ function changeInformationForm(event) {
         return response.json();
     }
     ).then((data) => {
-        if (data["success"] === true) {
+        if (Object.keys(data).includes("error")) {
+            alert(data["error"]);
+        } else {
             alert("Attribute changed!\n\nAttribute: " + document.getElementById("Change-Attribute").value + "\nValue: " + document.getElementById("Change-Value").value);
             window.location.reload();
-        } else {
-            alert(data["message"]);
         }
     });
 }

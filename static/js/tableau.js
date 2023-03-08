@@ -72,11 +72,16 @@ function formatTable(tableau) {
 
 function update() {
     let group = document.getElementById("group").innerHTML;
-    fetch("/" + tournament_id + "/tableau/update?group=" + group)
+    fetch("/api/tableau/update?tournament_id=" + tournament_id + "&group=" + group)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            formatTable(data);
+            if (Object.keys(data).includes("error")) {
+                console.log(data["error"]);
+                alert(data["error"]);
+            } else {
+                console.log(data);
+                formatTable(data);
+            }
         });
 }
 
