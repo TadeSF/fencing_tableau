@@ -963,6 +963,31 @@
         <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;/piste_overview.html&#39;</span><span class="p">,</span> <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament_id</span><span class="p">,</span> <span class="n">num_pistes</span><span class="o">=</span><span class="n">tournament</span><span class="o">.</span><span class="n">num_pistes</span><span class="p">)</span>
 
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/brackets&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">brackets</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Flask serves on a GET request /&lt;tournament_id&gt;/brackets the brackets.html file from the templates folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tournament_id : str</span>
+<span class="sd">        The id of the tournament.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    brackets.html, 200</span>
+<span class="sd">        On success</span>
+<span class="sd">    404</span>
+<span class="sd">        On tournament not found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">highlighted_fencer_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fencer_id&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;/brackets.html&#39;</span><span class="p">,</span> <span class="n">tournament_id</span><span class="o">=</span><span class="n">tournament_id</span><span class="p">,</span> <span class="n">highlighted_fencer_id</span><span class="o">=</span><span class="n">highlighted_fencer_id</span> <span class="k">if</span> <span class="n">highlighted_fencer_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
 
 <span class="c1"># --- Login-Methods ---</span>
 
@@ -1078,7 +1103,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO Implement</span>
     <span class="n">abort</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span></div>
-
 
 
 
@@ -1262,7 +1286,7 @@
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">()</span>
         
-        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_matches_left</span><span class="p">()),</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;matches_left&quot;</span><span class="p">:</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_matches_left</span><span class="p">()}),</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1392,7 +1416,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">)</span>
-        <span class="n">piste</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;piste&#39;</span><span class="p">)</span>
+        <span class="n">piste</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;piste&#39;</span><span class="p">))</span>
 
         <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1404,7 +1428,7 @@
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_info</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
 
 
 <span class="c1"># --- Fencer ---</span>
@@ -1535,6 +1559,28 @@
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+    
+
+<span class="c1"># --- Brackets ---</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/brackets/update&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_brackets</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">)</span>
+
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">()</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">elimination_brackets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="mi">200</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
 
 
 <span class="c1"># --- Helpers ---</span>
@@ -1636,14 +1682,38 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+        <span class="n">cookie</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logs_cookie&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">PASSWORD_LOGS</span><span class="p">):</span>
-            <span class="n">tournament_logs</span> <span class="o">=</span> <span class="n">log_parser</span><span class="o">.</span><span class="n">parse_tournament_log</span><span class="p">()</span>
-            <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;tournament_logs&quot;</span><span class="p">:</span> <span class="n">tournament_logs</span><span class="p">}),</span> <span class="mi">200</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wrong password for logs&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Wrong password&#39;</span><span class="p">}),</span> <span class="mi">401</span>
+        
+        <span class="k">if</span> <span class="n">cookie</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;logs/cookies.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">cookies</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Exception: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                
+            <span class="k">if</span> <span class="n">cookie</span> <span class="ow">in</span> <span class="n">cookies</span><span class="p">:</span>
+                <span class="n">tournament_logs</span> <span class="o">=</span> <span class="n">log_parser</span><span class="o">.</span><span class="n">parse_tournament_log</span><span class="p">()</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;tournament_logs&quot;</span><span class="p">:</span> <span class="n">tournament_logs</span><span class="p">}),</span> <span class="mi">200</span>
+        
+
+        <span class="k">if</span> <span class="n">password</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">PASSWORD_LOGS</span><span class="p">):</span>
+                <span class="n">tournament_logs</span> <span class="o">=</span> <span class="n">log_parser</span><span class="o">.</span><span class="n">parse_tournament_log</span><span class="p">()</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
+                <span class="n">cookie</span> <span class="o">=</span> <span class="n">random_generator</span><span class="o">.</span><span class="n">cookie</span><span class="p">()</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;tournament_logs&quot;</span><span class="p">:</span> <span class="n">tournament_logs</span><span class="p">}),</span> <span class="mi">200</span><span class="p">)</span>
+                <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s1">&#39;logs_cookie&#39;</span><span class="p">,</span> <span class="n">cookie</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;logs/cookies.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cookie</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">response</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wrong password for logs&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Wrong password&#39;</span><span class="p">}),</span> <span class="mi">401</span>
+            
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;No password or cookie&#39;</span><span class="p">}),</span> <span class="mi">401</span>
         
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="c1"># Log the error and traceback</span>

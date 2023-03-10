@@ -889,6 +889,31 @@ def piste_overview(tournament_id):
         tournament = get_tournament(tournament_id)
         return render_template('/piste_overview.html', tournament_id=tournament_id, num_pistes=tournament.num_pistes)
 
+@app.route('/<tournament_id>/brackets')
+def brackets(tournament_id):
+    """
+    Flask serves on a GET request /<tournament_id>/brackets the brackets.html file from the templates folder.
+
+    Parameters
+    ----------
+    tournament_id : str
+        The id of the tournament.
+
+    Returns
+    -------
+    brackets.html, 200
+        On success
+    404
+        On tournament not found
+    """
+
+    highlighted_fencer_id = request.args.get('fencer_id')
+
+    if not check_tournament_exists(tournament_id):
+        abort(404)
+    else:
+        return render_template('/brackets.html', tournament_id=tournament_id, highlighted_fencer_id=highlighted_fencer_id if highlighted_fencer_id is not None else 0)
+
 
 # --- Login-Methods ---
 
@@ -1004,7 +1029,6 @@ def login_referee():
     """
     # TODO Implement
     abort(404)
-
 
 
 
@@ -1188,7 +1212,7 @@ def matches_left():
         if tournament is None:
             return tournament_not_found_error()
         
-        return jsonify(tournament.get_matches_left()), 200
+        return jsonify({"matches_left": tournament.get_matches_left()}), 200
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
@@ -1318,7 +1342,7 @@ def toggle_piste():
     """
     try:
         tournament_id = request.args.get('tournament_id')
-        piste = request.args.get('piste')
+        piste = int(request.args.get('piste'))
 
         tournament = get_tournament(tournament_id)
         if tournament is None:
@@ -1330,7 +1354,7 @@ def toggle_piste():
     
     except Exception as e:
         app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_info = 500)
+        return default_error(e, traceback.format_exc())
 
 
 # --- Fencer ---
@@ -1461,6 +1485,28 @@ def get_tableau():
     except Exception as e:
         app.logger.error(e, exc_info=True)
         return default_error(e, traceback.format_exc(), status_code = 500)
+    
+
+# --- Brackets ---
+
+@app.route('/api/brackets/update', methods=['GET'])
+def get_brackets():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        response = tournament.elimination_brackets[0].map()
+        
+        return jsonify(response), 200
+    
+    except Exception as e:
+        app.logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc())
 
 
 # --- Helpers ---
@@ -1562,14 +1608,38 @@ def get_logs():
     """
     try:
         password = request.json['password']
+        cookie = request.cookies.get('logs_cookie')
+        print(cookie)
 
-        if check_password(password, PASSWORD_LOGS):
-            tournament_logs = log_parser.parse_tournament_log()
-            app.logger.info('Logs accessed')
-            return jsonify({"success": True, "tournament_logs": tournament_logs}), 200
-        else:
-            app.logger.info('Wrong password for logs')
-            return jsonify({'error': 'Wrong password'}), 401
+        
+        if cookie != None:
+            try:
+                with open('logs/cookies.txt', 'r') as f:
+                    cookies = f.read().splitlines()
+            except Exception as e:
+                app.logger.error('Exception: %s', e, exc_info=True)
+                
+            if cookie in cookies:
+                tournament_logs = log_parser.parse_tournament_log()
+                app.logger.info('Logs accessed')
+                return jsonify({"success": True, "tournament_logs": tournament_logs}), 200
+        
+
+        if password != None:
+            if check_password(password, PASSWORD_LOGS):
+                tournament_logs = log_parser.parse_tournament_log()
+                app.logger.info('Logs accessed')
+                cookie = random_generator.cookie()
+                response = make_response(jsonify({"success": True, "tournament_logs": tournament_logs}), 200)
+                response.set_cookie('logs_cookie', cookie)
+                with open('logs/cookies.txt', 'a') as f:
+                    f.write(cookie + '\n')
+                return response
+            else:
+                app.logger.info('Wrong password for logs')
+                return jsonify({'error': 'Wrong password'}), 401
+            
+        return jsonify({'error': 'No password or cookie'}), 401
         
     except Exception as e:
         # Log the error and traceback

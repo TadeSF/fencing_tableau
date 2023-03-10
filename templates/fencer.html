@@ -83,6 +83,12 @@
                                 <span>View Tableau</span>
                             </div>
                         </div>
+                        <div class="Button" id="button_view_brackets" onclick="viewBrackets()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-diagram-project"></i>
+                                <span>View Brackets</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="Score-Form" id="score-form" style="display: none;">
                         # TODO: Add score form
@@ -98,15 +104,26 @@
                 <div class="Next-Match">
                     <h2>Matches Finished</h2>
                     <p>You finished all matches in the current round.</p>
-                    <div class="Standing-Wrapper" id="tableau-wrapper" style="display: none;">
-                        <div class="Standing-Block" id="view_tableau" onclick="viewTableau()">View Tableau</div>
-                    </div>
-                    <br>
-                    <div id="approval-needed">
-                        <h2>Approve Group Tableau</h2>
-                        <div class="Standing-Wrapper" style="margin-top: 10px;">
-                            <div class="Standing-Block" id="report_issue" onclick="report_issue('group')">Report Issue</div>
-                            <div class="Standing-Block" id="approve_tableau" onclick="approve_tableau('group')">Approve</div>
+                    <div class="Button-Wrapper">
+                        <div class="Button" id="button_finished_view_tableau" onclick="viewTableau()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-table-cells"></i>
+                                <span>View Tableau</span>
+                            </div>
+                        </div>
+                        <div class="Button" id="button_finished_view_brackets" onclick="viewBrackets()">
+                            <div class="Button-Content">
+                                <i class="fa-solid fa-diagram-project"></i>
+                                <span>View Brackets</span>
+                            </div>
+                        </div>
+                        <br>
+                        <div id="approval-needed">
+                            <h2>Approve Group Tableau</h2>
+                            <div class="Standing-Wrapper" style="margin-top: 10px;">
+                                <div class="Standing-Block" id="report_issue" onclick="report_issue('group')">Report Issue</div>
+                                <div class="Standing-Block" id="approve_tableau" onclick="approve_tableau('group')">Approve</div>
+                            </div>
                         </div>
                     </div>
                 </div>

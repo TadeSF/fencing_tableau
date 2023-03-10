@@ -77,7 +77,18 @@ function update() {
         .then(data => {
             if (Object.keys(data).includes("error")) {
                 console.log(data["error"]);
-                alert(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
             } else {
                 console.log(data);
                 formatTable(data);

@@ -76,3 +76,7 @@ function get_logs(){
         }
     });
 }
+
+window.onload = function () {
+    get_logs()
+}

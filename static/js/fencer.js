@@ -166,13 +166,6 @@ async function update() {
                     }
                 }
 
-                let tableau_wrapper = document.getElementById("button_view_tableau");
-                if (data["group_stage"] === true) {
-                    tableau_wrapper.style.display = "block";
-                } else {
-                    tableau_wrapper.style.display = "none";
-                }
-
 
                 const piste_helper = document.getElementById("piste_helper");
                 const piste_block = document.getElementById("Next-Piste-Block");
@@ -236,7 +229,7 @@ async function update() {
                 document.getElementById("Next-Opponents").style.display = "none";
                 document.getElementById("No-More-Matches").style.display = "block";
                 if (data["group_stage"] == true) {
-                    document.getElementById("tableau-wrapper").style.display = "flex";
+                    // document.getElementById("tableau-wrapper").style.display = "flex";
                     if (data["approved_tableau"] == false && logged_in_fencer == true) {
                         document.getElementById("approval-needed").style.display = "block";
                     } else {
@@ -244,11 +237,27 @@ async function update() {
                     }
                 } else {
 
-                    document.getElementById("tableau-wrapper").style.display = "none";
+                    // document.getElementById("tableau-wrapper").style.display = "none";
                     document.getElementById("approval-needed").style.display = "none";
                 }
                 document.getElementById("button_start_match").style.display = "none";
                 document.getElementById("button_input_score").style.display = "none";
+            }
+
+            let tableau_button = document.getElementById("button_view_tableau");
+            let tableau_finished_button = document.getElementById("button_finished_view_tableau");
+            let brackets_button = document.getElementById("button_view_brackets");
+            let brackets_finished_button = document.getElementById("button_finished_view_brackets");
+            if (data["group_stage"] === true) {
+                tableau_button.style.display = "block";
+                tableau_finished_button.style.display = "block";
+                brackets_button.style.display = "none";
+                brackets_finished_button.style.display = "none";
+            } else {
+                tableau_button.style.display = "none";
+                tableau_finished_button.style.display = "none";
+                brackets_button.style.display = "block";
+                brackets_finished_button.style.display = "block";
             }
 
             let statistics_matches = document.getElementById("Matches");
@@ -659,6 +668,10 @@ function viewTableau() {
     window.open("/" + tournament_id + "/tableau?group=" + group, "_blank");
 }
 
+function viewBrackets() {
+    window.open("/" + tournament_id + "/brackets?fencer_id=" + fencer_id, "_blank");
+}
+
 function startMatch() {
     fetch("/api/matches/set-active?tournament_id=" + tournament_id + "&match_id=" + document.getElementById("Next-Match-Section").dataset.id, {
         method: "POST",
@@ -670,7 +683,19 @@ function startMatch() {
         .then((response) => response.json())
         .then((data) => {
             if (Object.keys(data).includes("error")) {
-                alert(data["error"]);
+                console.log(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
             } else {
                 update();
             }
@@ -743,7 +768,19 @@ function changeInformationForm(event) {
     }
     ).then((data) => {
         if (Object.keys(data).includes("error")) {
-            alert(data["error"]);
+            console.log(data["error"]);
+            alert_string = "Error: " + data["error"]["code"];
+            if (data["error"]["message"]) {
+                alert_string += "\n\n" + data["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (data["error"]["exception"]) {
+                alert_string += "\n\n" + data["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             alert("Attribute changed!\n\nAttribute: " + document.getElementById("Change-Attribute").value + "\nValue: " + document.getElementById("Change-Value").value);
             window.location.reload();

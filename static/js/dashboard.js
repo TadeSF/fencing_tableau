@@ -9,7 +9,19 @@ function update(update_iframes=true) {
         .then(response => response.json())
         .then(response => {
             if (Object.keys(response).includes("error")) {
-                alert(response["error"]);
+                console.log(response["error"]);
+                alert_string = "Error: " + response["error"]["code"];
+                if (response["error"]["message"]) {
+                    alert_string += "\n\n" + response["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (response["error"]["exception"]) {
+                    alert_string += "\n\n" + response["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
             } else {
                 document.getElementById("main_id_text").innerHTML = response["id"]
                 document.getElementById("main_id_text_pw").innerHTML = response["id"]
@@ -51,6 +63,10 @@ function update(update_iframes=true) {
                 // if Stage does not contain Preliminary Round (it always has a number afterwards), hide the "Tableau" button 
                 if (response["stage"].split(" ")[0] !== "Preliminary") {
                     document.getElementById("Tableau").style.display = "none";
+                    document.getElementById("Brackets").style.display = "block";
+                } else {
+                    document.getElementById("Tableau").style.display = "block";
+                    document.getElementById("Brackets").style.display = "none";
                 }
 
                 if (response["stage"] === "Finished") {
@@ -75,33 +91,33 @@ function advance() {
     advance_button.firstChild.classList.add("fa-spinner");
 
     fetch('/api/matches/matches-left?tournament_id=' + tournament_id)
-    .then(response => response.text())
-    .then(response => {
-        if (response === "0") {
-            fetch('/api/next-stage?tournament_id=' + tournament_id)
-            .then(response => {
-                if (response.status === 200) {
-                    setTimeout(function() {update()}, 1000);
-                } else {
-                    console.log(response)
-                    alert("An error occurred!")
-                }
-            })
-        } else {
-            if (response.status === 404) {
-                alert("The Tournament does not exist!")
+        .then(response => response.json())
+        .then(response => {
+            if (response.matches_left == "0") {
+                fetch('/api/next-stage?tournament_id=' + tournament_id)
+                .then(response => {
+                    if (response.status === 200) {
+                        setTimeout(function() {update()}, 1000);
+                    } else {
+                        console.log(response)
+                        alert("An error occurred!")
+                    }
+                })
             } else {
-                alert("There are still matches left to be completed!")
+                if (response.status === 404) {
+                    alert("The Tournament does not exist!")
+                } else {
+                    alert("There are still matches left to be completed!")
+                }
+                console.log(response)
             }
-            console.log(response)
-        }
 
-        setTimeout(function() {
-            advance_button.disabled = false;
-            advance_button.firstChild.classList.remove("fa-spin");
-            advance_button.firstChild.classList.remove("fa-spinner");
-            advance_button.firstChild.classList.add("fa-forward-fast");
-        }, 1500);
+            setTimeout(function() {
+                advance_button.disabled = false;
+                advance_button.firstChild.classList.remove("fa-spin");
+                advance_button.firstChild.classList.remove("fa-spinner");
+                advance_button.firstChild.classList.add("fa-forward-fast");
+            }, 1500);
     })
 
     
@@ -200,6 +216,10 @@ document.getElementById("overlay-form").addEventListener("submit", function(even
 
 function openTableau() {
     window.open("/" + tournament_id + "/tableau?group=1", "_blank");
+}
+
+function openBrackets() {
+    window.open("/" + tournament_id + "/brackets", "_blank");
 }
 
 function openQR() {

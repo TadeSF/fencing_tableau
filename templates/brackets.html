@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Elimination Bracket</title>
+    <link rel="stylesheet" href="/static/css/bracket.css">
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body data-tournament_id="{{ tournament_id }}" data-highlighted_fencer_id="{{ highlighted_fencer_id }}">
+    <div class="container">
+        <h1 id="bracket_title">Elimination Bracket</h1>
+        <div id="bracket" class="tournament-bracket tournament-bracket--rounded">
+        </div>
+    </div>
+    <script src="/static/js/bracket.js"></script>
+</body>
+</html>

@@ -13,7 +13,19 @@ function get_matches() {
     .then(response => {
         console.log(response)
         if (Object.keys(response).includes("error")) {
-            alert(response["error"]);
+            console.log(response["error"]);
+            alert_string = "Error: " + response["error"]["code"];
+            if (response["error"]["message"]) {
+                alert_string += "\n\n" + response["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (response["error"]["exception"]) {
+                alert_string += "\n\n" + response["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             let matches = response["matches"]
             update_matches(matches)
@@ -565,8 +577,19 @@ function push_score(id, green_score, red_score) {
     .then(response => response.json())
     .then(data => {
         if (Object.keys(data).includes("error")) {
-            console.log(data["error"])
-            alert(data["error"]);
+            console.log(data["error"]);
+            alert_string = "Error: " + data["error"]["code"];
+            if (data["error"]["message"]) {
+                alert_string += "\n\n" + data["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (data["error"]["exception"]) {
+                alert_string += "\n\n" + data["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             get_matches()
             // if window is an iframe, send message to parent window
@@ -618,7 +641,18 @@ function match_set_active(id) {
     .then(response => {
         if (Object.keys(response).includes("error")) {
             console.log(response["error"]);
-            alert(response["error"]);
+            alert_string = "Error: " + response["error"]["code"];
+            if (response["error"]["message"]) {
+                alert_string += "\n\n" + response["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (response["error"]["exception"]) {
+                alert_string += "\n\n" + response["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             get_matches()
         }
@@ -643,7 +677,18 @@ function prioritize_match(id, value) {
     .then(data => {
         if (Object.keys(data).includes("error")) {
             console.log(data["error"]);
-            alert(data["error"]);
+            alert_string = "Error: " + data["error"]["code"];
+            if (data["error"]["message"]) {
+                alert_string += "\n\n" + data["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (data["error"]["exception"]) {
+                alert_string += "\n\n" + data["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             get_matches()
         }
@@ -665,7 +710,18 @@ function assign_piste(match_id, piste) {
     .then(data => {
         if (Object.keys(data).includes("error")) {
             console.log(data["error"]);
-            alert(data["error"]);
+            alert_string = "Error: " + data["error"]["code"];
+            if (data["error"]["message"]) {
+                alert_string += "\n\n" + data["error"]["message"];
+            }
+            alert_string += "\n Do you want to view the logs?";
+            if (data["error"]["exception"]) {
+                alert_string += "\n\n" + data["error"]["exception"];
+            }
+            var result = window.confirm(alert_string);
+            if (result == true) {
+                window.open("/logs", "_blank");
+            }
         } else {
             get_matches()
         }
@@ -683,7 +739,18 @@ function remove_piste_assignment(match_id) {
         .then(data => {
             if (Object.keys(data).includes("error")) {
                 console.log(data["error"]);
-                alert(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
             } else {
                 get_matches()
             }

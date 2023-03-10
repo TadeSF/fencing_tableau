@@ -95,7 +95,18 @@ function get_piste_status() {
         .then(data => {
             if (Object.keys(data).includes("error")) {
                 console.log(data["error"]);
-                alert(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
 
             } else {
                 console.log(data);
@@ -108,7 +119,7 @@ function get_piste_status() {
                     let toggle_button = piste.getElementsByClassName("Toggle-Piste")[0];
                     toggle_button.onclick = function () {
                         let requested_piste = i + 1;
-                        fetch("/api/piste/toggle?tournament_id=" + tournament_id + "&piste=" + toString(requested_piste), {
+                        fetch("/api/piste/toggle?tournament_id=" + tournament_id + "&piste=" + requested_piste, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
@@ -155,7 +166,18 @@ function get_piste_status() {
                                 .then(data => {
                                     if (Object.keys(data).includes("error")) {
                                         console.log(data["error"]);
-                                        alert(data["error"]);
+                                        alert_string = "Error: " + data["error"]["code"];
+                                        if (data["error"]["message"]) {
+                                            alert_string += "\n\n" + data["error"]["message"];
+                                        }
+                                        alert_string += "\n Do you want to view the logs?";
+                                        if (data["error"]["exception"]) {
+                                            alert_string += "\n\n" + data["error"]["exception"];
+                                        }
+                                        var result = window.confirm(alert_string);
+                                        if (result == true) {
+                                            window.open("/logs", "_blank");
+                                        }
                                     } else {
                                         get_piste_status();
                                     }
@@ -197,7 +219,18 @@ function toggle_piste(piste_id) {
         .then(data => {
             if (Object.keys(data).includes("error")) {
                 console.log(data["error"]);
-                alert(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
             } else {
                 get_piste_status();
             }

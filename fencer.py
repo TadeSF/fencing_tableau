@@ -102,6 +102,17 @@ class Stage(Enum):
         """
         if self.value >= 1:
             return Stage(self.value - 1)
+        
+    def previous_stage(self):
+        """
+        Decreases the stage by one (e.g. TOP_512 -> TOP_1024)
+        This only works if the stage is not the first stage (PRELIMINARY_ROUND) or one of the special cases indicated by the negative enum values (PLACEMENTS)
+        Returns
+        -------
+        Stage (-1)
+        """
+        if self.value <= 9:
+            return Stage(self.value + 1)
 
     @property
     def short_stage_name(self):

@@ -4,7 +4,7 @@ import math
 import os
 import random
 import time
-from typing import List, Literal
+from typing import List, Tuple, Literal
 
 from fuzzywuzzy import fuzz
 
@@ -386,6 +386,9 @@ class Tournament:
         self.elimination_matches = []
         self.elimination_matches_archive = []
 
+        # Elimination Bracket(s)
+        self.elimination_brackets: List[self.Bracket] = []
+
         # Stage of the tournament
         self.elimination_first_stage = Stage(math.ceil(math.log2(len(fencers)))) if self.first_elimination_round == None else Stage(math.log2(self.first_elimination_round))
         self.preliminary_stage = 1 if self.num_preliminary_rounds != None else None
@@ -421,6 +424,12 @@ class Tournament:
     @property
     def matches_of_current_preliminary_round(self) -> List[Match]:
         return self.preliminary_matches[self.preliminary_stage - 1]
+    
+    @property
+    def matches_of_current_elimination_round(self) -> List[Match]:
+        if self.stage == Stage.PRELIMINARY_ROUND:
+            return []
+        return [matches for matches in self.elimination_matches if matches.stage == self.stage]
 
     @property
     def all_matches(self) -> List[Match]:
@@ -939,6 +948,7 @@ class Tournament:
             if self.preliminary_stage > self.num_preliminary_rounds:
                 self.stage = self.elimination_first_stage
                 self.create_next_elimination_round()
+                self.elimination_brackets.append(self.Bracket(self.matches_of_current_elimination_round, self.stage, "Elimination Bracket"))  # TODO implement looser bracket
 
             else:
                 self.create_preliminary_round()
@@ -946,6 +956,7 @@ class Tournament:
         elif self.stage == Stage.SEMI_FINALS:
             self.stage = Stage.GRAND_FINAL
             self.create_next_elimination_round(final = True)
+            self.elimination_brackets[0].create_new_round(self.matches_of_current_elimination_round, self.stage)
         
         elif self.stage == Stage.GRAND_FINAL:
             self.stage = Stage.FINISHED
@@ -955,14 +966,17 @@ class Tournament:
 
 
         elif self.stage == Stage.FINISHED:
-            pass
+            raise StageError("Error in next_stage: The tournament is already finished.")
 
         else:
             self.stage = self.stage.next_stage()
             self.create_next_elimination_round()
+            self.elimination_brackets[0].create_new_round(self.matches_of_current_elimination_round, self.stage)
 
         for fencer in self.fencers:
             fencer.approved_tableau = False
+
+        logger.info(f"Stage advanced to {self.stage.name}.")
 
     
     # ---| Search |---
@@ -1210,66 +1224,122 @@ class Tournament:
     # ---| Simulation |---
 
     def simulate_current(self) -> None:
-        if self.simulation_active:
-            if self.stage == Stage.PRELIMINARY_ROUND:
-                length = len(self.matches_of_current_preliminary_round)
-                for match in self.matches_of_current_preliminary_round:
+        if not self.simulation_active:
+            raise TournamentError("Simulation is not active")
 
-                    self.assign_pistes()
+        for match in (self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches):
 
-                    # Set match active
-                    if match.match_ongoing != True and match.match_completed != True:
+            if not match.match_completed:
+                try:
+                    if not match.match_ongoing or match.wildcard:
                         self.set_active(match.id)
 
-                    if match.match_completed != True:
-                        if random.choice([True, False]) is True:
-                            self.push_score(match.id, 5, random.randint(0, 4))
-                        else:
-                            self.push_score(match.id, random.randint(0, 4), 5)
+                    if not match.wildcard:
+                        score = (15, random.randint(0, 14)) if random.choice([True, False]) else (random.randint(0,14), 15)
+                        self.push_score(match.id, *score)
 
-                    time.sleep(0.01)
-                    # Print status bar
-                    progress = round(self.matches_of_current_preliminary_round.index(match) / length * 20)
+                    progress = round(self.matches_of_current_preliminary_round.index(match) / len(self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches) * 20)
                     print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
+                except Exception as e:
+                    logger.error(e)
+                    continue
 
-                print(f"Simulating... |{'#' * 20}|")
-                print("Simulation Done.")
+            time.sleep(0.01)
+
+        print(f"Simulating... |{'#' * 20}|")
+        logger.info("Simulation Done.")
 
 
-            else:
-                length = len(self.elimination_matches)
-                for match in self.elimination_matches:
+    # ---| Bracket Class |---
+    class Bracket:
+        def __init__(self, matches: List[EliminationMatch], stage: Stage, title: str):
+            self.nodes = []
+            self.stages = [stage]
+            for match in matches:
+                self.nodes.append(self.Node(match, stage, root=True))
+            self.title = title
 
-                    self.assign_pistes()
+        def create_new_round(self, matches: List[EliminationMatch], stage: Stage):
+            self.stages.append(stage)
+            nodes = [self.Node(match, stage) for match in matches]
+            
+            for node in nodes:
+                for established_node in list(filter(lambda x: x.stage == stage.previous_stage(), self.nodes)):
+                    if established_node.match.red in [node.match.red, node.match.green] or established_node.match.green in [node.match.red, node.match.green]:
+                        established_node.assign_child(node)
+                        node.assign_parent(established_node)
+                        logger.debug(f"Assigned {node.match} to {established_node.match}")
+                
+            self.nodes.extend(nodes)
 
-                    if match.match_ongoing != True:
-                        self.set_active(match.id)
 
-                    if match.match_completed != True:
-                        if match.wildcard is True:
-                            continue
-                        if random.choice([True, False]) is True:
-                            self.push_score(match.id, 15, random.randint(0, 14))
-                        else:
-                            self.push_score(match.id, random.randint(0, 14), 15)
+        def map(self):
+            json_map = {
+                "title": self.title,
+            }
+
+            temp_parents_stack = []
+
+            stages_reversed = list(reversed(self.stages))
+
+            for stage in stages_reversed:
+                stage_map = []
+
+                stage_list = list(filter(lambda x: x.stage == stage, self.nodes))
+
+                if len(json_map) > 1:
+                    # Sort in order of temp_child_stack
+                    try:
+                        stage_list = sorted(stage_list, key=lambda x: temp_parents_stack.index(x.id))
+                    except ValueError:
+                        logger.error(f"temp_parents_stack: {temp_parents_stack}")
+                        logger.error(f"stage_list: {[node.id for node in stage_list]}")
+
+                temp_parents_stack = []
+
+                for node in stage_list:
+                    stage_map.append(node.get_info())
+                    if node.parents != []:
+                        temp_parents_stack.extend([parents.id for parents in node.parents])
+                        logger.debug(f"Added {[parents.id for parents in node.parents]} to temp_parents_stack")
+                json_map[str(stage.value)] = stage_map
+                json_map[str(stage.value)].append(stage.name.replace("_", " "))
+
+            return json_map
+
+
+        class Node:
+            def __init__(self, match: EliminationMatch, stage: Stage, root: bool = False):
+                self.id = random_generator.id(8)
+                self.match = match
+                self.stage = stage
+                self.parents = []
+                self.child = None
+                self.root = root
+
+            def assign_child(self, child):
+                self.child = child
+
+            def assign_parent(self, parent):
+                self.parents.append(parent)
+
+            def get_info(self):
+                return {
+                    "node_id": self.id,
+                    "match_id": self.match.id,
+                    "stage": self.stage.name,
+                    "child": self.child.id if self.child else None,
+                    "parents": [parent.id for parent in self.parents] if self.parents else None,
+                    "root": self.root,
                     
-                    # Print status bar
-                    progress = round(self.elimination_matches.index(match) / length * 20)
-                    print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
-
-                print(f"Simulating... |{'#' * 20}|")
-                print("Simulation Done.")
-
-
-
-
-# -------| Different Tournament Class Modes |-------
-
-class KnockoutTournament(Tournament):
-    pass
-
-class PlacementTournament(Tournament):
-    pass
-
-class RepechageTourament(Tournament):
-    pass
+                    "red": self.match.red.short_str,
+                    "red_id": self.match.red.id,
+                    "red_nationality": self.match.red.nationality,
+                    "red_score": self.match.red_score,
+                    "green": self.match.green.short_str,
+                    "green_id": self.match.green.id,
+                    "green_nationality": self.match.green.nationality,
+                    "green_score": self.match.green_score,
+                    "match_started": self.match.match_ongoing_timestamp.strftime("%Y-%m-%d %H:%M:%S") if self.match.match_ongoing_timestamp else "-",
+                    "match_completed": self.match.match_completed_timestamp.strftime("%Y-%m-%d %H:%M:%S") if self.match.match_completed_timestamp else "-",
+                }

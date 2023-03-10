@@ -12,3 +12,9 @@ class PisteError(Exception):
 
 class OccupiedPisteError(PisteError):
     pass
+
+class StageError(Exception):
+    pass
+
+class TournamentError(Exception):
+    pass
