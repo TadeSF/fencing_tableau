@@ -145,6 +145,9 @@
     <span class="c1"># add ch to logger</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+
+    <span class="c1"># Log the start of the server</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Server started&#39;</span><span class="p">)</span>
     
 <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
     <span class="k">pass</span>
@@ -471,8 +474,11 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">!=</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">gunicorn_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;gunicorn.error&#39;</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="n">gunicorn_logger</span><span class="o">.</span><span class="n">handlers</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">gunicorn_logger</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="n">gunicorn_logger</span><span class="o">.</span><span class="n">handlers</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">gunicorn_logger</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running in Gunicorn&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running in Flask&quot;</span><span class="p">)</span>
 
 <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_SERVER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;smtp.gmx.net&#39;</span>
 <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAIL_PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">465</span>
@@ -507,7 +513,6 @@
     <span class="c1"># user_agent = request.headers.get(&quot;User-Agent&quot;)</span>
     <span class="c1"># if &quot;mobile&quot; in user_agent.lower() and request.args.get(&#39;no_mobile&#39;) is None:</span>
     <span class="c1">#     return redirect(url_for(&#39;mobile_index&#39;))</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Serving index.html&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">APP_VERSION</span><span class="p">)</span></div>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/fencer-login&#39;</span><span class="p">)</span>
@@ -1057,8 +1062,6 @@
         <span class="n">name</span> <span class="o">=</span> <span class="n">search</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tournament_exists</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tournament not found&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Tournament not found&#39;</span><span class="p">}),</span> <span class="mi">404</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
@@ -1109,17 +1112,17 @@
 <span class="c1"># ------- API --------</span>
 
 <span class="c1"># --- Error Responses ---</span>
-<span class="k">def</span> <span class="nf">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT_ERROR&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;An error occured&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;DEFAULT_ERROR&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;An error occured&quot;</span><span class="p">):</span>
     <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;code&#39;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">message</span><span class="p">}}</span>
     <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">response</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;exception&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">traceback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">response</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">][</span><span class="s2">&quot;traceback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">traceback</span>
 
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="n">status_code</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">tournament_not_found_error</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;TOURNAMENT_NOT_FOUND&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Tournament not found&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">404</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;TOURNAMENT_NOT_FOUND&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Tournament not found&quot;</span><span class="p">)</span>
 
 <span class="c1"># --- Dashboard ---</span>
 
@@ -1149,7 +1152,7 @@
             <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">(),</span> <span class="mi">404</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_matches</span><span class="p">())</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches/set_active&#39;, methods=[&#39;POST&#39;])</span>
@@ -1165,6 +1168,10 @@
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">(),</span> <span class="mi">404</span>
         
+        <span class="c1"># Check if logged in as referee or master</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;referee&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s1">&#39;master&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tournament</span><span class="o">.</span><span class="n">allow_fencers_to_start_matches</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;User must be logged in to input Results!&quot;</span><span class="p">),</span> <span class="mi">401</span>
+        
         <span class="n">override_flag</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;override_flag&#39;</span><span class="p">]</span>
 
         <span class="n">tournament</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">match_id</span><span class="p">,</span> <span class="n">override_flag</span><span class="p">)</span>
@@ -1172,10 +1179,10 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="n">OccupiedPisteError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;PISTE_OCCUPIED&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Piste is already in use by another match.&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">400</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;PISTE_OCCUPIED&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Piste is already in use by another match.&quot;</span><span class="p">),</span> <span class="mi">400</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span></div>
         
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches/push_score&#39;, methods=[&#39;POST&#39;])</span>
 <div class="viewcode-block" id="push_score"><a class="viewcode-back" href="../main.html#main.push_score">[docs]</a><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/matches/push-score&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1192,8 +1199,8 @@
         
 
         <span class="c1"># Check if logged in as referee or master</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;referee&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s1">&#39;master&#39;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;User must be logged in to input Results!&quot;</span><span class="p">,</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">401</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;referee&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s1">&#39;master&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">tournament</span><span class="o">.</span><span class="n">allow_fencers_to_input_scores</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;User must be logged in to input Results!&quot;</span><span class="p">),</span> <span class="mi">401</span>
 
         <span class="n">green_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;green_score&#39;</span><span class="p">])</span>
         <span class="n">red_score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;red_score&#39;</span><span class="p">])</span>
@@ -1203,8 +1210,8 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span></div>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches/prioritize&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/matches/prioritize&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1226,8 +1233,8 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches/assign_piste&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/matches/assign-piste&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1249,8 +1256,8 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches/remove_piste_assignment&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/matches/remove-piste-assignment&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1270,8 +1277,8 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/matches-left&#39;, methods=[&#39;GET&#39;])</span>
 
@@ -1289,8 +1296,8 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;matches_left&quot;</span><span class="p">:</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_matches_left</span><span class="p">()}),</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span></div>
 
 
 <span class="c1"># --- Standings ---</span>
@@ -1315,8 +1322,8 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_standings</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">handedness</span><span class="p">,</span> <span class="n">age_group</span><span class="p">)),</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span></div>
 
 
 <span class="c1"># --- Master Requests ---</span>
@@ -1363,10 +1370,10 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span></div>
 
-<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;tournament_id&gt;/download-results&#39;</span><span class="p">)</span>
+<span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/download-results&#39;)</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/download-results&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
 <span class="k">def</span> <span class="nf">download_results</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1387,8 +1394,8 @@
         <span class="k">return</span> <span class="n">send_file</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;results/</span><span class="si">{</span><span class="n">tournament</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">.zip&#39;</span><span class="p">,</span> <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 
 <span class="c1"># --- Piste ---</span>
@@ -1406,8 +1413,8 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">tournament</span><span class="o">.</span><span class="n">get_piste_status</span><span class="p">(</span><span class="n">piste</span><span class="p">))</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/piste-overview/toggle-piste&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/piste/toggle&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1427,7 +1434,7 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
 
 
@@ -1456,8 +1463,8 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">fencer_hub_information</span><span class="p">)</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/fencer/&lt;fencer_id&gt;/change_attribute&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/fencer/change-attribute&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1476,25 +1483,25 @@
         <span class="n">logged_in_as_master</span> <span class="o">=</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s1">&#39;master&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">logged_in_as_fencer</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">logged_in_as_master</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client is not logged in. As Master or corresponding Fencer&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client is not logged in. As Master or corresponding Fencer&#39;</span><span class="p">),</span> <span class="mi">401</span>
 
 
         <span class="n">attribute</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;attribute&#39;</span><span class="p">]</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">attribute</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;club&quot;</span><span class="p">,</span> <span class="s2">&quot;nationality&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;handedness&quot;</span><span class="p">,</span> <span class="s2">&quot;age&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ATTRIBUTE_NAME&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client provided an invalid attribute name. Attribute name must be one of these: [&quot;name&quot;, &quot;club&quot;, &quot;nationality&quot;, &quot;gender&quot;, &quot;handedness&quot;, &quot;age&quot;]&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ATTRIBUTE_NAME&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client provided an invalid attribute name. Attribute name must be one of these: [&quot;name&quot;, &quot;club&quot;, &quot;nationality&quot;, &quot;gender&quot;, &quot;handedness&quot;, &quot;age&quot;]&#39;</span><span class="p">),</span> <span class="mi">400</span>
         
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ATTRIBUTE_VALUE&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client provided an invalid attribute value. Attribute value must not be None.&#39;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ATTRIBUTE_VALUE&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Client provided an invalid attribute value. Attribute value must not be None.&#39;</span><span class="p">),</span> <span class="mi">400</span>
     
         <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_id</span><span class="p">(</span><span class="n">fencer_id</span><span class="p">)</span><span class="o">.</span><span class="n">change_attribute</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 <span class="c1"># @app.route(&#39;/&lt;tournament_id&gt;/tableau/approve&#39;, methods=[&#39;POST&#39;])</span>
 <span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/fencer/approve-tableau&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span> <span class="c1"># BEARBEITET</span>
@@ -1517,7 +1524,7 @@
 
         <span class="c1"># Check if Cookie for logged in fencer exists</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;fencer&quot;</span><span class="p">,</span> <span class="n">fencer_id</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Client is not logged in as fencer&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Client is not logged in as fencer&quot;</span><span class="p">),</span> <span class="mi">401</span>
 
         <span class="c1"># Check if Cookie with device_id exists</span>
         <span class="k">if</span> <span class="s1">&#39;device_id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="p">:</span>
@@ -1533,8 +1540,74 @@
         <span class="k">return</span> <span class="n">response</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
+    
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/fencer/disqualify&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_disqualify_fencer_information</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">)</span>
+        <span class="n">start_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_number&#39;</span><span class="p">)</span>
+
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">(),</span> <span class="mi">404</span>
+        
+        <span class="c1"># Check if logged in as master</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;master&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Client is not logged in as master&quot;</span><span class="p">),</span> <span class="mi">401</span>
+        
+        <span class="n">fencer</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_start_number</span><span class="p">(</span><span class="n">start_number</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fencer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;FENCER_NOT_FOUND&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Fencer with start number </span><span class="si">{}</span><span class="s2"> not found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_number</span><span class="p">)),</span> <span class="mi">404</span>
+        
+        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">fencer</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">fencer</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;start_number&quot;</span><span class="p">:</span> <span class="n">fencer</span><span class="o">.</span><span class="n">start_number</span><span class="p">,</span>
+            <span class="s2">&quot;club&quot;</span><span class="p">:</span> <span class="n">fencer</span><span class="o">.</span><span class="n">club</span><span class="p">,</span>
+            <span class="s2">&quot;nationality&quot;</span><span class="p">:</span> <span class="n">fencer</span><span class="o">.</span><span class="n">nationality</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="mi">200</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/fencer/disqualify&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">disqualify_fencer</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">)</span>
+        <span class="n">fencer_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fencer_id&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        
+        <span class="n">reason</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">]</span>
+
+        <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tournament_not_found_error</span><span class="p">(),</span> <span class="mi">404</span>
+        
+        <span class="c1"># Check if logged in as master</span>
+        <span class="c1"># if not check_logged_in(request, tournament_id, &quot;master&quot;):</span>
+        <span class="c1">#     return default_error(code=&quot;NOT_LOGGED_IN&quot;, message=&quot;Client is not logged in as master&quot;), 401</span>
+        
+        <span class="n">tournament</span><span class="o">.</span><span class="n">disqualify_fencer</span><span class="p">(</span><span class="n">fencer_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="n">save_tournament</span><span class="p">(</span><span class="n">tournament</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
+
 
 
 <span class="c1"># --- Tableau ---</span>
@@ -1557,8 +1630,8 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
     
 
 <span class="c1"># --- Brackets ---</span>
@@ -1579,7 +1652,7 @@
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">response</span><span class="p">),</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
 
 
@@ -1602,8 +1675,8 @@
         <span class="k">return</span> <span class="p">{},</span> <span class="mi">200</span>
     
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span> <span class="n">status_code</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()),</span> <span class="mi">500</span>
 
 
 <span class="c1"># ------- Docs -------</span>
@@ -1691,18 +1764,18 @@
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;logs/cookies.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">cookies</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Exception: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Exception: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 
             <span class="k">if</span> <span class="n">cookie</span> <span class="ow">in</span> <span class="n">cookies</span><span class="p">:</span>
                 <span class="n">tournament_logs</span> <span class="o">=</span> <span class="n">log_parser</span><span class="o">.</span><span class="n">parse_tournament_log</span><span class="p">()</span>
-                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;tournament_logs&quot;</span><span class="p">:</span> <span class="n">tournament_logs</span><span class="p">}),</span> <span class="mi">200</span>
         
 
         <span class="k">if</span> <span class="n">password</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">check_password</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">PASSWORD_LOGS</span><span class="p">):</span>
                 <span class="n">tournament_logs</span> <span class="o">=</span> <span class="n">log_parser</span><span class="o">.</span><span class="n">parse_tournament_log</span><span class="p">()</span>
-                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logs accessed&#39;</span><span class="p">)</span>
                 <span class="n">cookie</span> <span class="o">=</span> <span class="n">random_generator</span><span class="o">.</span><span class="n">cookie</span><span class="p">()</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;tournament_logs&quot;</span><span class="p">:</span> <span class="n">tournament_logs</span><span class="p">}),</span> <span class="mi">200</span><span class="p">)</span>
                 <span class="n">response</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s1">&#39;logs_cookie&#39;</span><span class="p">,</span> <span class="n">cookie</span><span class="p">)</span>
@@ -1710,14 +1783,14 @@
                     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cookie</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">response</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wrong password for logs&#39;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Wrong password for logs&#39;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Wrong password&#39;</span><span class="p">}),</span> <span class="mi">401</span>
             
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;No password or cookie&#39;</span><span class="p">}),</span> <span class="mi">401</span>
         
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="c1"># Log the error and traceback</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Exception: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Exception: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">500</span>
 
 

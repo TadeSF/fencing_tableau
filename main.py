@@ -71,6 +71,9 @@ try: # Error Catch for Sphinx Documentation
     # add ch to logger
     logger.addHandler(ch)
     logger.addHandler(fh)
+
+    # Log the start of the server
+    logger.info('Server started')
     
 except FileNotFoundError:
     pass
@@ -397,8 +400,11 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    logger.handlers = gunicorn_logger.handlers
+    logger.setLevel(gunicorn_logger.level)
+    print("Running in Gunicorn")
+else:
+    print("Running in Flask")
 
 app.config['MAIL_SERVER'] = 'smtp.gmx.net'
 app.config['MAIL_PORT'] = 465
@@ -433,7 +439,6 @@ def index():
     # user_agent = request.headers.get("User-Agent")
     # if "mobile" in user_agent.lower() and request.args.get('no_mobile') is None:
     #     return redirect(url_for('mobile_index'))
-    app.logger.info("Serving index.html")
     return render_template('index.html', version=APP_VERSION)
 
 @app.route('/fencer-login')
@@ -983,8 +988,6 @@ def login_fencer():
         name = search
 
     if not check_tournament_exists(tournament_id):
-        print(tournament_id)
-        print("Tournament not found")
         return jsonify({'error': 'Tournament not found'}), 404
     else:
         tournament = get_tournament(tournament_id)
@@ -1035,17 +1038,17 @@ def login_referee():
 # ------- API --------
 
 # --- Error Responses ---
-def default_error(e: Exception = None, traceback = None, code = "DEFAULT_ERROR", message = "An error occured", status_code = 500):
+def default_error(e: Exception = None, traceback = None, code = "DEFAULT_ERROR", message = "An error occured"):
     response = {"error": {'code': code, 'message': message}}
     if e is not None:
         response["error"]["exception"] = str(e)
     if traceback is not None:
         response["error"]["traceback"] = traceback
 
-    return jsonify(response), status_code
+    return jsonify(response)
 
 def tournament_not_found_error():
-    return default_error(code = "TOURNAMENT_NOT_FOUND", message = "Tournament not found", status_code = 404)
+    return default_error(code = "TOURNAMENT_NOT_FOUND", message = "Tournament not found")
 
 # --- Dashboard ---
 
@@ -1075,7 +1078,7 @@ def get_matches():
             return tournament_not_found_error(), 404
         return jsonify(tournament.get_matches())
     except Exception as e:
-        app.logger.error(e, exc_info=True)
+        logger.error(e, exc_info=True)
         return default_error(e)
 
 # @app.route('/<tournament_id>/matches/set_active', methods=['POST'])
@@ -1091,6 +1094,10 @@ def set_active():
         if tournament is None:
             return tournament_not_found_error(), 404
         
+        # Check if logged in as referee or master
+        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_start_matches:
+            return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!"), 401
+        
         override_flag = request.json['override_flag']
 
         tournament.set_active(match_id, override_flag)
@@ -1098,10 +1105,10 @@ def set_active():
         return {}, 200
     
     except OccupiedPisteError:
-        return default_error(code = "PISTE_OCCUPIED", message = "Piste is already in use by another match.", status_code = 400)
+        return default_error(code = "PISTE_OCCUPIED", message = "Piste is already in use by another match."), 400
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
         
 # @app.route('/<tournament_id>/matches/push_score', methods=['POST'])
 @app.route('/api/matches/push-score', methods=['POST']) # BEARBEITET
@@ -1118,8 +1125,8 @@ def push_score():
         
 
         # Check if logged in as referee or master
-        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master'):
-            return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!", status_code = 401)
+        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_input_scores:
+            return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!"), 401
 
         green_score = int(request.json['green_score'])
         red_score = int(request.json['red_score'])
@@ -1129,8 +1136,8 @@ def push_score():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc())
 
 # @app.route('/<tournament_id>/matches/prioritize', methods=['POST'])
 @app.route('/api/matches/prioritize', methods=['POST']) # BEARBEITET
@@ -1152,8 +1159,8 @@ def prioritize():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/matches/assign_piste', methods=['POST'])
 @app.route('/api/matches/assign-piste', methods=['POST']) # BEARBEITET
@@ -1175,8 +1182,8 @@ def assign_piste():
         return {}, 200
 
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/matches/remove_piste_assignment', methods=['POST'])
 @app.route('/api/matches/remove-piste-assignment', methods=['POST']) # BEARBEITET
@@ -1196,8 +1203,8 @@ def remove_piste_assignment():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/matches-left', methods=['GET'])
 
@@ -1215,8 +1222,8 @@ def matches_left():
         return jsonify({"matches_left": tournament.get_matches_left()}), 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 
 # --- Standings ---
@@ -1241,8 +1248,8 @@ def get_standings():
         return jsonify(tournament.get_standings(group, gender, handedness, age_group)), 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 
 # --- Master Requests ---
@@ -1289,10 +1296,10 @@ def next_stage():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
-@app.route('/<tournament_id>/download-results')
+# @app.route('/<tournament_id>/download-results')
 @app.route('/api/download-results', methods=['GET']) # BEARBEITET
 def download_results():
     """
@@ -1313,8 +1320,8 @@ def download_results():
         return send_file(f'results/{tournament.id}.zip', as_attachment=True)
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 
 # --- Piste ---
@@ -1332,8 +1339,8 @@ def piste_overview_update():
         return jsonify(tournament.get_piste_status(piste))
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/piste-overview/toggle-piste', methods=['POST'])
 @app.route('/api/piste/toggle', methods=['POST']) # BEARBEITET
@@ -1353,7 +1360,7 @@ def toggle_piste():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
+        logger.error(e, exc_info=True)
         return default_error(e, traceback.format_exc())
 
 
@@ -1382,8 +1389,8 @@ def get_fencer():
         return jsonify(fencer_hub_information)
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/fencer/<fencer_id>/change_attribute', methods=['POST'])
 @app.route('/api/fencer/change-attribute', methods=['POST']) # BEARBEITET
@@ -1402,25 +1409,25 @@ def change_fencer_attribute():
         logged_in_as_master = check_logged_in(request, tournament_id, 'master')
 
         if not logged_in_as_fencer and not logged_in_as_master:
-            return default_error(code="NOT_LOGGED_IN", message='Client is not logged in. As Master or corresponding Fencer', status_code=401)
+            return default_error(code="NOT_LOGGED_IN", message='Client is not logged in. As Master or corresponding Fencer'), 401
 
 
         attribute = request.json['attribute']
         value = request.json['value']
 
         if attribute not in ["name", "club", "nationality", "gender", "handedness", "age"]:
-            return default_error(code="INVALID_ATTRIBUTE_NAME", message='Client provided an invalid attribute name. Attribute name must be one of these: ["name", "club", "nationality", "gender", "handedness", "age"]', status_code=400)
+            return default_error(code="INVALID_ATTRIBUTE_NAME", message='Client provided an invalid attribute name. Attribute name must be one of these: ["name", "club", "nationality", "gender", "handedness", "age"]'), 400
         
         if value is None:
-            return default_error(code="INVALID_ATTRIBUTE_VALUE", message='Client provided an invalid attribute value. Attribute value must not be None.', status_code=400)
+            return default_error(code="INVALID_ATTRIBUTE_VALUE", message='Client provided an invalid attribute value. Attribute value must not be None.'), 400
     
         tournament.get_fencer_by_id(fencer_id).change_attribute(attribute, value)
         save_tournament(tournament)
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 # @app.route('/<tournament_id>/tableau/approve', methods=['POST'])
 @app.route('/api/fencer/approve-tableau', methods=['POST']) # BEARBEITET
@@ -1443,7 +1450,7 @@ def approve_tableau():
 
         # Check if Cookie for logged in fencer exists
         if not check_logged_in(request, tournament_id, "fencer", fencer_id):
-            return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as fencer", status_code=401)
+            return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as fencer"), 401
 
         # Check if Cookie with device_id exists
         if 'device_id' in request.cookies:
@@ -1459,8 +1466,74 @@ def approve_tableau():
         return response
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
+    
+@app.route('/api/fencer/disqualify', methods=['GET'])
+def get_disqualify_fencer_information():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        start_number = request.args.get('start_number')
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error(), 404
+        
+        # Check if logged in as master
+        if not check_logged_in(request, tournament_id, "master"):
+            return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as master"), 401
+        
+        fencer = tournament.get_fencer_by_start_number(start_number)
+
+        if fencer is None:
+            return default_error(code="FENCER_NOT_FOUND", message="Fencer with start number {} not found".format(start_number)), 404
+        
+        response = {
+            "id": fencer.id,
+            "name": fencer.name,
+            "start_number": fencer.start_number,
+            "club": fencer.club,
+            "nationality": fencer.nationality,
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
+
+
+@app.route('/api/fencer/disqualify', methods=['POST'])
+def disqualify_fencer():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        fencer_id = request.args.get('fencer_id')
+
+        data = request.get_json()
+        
+        reason = data['reason']
+
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error(), 404
+        
+        # Check if logged in as master
+        # if not check_logged_in(request, tournament_id, "master"):
+        #     return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as master"), 401
+        
+        tournament.disqualify_fencer(fencer_id, reason)
+        save_tournament(tournament)
+
+        return {}, 200
+    
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
+
 
 
 # --- Tableau ---
@@ -1483,8 +1556,8 @@ def get_tableau():
         return jsonify(response), 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
     
 
 # --- Brackets ---
@@ -1505,7 +1578,7 @@ def get_brackets():
         return jsonify(response), 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
+        logger.error(e, exc_info=True)
         return default_error(e, traceback.format_exc())
 
 
@@ -1528,8 +1601,8 @@ def simulate():
         return {}, 200
     
     except Exception as e:
-        app.logger.error(e, exc_info=True)
-        return default_error(e, traceback.format_exc(), status_code = 500)
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 
 # ------- Docs -------
@@ -1617,18 +1690,18 @@ def get_logs():
                 with open('logs/cookies.txt', 'r') as f:
                     cookies = f.read().splitlines()
             except Exception as e:
-                app.logger.error('Exception: %s', e, exc_info=True)
+                logger.error('Exception: %s', e, exc_info=True)
                 
             if cookie in cookies:
                 tournament_logs = log_parser.parse_tournament_log()
-                app.logger.info('Logs accessed')
+                logger.info('Logs accessed')
                 return jsonify({"success": True, "tournament_logs": tournament_logs}), 200
         
 
         if password != None:
             if check_password(password, PASSWORD_LOGS):
                 tournament_logs = log_parser.parse_tournament_log()
-                app.logger.info('Logs accessed')
+                logger.info('Logs accessed')
                 cookie = random_generator.cookie()
                 response = make_response(jsonify({"success": True, "tournament_logs": tournament_logs}), 200)
                 response.set_cookie('logs_cookie', cookie)
@@ -1636,14 +1709,14 @@ def get_logs():
                     f.write(cookie + '\n')
                 return response
             else:
-                app.logger.info('Wrong password for logs')
+                logger.info('Wrong password for logs')
                 return jsonify({'error': 'Wrong password'}), 401
             
         return jsonify({'error': 'No password or cookie'}), 401
         
     except Exception as e:
         # Log the error and traceback
-        app.logger.error('Exception: %s', e, exc_info=True)
+        logger.error('Exception: %s', e, exc_info=True)
         return jsonify({"success": False, "message": str(e)}), 500
 
 

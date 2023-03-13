@@ -272,6 +272,10 @@ class Fencer:
 
         self.age: int = age
 
+        self.disqualified = False
+        self.disq_save_nationality = None # This stores the nationality of the fencer in case he/she is disqualified
+        self.disq_reason = None # This stores the reason for disqualification
+
 
         # Grouping information
         self.prelim_group = None
@@ -398,6 +402,18 @@ class Fencer:
         self.in_match = True
         self.is_staged = False
 
+    def disqualify(self, reason: str = None):
+        self.disqualified = True
+        self.disq_save_nationality = self.nationality
+        self.nationality = "DQD"
+        self.disq_reason = reason
+    
+    def revoke_disqualification(self):
+        self.disqualified = False
+        self.nationality = self.disq_save_nationality
+        self.disq_save_nationality = None
+
+
     # statistics
     def update_statistics(self, match, win: bool, opponent, points_for: int, points_against: int, round: int = 0, skip_last_matches: bool = False) -> None:
         """
@@ -487,10 +503,10 @@ class Fencer:
 
 
     
-    def update_statistics_wildcard_game(self, match):
+    def update_statistics_wildcard_or_disq_game(self, match, disq: bool = False):
         self.last_matches.append({
             "win": True,
-            "opponent": "Wildcard",
+            "opponent": "Wildcard" if not disq else "Disqualified Opponent",
             "match": match.id,
         })
 

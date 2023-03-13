@@ -101,7 +101,7 @@ def matchmaker_groups(fencers: List[Fencer], stage: Stage, prelim_round: int) ->
     for i in range(0, len(fencers)):
         for j in range(i + 1, len(fencers)):
             # Randomize the color of the fencers
-            if not type(fencers[i]) == "Wildcard" and not type(fencers[j]) == "Wildcard":
+            if type(fencers[i]) != "Wildcard" and type(fencers[j]) != "Wildcard":
                 red = fencers[i] if random.randint(0, 1) == 0 else fencers[j]
                 green = fencers[j] if red == fencers[i] else fencers[i]
             # Create match
@@ -161,7 +161,7 @@ def create_group_matches(fencers: List[List[Fencer]], stage: Stage, groups: int 
 def sorting_fencers(fencers: List[Fencer]) -> List[Fencer]:
     # This method sorts fencers by overall score
     # sort by stage, win percentage, points difference, points for, points against
-    fencers = sorted(fencers, key=lambda fencer: (-(fencer.final_rank if fencer.final_rank != None else float('0')), fencer.win_percentage(), fencer.points_difference_int(), fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"]), reverse=True)
+    fencers = sorted(fencers, key=lambda fencer: (-(fencer.disqualified), -(fencer.final_rank if fencer.final_rank != None else float('0')), fencer.win_percentage(), fencer.points_difference_int(), fencer.statistics["overall"]["points_for"], fencer.statistics["overall"]["points_against"]), reverse=True)
     return fencers
 
 
@@ -214,7 +214,7 @@ def next_tree_node(fencers_list: List[List[Fencer]], stage, mode: Literal["ko", 
 
             # sort the sublist by elimination_value and who won
             # That means, that all we have now a list of fencers where each fencer with uneven index advances (1, 3, 5, ...), each fencer with even index is eliminated.
-            sublist = sorted(sublist, key=lambda fencer: (fencer.elimination_value, fencer.last_match_won))
+            sublist = sorted(sublist, key=lambda fencer: (fencer.elimination_value if fencer.elimination_value else float('inf'), fencer.last_match_won if fencer.last_match_won else False)) # TODO check if this works (float('inf')
 
             # Iterate over the elements in the sublist
             for i in range(len(sublist)):
@@ -493,7 +493,7 @@ class Tournament:
                 and
                 match.match_completed == False
                 and
-                match.wildcard == False
+                match.wildcard_or_disq == False
                 and
 
                 not (
@@ -1091,6 +1091,39 @@ class Tournament:
         return {"success": False, "message": "Tableau not approved"}
 
 
+    def disqualify_fencer(self, fencer_id, reason = None):
+        fencer = self.get_fencer_by_id(fencer_id)
+        fencer.disqualify(reason)
+
+        logger.info(f"Fencer {fencer} disqualified for '{reason if reason else 'No reason given'}'")
+
+        # All unfinished matches of the fencer are automatically finished
+        for match in self.all_matches:
+            if match.match_completed == False:
+                if match.green.id == fencer_id:
+                    match.match_completed = True
+                    match.red_score = 1
+                    match.wildcard_or_disq = True
+                    match.red.update_statistics_wildcard_or_disq_game(self, disq = True)
+                elif match.red.id == fencer_id:
+                    match.match_completed = True
+                    match.green_score = 1
+                    match.wildcard_or_disq = True
+                    match.green.update_statistics_wildcard_or_disq_game(self, disq = True)
+
+
+    def revoke_disqulification(self, fencer_id):
+        fencer = self.get_fencer_by_id(fencer_id)
+        fencer.revoke_disqualification()
+        logger.info(f"Disqualification of fencer {fencer} revoked")
+                
+                    
+
+
+
+
+
+
     # --- General Information ---
     def get_num_groups(self) -> int:
         if self.stage == Stage.PRELIMINARY_ROUND:
@@ -1231,17 +1264,17 @@ class Tournament:
 
             if not match.match_completed:
                 try:
-                    if not match.match_ongoing or match.wildcard:
+                    if not match.match_ongoing or match.wildcard_or_disq:
                         self.set_active(match.id)
 
-                    if not match.wildcard:
+                    if not match.wildcard_or_disq:
                         score = (15, random.randint(0, 14)) if random.choice([True, False]) else (random.randint(0,14), 15)
                         self.push_score(match.id, *score)
 
-                    progress = round(self.matches_of_current_preliminary_round.index(match) / len(self.matches_of_current_preliminary_round if self.stage == Stage.PRELIMINARY_ROUND else self.elimination_matches) * 20)
+                    progress = round((self.matches_of_current_preliminary_round.index(match) / len(self.matches_of_current_preliminary_round)) if self.stage == Stage.PRELIMINARY_ROUND else (self.elimination_matches.index(match) / len(self.elimination_matches)) * 20)
                     print(f"Simulating... |{'#' * progress}{' ' * (20 - progress)}|", end="\r")
                 except Exception as e:
-                    logger.error(e)
+                    logger.error(e, exc_info=True)
                     continue
 
             time.sleep(0.01)

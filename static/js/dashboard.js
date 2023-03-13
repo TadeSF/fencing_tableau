@@ -249,7 +249,7 @@ function download_results() {
     results_button.firstChild.classList.add("fa-spin");
     results_button.firstChild.classList.add("fa-spinner");
 
-    window.open("/" + tournament_id + "/download-results", "_blank");
+    window.open("/api/download-results?tournament_id=" + tournament_id, "_blank");
 
     setTimeout(function() {
         results_button.disabled = false;

@@ -346,6 +346,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">age</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">disqualified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disq_save_nationality</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># This stores the nationality of the fencer in case he/she is disqualified</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disq_reason</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># This stores the reason for disqualification</span>
+
 
         <span class="c1"># Grouping information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prelim_group</span> <span class="o">=</span> <span class="kc">None</span>
@@ -472,6 +476,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">in_match</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_staged</span> <span class="o">=</span> <span class="kc">False</span>
 
+    <span class="k">def</span> <span class="nf">disqualify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disqualified</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disq_save_nationality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span> <span class="o">=</span> <span class="s2">&quot;DQD&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disq_reason</span> <span class="o">=</span> <span class="n">reason</span>
+    
+    <span class="k">def</span> <span class="nf">revoke_disqualification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disqualified</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nationality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disq_save_nationality</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disq_save_nationality</span> <span class="o">=</span> <span class="kc">None</span>
+
+
     <span class="c1"># statistics</span>
 <div class="viewcode-block" id="Fencer.update_statistics"><a class="viewcode-back" href="../fencer.html#fencer.Fencer.update_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">update_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">win</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">opponent</span><span class="p">,</span> <span class="n">points_for</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">points_against</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">skip_last_matches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -561,10 +577,10 @@
 
 
     
-    <span class="k">def</span> <span class="nf">update_statistics_wildcard_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">update_statistics_wildcard_or_disq_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">,</span> <span class="n">disq</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_matches</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
             <span class="s2">&quot;win&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;opponent&quot;</span><span class="p">:</span> <span class="s2">&quot;Wildcard&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;opponent&quot;</span><span class="p">:</span> <span class="s2">&quot;Wildcard&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">disq</span> <span class="k">else</span> <span class="s2">&quot;Disqualified Opponent&quot;</span><span class="p">,</span>
             <span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="n">match</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="p">})</span>
 

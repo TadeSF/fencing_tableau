@@ -52,7 +52,7 @@ def parse_tournament_log() -> dict:
                 'datetime': "0000-00-00 00:00:00,000",
                 'module': "parser",
                 'level': "ERROR",
-                'message': "Line skipped, could not be parsed",
+                'message': "Line skipped, could not be parsed. Raw:\n" + line,
                 'traceback': None
             }
             loglines.append(logline)

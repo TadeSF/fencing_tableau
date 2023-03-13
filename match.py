@@ -55,7 +55,7 @@ class Match:
         self.match_ongoing_timestamp: datetime = None
         self.match_completed = False
         self.match_completed_timestamp: datetime = None
-        self.wildcard = False
+        self.wildcard_or_disq = False
 
         # Fencer Information
         self.green = fencer_green
@@ -67,6 +67,30 @@ class Match:
         # Score
         self.green_score = 0
         self.red_score = 0
+
+        # If disqualified, other fencer wins by default
+        if self.green.disqualified and self.red.disqualified:
+            # If both fencers are disqualified, pick a winner randomly
+            self.match_completed = True
+            self.wildcard_or_disq = True
+            if random.randint(0, 1) == 0:
+                self.green_score = 1
+                self.green.update_statistics_wildcard_or_disq_game(self)
+            else:
+                self.red_score = 1
+                self.red.update_statistics_wildcard_or_disq_game(self)
+
+        elif self.green.disqualified:
+            self.match_completed = True
+            self.red_score = 1
+            self.wildcard_or_disq = True
+            self.red.update_statistics_wildcard_or_disq_game(self)
+
+        elif self.red.disqualified:
+            self.match_completed = True
+            self.green_score = 1
+            self.wildcard_or_disq = True
+            self.green.update_statistics_wildcard_or_disq_game(self)
 
         # Logging
         logger.info(f"Match created: {self.id}, {self.green.name} - {self.red.name}")
@@ -92,7 +116,7 @@ class Match:
             "piste": self.piste,
             "match_ongoing": self.match_ongoing,
             "match_completed": self.match_completed,
-            "wildcard": self.wildcard,
+            "wildcard": self.wildcard_or_disq,
             "green": self.green,
             "red": self.red,
             "stage": self.stage,
@@ -123,7 +147,7 @@ class Match:
     def piste_str(self) -> str:
         if self.piste != None:
             return str(self.piste.number) 
-        elif self.wildcard:
+        elif self.wildcard_or_disq:
             return "-"
         else:
             return "TBA"
@@ -192,12 +216,12 @@ class EliminationMatch(Match):
             self.match_completed = True
             self.red_score = 1
             self.wildcard = True
-            self.red.update_statistics_wildcard_game(self)
+            self.red.update_statistics_wildcard_or_disq_game(self)
         elif self.red.name == "Wildcard":
             self.match_completed = True
             self.green_score = 1
             self.wildcard = True
-            self.green.update_statistics_wildcard_game(self)
+            self.green.update_statistics_wildcard_or_disq_game(self)
 
     def input_results(self, green_score: int, red_score: int, skip_update_statistics: bool = False) -> None:
         super().input_results(green_score, red_score)

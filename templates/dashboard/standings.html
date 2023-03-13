@@ -26,26 +26,34 @@
             <select id="group_filter" data-num_groups="{{ num_groups }}" data-requested_group="{{ requested_group }}"
               onchange="get_standings()">
               <option value="">All Groups</option>
+              <option disabled>–</option>
             </select>
             <select id="gender_filter" onchange="get_standings()">
               <option value="">All Genders</option>
+              <option disabled>–</option>
               <option value="M">Male</option>
               <option value="F">Female</option>
               <option value="D">Diverse</option>
             </select>
             <select id="handedness_filter" onchange="get_standings()">
               <option value="">All Handedness</option>
+              <option disabled>–</option>
               <option value="R">Right</option>
               <option value="L">Left</option>
             </select>
             <select id="age_filter" onchange="get_standings()">
               <option value="">All Ages</option>
-              <option value="0-17">Under 18</option>
-              <option value="18-23">18-23</option>
-              <option value="24-30">24-30</option>
-              <option value="31-40">31-40</option>
-              <option value="41-50">41-50</option>
-              <option value="51-100">Over 50</option>
+              <option disabled>–</option>
+              <option value="0-19">All Juniors (-19)</option>
+              <option value="0-17">U17 Juniors</option>
+              <option value="18-19">U19 Juniors</option>
+              <option disabled>–</option>
+              <option value="20-39">Seniors (20-39)</option>
+              <option disabled>–</option>
+              <option value="40-99">All Veterans (40+)</option>
+              <option value="40-49">40s Veterans</option>
+              <option value="50-59">50s Veterans</option>
+              <option value="60-69">60s Veterans</option>
             </select>
           </form>
         </div>

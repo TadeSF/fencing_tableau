@@ -15,6 +15,8 @@ let StandingsChart;
 let DifferenceChart;
 let DifferenceMatchChart;
 
+
+
 function get_flag(country) {
     return new Promise((resolve, reject) => {
         // Check if the file is already in cache
@@ -678,7 +680,7 @@ function startMatch() {
         headers: {
             "Content-Type": "application/json",
         },
-        body: {"override_flag": "false"},
+        body: JSON.stringify({"override_flag": false}),
     })
         .then((response) => response.json())
         .then((data) => {
@@ -704,11 +706,48 @@ function startMatch() {
 }
 
 function inputScore() {
+    let green_score = prompt("Please enter the score for the green fencer:", "0");
+    let red_score = prompt("Please enter the score for the red fencer:", "0");
+    let match_id = document.getElementById("Next-Match-Section").dataset.id;
+    let data = {
+        "green_score": green_score,
+        "red_score": red_score
+    }
 
-}
+    if (green_score == 0 && red_score == 0) {
+        alert("Please enter a valid score (must not be 0)");
+        return;
+    }
 
-function pushScore() {
-
+    fetch("/api/matches/push-score?tournament_id=" + tournament_id + "&match_id=" + match_id, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (Object.keys(data).includes("error")) {
+                console.log(data["error"]);
+                alert_string = "Error: " + data["error"]["code"];
+                if (data["error"]["message"]) {
+                    alert_string += "\n\n" + data["error"]["message"];
+                }
+                alert_string += "\n Do you want to view the logs?";
+                if (data["error"]["exception"]) {
+                    alert_string += "\n\n" + data["error"]["exception"];
+                }
+                var result = window.confirm(alert_string);
+                if (result == true) {
+                    window.open("/logs", "_blank");
+                }
+            } else {
+                alert("Score successfully reported!");
+                update();
+            }
+        }
+    );
 }
 
 function report_issue() {
