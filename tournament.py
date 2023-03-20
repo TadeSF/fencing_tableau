@@ -985,25 +985,32 @@ class Tournament:
             if fencer.id == fencer_id:
                 return fencer
         raise SearchError(f"Fencer with id {fencer_id} not found.")
-
+    
     def get_fencer_id_by_name(self, fencer_name) -> str:
+        return self.get_fencer_by_name(fencer_name).id
+    
+    def get_fencer_by_name(self, fencer_name) -> Fencer:
         best_match = None
         best_ratio = 0
         for fencer in self.fencers:
             ratio = fuzz.token_set_ratio(fencer.name, fencer_name)
             if ratio > best_ratio:
                 best_ratio = ratio
-                best_match = fencer.id
+                best_match = fencer
         if best_ratio >= 70: # to be adjusted according to the desired threshold
             return best_match
         raise SearchError(f"Could not match requested fencer name {fencer_name} to any fencer in the tournament.")
     
     def get_fencer_id_by_start_number(self, start_number) -> str:
+        return self.get_fencer_by_start_number(start_number).id
+    
+    def get_fencer_by_start_number(self, start_number) -> Fencer:
         if start_number < len(self.fencers):
             for fencer in self.fencers:
                 if fencer.start_number == int(start_number):
-                    return fencer.id
-        raise SearchError(f"Could not match requested start number {start_number} to any fencer in the tournament.")
+                    return fencer
+        raise SearchError(
+            f"Could not match requested start number {start_number} to any fencer in the tournament.")
 
     def get_match_by_id(self, match_id) -> Match:
         for match in self.all_matches:
@@ -1138,7 +1145,7 @@ class Tournament:
 
     # ---| Exporting |---
 
-    def export_stage_results(self) -> list:      
+    def export_stage_results(self) -> list:
 
         # Check if the results folder exists, if not create it
         if not os.path.exists("results"):

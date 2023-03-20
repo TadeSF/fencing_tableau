@@ -25,8 +25,8 @@
                         <button id="Brackets" onclick="openBrackets()" title="Open the Bracket View of the Elimination-Round"><i class="fa-solid fa-diagram-project"></i></button>
                         <button id="Results" onclick="download_results()" title="Download all Result-CSV-Files of the tournament" style="display: none;"><i class="fa-solid fa-file-arrow-down"></i></button>
                         <button id="Pistes" onclick="pistes()" title="Open the Piste Overview"><i class="fa-solid fa-location-dot"></i></button>
+                        <button id="Disqualify" onclick="disqualify()" title="Disqualify a Fencer from the Tournament"><i class="fa-solid fa-user-slash"></i></button>
                         <button id="Simulate" onclick="simulate()" title="Simulate Matches. For Testing only."><i class="fa-solid fa-gears"></i></button>
-                        <button id="Home" onclick="home()" title="Go back to the Landing-Page and close the Web-Application"><i class="fa-solid fa-house"></i></button>
                     </div>
                     <div class="header">
                         <div class="options-header">
@@ -113,7 +113,30 @@
         <div id="loading-screen">
             <div id="loading-icon"></div>
         </div>
-    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
-    <script src="/static/js/dashboard.js"></script>
+
+        <div id="disqualify-overlay">
+            <div class="overlay-window">
+                <div class="overlay-header">
+                    <h2>Disqualify Fencer</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="overlay-content">
+                    <form id="search-form">
+                        <input type="text" id="search-input" placeholder="Search fencer by start number or name...">
+                        <button type="submit" id="search-button">Search</button>
+                    </form>
+                    <div id="search-results"></div>
+                    <form id="disqualify-form">
+                        <input type="text" id="disqualify-reason" placeholder="Reason for disqualification...">
+                        <input type="checkbox" id="confirm-checkbox">
+                        <label for="confirm-checkbox">I am sure I want to disqualify the Fencer above from the tournament.</label>
+                        <button type="submit" id="disqualify-button" disabled>Disqualify</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+        <script src="/static/js/dashboard.js"></script>
     </body>
 </html>

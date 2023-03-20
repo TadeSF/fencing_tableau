@@ -1476,6 +1476,11 @@ def get_disqualify_fencer_information():
     try:
         tournament_id = request.args.get('tournament_id')
         start_number = request.args.get('start_number')
+        if start_number is not None:
+            start_number = int(start_number)
+        name_query = request.args.get('name')
+
+        print(name_query)
 
         tournament = get_tournament(tournament_id)
         if tournament is None:
@@ -1485,7 +1490,12 @@ def get_disqualify_fencer_information():
         if not check_logged_in(request, tournament_id, "master"):
             return default_error(code="NOT_LOGGED_IN", message="Client is not logged in as master"), 401
         
-        fencer = tournament.get_fencer_by_start_number(start_number)
+        if start_number:
+            fencer = tournament.get_fencer_by_start_number(start_number)
+        elif name_query:
+            fencer = tournament.get_fencer_by_name(name_query)
+        else:
+            return default_error(code="INVALID_ARGUMENTS", message="Client provided invalid arguments"), 400
 
         if fencer is None:
             return default_error(code="FENCER_NOT_FOUND", message="Fencer with start number {} not found".format(start_number)), 404
@@ -1682,8 +1692,6 @@ def get_logs():
     try:
         password = request.json['password']
         cookie = request.cookies.get('logs_cookie')
-        print(cookie)
-
         
         if cookie != None:
             try:

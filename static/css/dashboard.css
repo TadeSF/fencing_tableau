@@ -35,9 +35,15 @@ button {
   text-decoration: none;
 }
 
-button:hover, button:disabled {
+button:hover {
   box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
   translate: 4px 4px;
+}
+
+button:disabled {
+  box-shadow: 0 0 0px rgba(0, 0, 0, 0.2);
+  background-color: #888;
+  cursor: not-allowed;
 }
 
 .main-wrapper {
@@ -94,6 +100,17 @@ button:hover, button:disabled {
 }
 .options #main_id_container {
   grid-column: span 2;
+}
+.options #Disqualify {
+  background-color: #b90000;
+  color: #ffffff;
+}
+.options #Results {
+  background-color: #004db9;
+  color: #ffffff;
+}
+.options #Advance, .options #Tableau, .options #Brackets, .options #Results, .options #Simulate {
+  display: none;
 }
 
 .header {
@@ -260,7 +277,6 @@ form button[type=submit] {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: 0.3s;
   margin: 0;
   margin-top: 10px;
@@ -268,7 +284,6 @@ form button[type=submit] {
 
 form button[type=submit]:hover {
   background-color: #444;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: 0.3s;
 }
 
@@ -309,6 +324,93 @@ form button[type=submit]:hover {
 
 .span-3 {
   grid-column: span 3;
+}
+
+#disqualify-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+}
+
+.overlay-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 10px;
+  overflow: auto;
+  background-color: #fff;
+  padding: 20px;
+  z-index: 9999;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.overlay-header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overlay-header h2 {
+  margin: 0;
+}
+
+.overlay-content {
+  padding: 10px;
+}
+
+.close {
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#search-form,
+#disqualify-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-gap: 10px;
+  align-items: stretch;
+}
+
+#search-button,
+#disqualify-button {
+  font-size: 1.2rem;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#search-button {
+  background-color: #4CAF50;
+  margin-top: 0;
+}
+
+#search-results {
+  text-align: center;
+}
+
+#disqualify-button {
+  background-color: #b90000;
+  grid-column: 1/3;
+}
+
+#disqualify-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+#disqualify-reason {
+  margin-top: 2rem;
+  grid-column: 1/3;
 }
 
 @media screen and (max-width: 1350px) {

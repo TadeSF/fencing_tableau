@@ -238,9 +238,16 @@ function pistes() {
     window.open("/" + tournament_id + "/piste-overview", "_blank");
 }
 
-function home() {
-    window.location.href = "/";
+function disqualify() {
+    document.getElementById("disqualify-overlay").style.display = "flex";
 }
+
+// Event listener for closing disqualify overlay. When clicked outside of the overlay, it will close.
+document.getElementById("disqualify-overlay").addEventListener("click", function (event) {
+    if (event.target == document.getElementById("disqualify-overlay")) {
+        closeOverlay();
+    }
+});
 
 function download_results() {
     const results_button = document.getElementById("Results");
@@ -271,3 +278,131 @@ window.addEventListener("message", function (event) {
         update();
     }
 });
+
+
+
+
+// Disqualify overlay
+
+// Get overlay and close button elements
+const overlay = document.getElementById("disqualify-overlay");
+const closeButton = document.querySelector(".close");
+
+// Get form and input elements
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const searchButton = document.getElementById("search-button");
+const searchResults = document.getElementById("search-results");
+
+const disqualifyForm = document.getElementById("disqualify-form");
+const confirmCheckbox = document.getElementById("confirm-checkbox");
+const disqualifyButton = document.getElementById("disqualify-button");
+
+// Add event listener to open overlay when disqualify button is clicked
+disqualifyButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    disqualifyFencer();
+});
+
+// Add event listener to close overlay when close button is clicked
+closeButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    closeOverlay();
+});
+
+// Add event listener to search button to perform search
+searchButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    searchFencer();
+});
+
+// Add event listener to search input to enable/disable search button
+searchInput.addEventListener("input", (event) => {
+    const inputValue = event.target.value.trim();
+    searchButton.disabled = !inputValue;
+});
+
+// Add event listener to confirm checkbox to enable/disable disqualify button
+confirmCheckbox.addEventListener("change", (event) => {
+    disqualifyButton.disabled = !event.target.checked;
+});
+
+function disqualifyFencer() {
+    const fencer_id = searchResults.dataset.fencer_id;
+    const reason = document.getElementById("disqualify-reason").value;
+
+    const url = `/api/fencer/disqualify?tournament_id=${tournament_id }&fencer_id=${ fencer_id }`;
+    const options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            reason: reason
+        })
+    };
+
+    fetch(url, options)
+        .then(response => {
+            if (response.ok) {
+                closeOverlay();
+            } else {
+                throw new Error("Disqualification failed");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Disqualification failed");
+        });
+}
+
+function searchFencer() {
+    const startNumber = parseInt(searchInput.value.trim());
+    let name_query = searchInput.value.trim().replace(/\s/g, "%20");
+    let url;
+
+    if (isNaN(startNumber)) {
+        url = `/api/fencer/disqualify?tournament_id=${tournament_id}&name=${name_query}`;
+    } else {
+        url = `/api/fencer/disqualify?tournament_id=${tournament_id}&start_number=${startNumber}`;
+    }
+
+    fetch(url)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Search failed");
+            }
+        })
+        .then(data => {
+            if (data.id) {
+                displayFencer(data);
+            } else {
+                throw new Error("Fencer not found");
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert("Fencer not found");
+        });
+}
+
+function displayFencer(fencer) {
+    const fencerInfo = `
+        <p>Fencer to disqualify found:</p>
+        <p style="font-size: 1.3rem">${fencer.start_number}&emsp;<strong>${fencer.name}</strong> (${fencer.nationality}) – ${fencer.club}</p>
+        <p>A disqualified Fencer is not removed from the tournament, but all remaining matches are automatically lost. The Fencer will be marked as disqualified in the results. There is currently no way to undo this action.</p>`;
+    searchResults.innerHTML = fencerInfo;
+    searchResults.dataset.fencer_id = fencer.id;
+    disqualifyButton.disabled = !confirmCheckbox.checked;
+}
+
+function closeOverlay() {
+    overlay.style.display = "none";
+    searchInput.value = "";
+    searchButton.disabled = true;
+    searchResults.innerHTML = "";
+    confirmCheckbox.checked = false;
+    disqualifyButton.disabled = true;
+}

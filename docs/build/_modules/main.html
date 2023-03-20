@@ -1550,6 +1550,11 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tournament_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tournament_id&#39;</span><span class="p">)</span>
         <span class="n">start_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;start_number&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_number</span><span class="p">)</span>
+        <span class="n">name_query</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">name_query</span><span class="p">)</span>
 
         <span class="n">tournament</span> <span class="o">=</span> <span class="n">get_tournament</span><span class="p">(</span><span class="n">tournament_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tournament</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1559,7 +1564,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">check_logged_in</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">tournament_id</span><span class="p">,</span> <span class="s2">&quot;master&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;NOT_LOGGED_IN&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Client is not logged in as master&quot;</span><span class="p">),</span> <span class="mi">401</span>
         
-        <span class="n">fencer</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_start_number</span><span class="p">(</span><span class="n">start_number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_number</span><span class="p">:</span>
+            <span class="n">fencer</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_start_number</span><span class="p">(</span><span class="n">start_number</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name_query</span><span class="p">:</span>
+            <span class="n">fencer</span> <span class="o">=</span> <span class="n">tournament</span><span class="o">.</span><span class="n">get_fencer_by_name</span><span class="p">(</span><span class="n">name_query</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;INVALID_ARGUMENTS&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Client provided invalid arguments&quot;</span><span class="p">),</span> <span class="mi">400</span>
 
         <span class="k">if</span> <span class="n">fencer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default_error</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="s2">&quot;FENCER_NOT_FOUND&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Fencer with start number </span><span class="si">{}</span><span class="s2"> not found&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start_number</span><span class="p">)),</span> <span class="mi">404</span>
@@ -1756,8 +1766,6 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
         <span class="n">cookie</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logs_cookie&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">cookie</span><span class="p">)</span>
-
         
         <span class="k">if</span> <span class="n">cookie</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
