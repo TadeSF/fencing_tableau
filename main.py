@@ -930,6 +930,7 @@ def brackets(tournament_id):
 
 @app.route('/<tournament_id>/<match_id>/live')
 @app.route('/live-app')
+@app.route('/live-ref')
 def live_ref(tournament_id = None, match_id = None):
     if tournament_id:
         try:
@@ -1132,8 +1133,14 @@ def set_active():
         if tournament is None:
             return tournament_not_found_error(), 404
         
+        if "live_ref" in request.json:
+            live_ref = request.json['live_ref']
+            logger.info(f"Started match {match_id} with live ref")
+        else:
+            live_ref = False
+        
         # Check if logged in as referee or master
-        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_start_matches:
+        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_start_matches and not live_ref:
             return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!"), 401
         
         override_flag = request.json['override_flag']
@@ -1161,9 +1168,16 @@ def push_score():
         if tournament is None:
             return tournament_not_found_error(), 404
         
+        if "live_ref" in request.json:
+            live_ref = request.json['live_ref']
+            logger.info(f"Finished match {match_id} with live ref")
+        else:
+            live_ref = False
+        
 
         # Check if logged in as referee or master
-        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_input_scores:
+        
+        if not check_logged_in(request, tournament_id, "referee") and not check_logged_in(request, tournament_id, 'master') and not tournament.allow_fencers_to_input_scores and not live_ref:
             return default_error(code = "NOT_LOGGED_IN", message = "User must be logged in to input Results!"), 401
 
         green_score = int(request.json['green_score'])

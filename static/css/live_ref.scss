@@ -9,7 +9,7 @@ body {
 
 .Wrapper {
     width: 100vw;
-    height: 100vh;
+    height: 100svh;
     background-color: #fff;
     color: #000;
     margin: 0;
@@ -63,6 +63,39 @@ body {
         justify-content: center;
         align-items: center;
         font-variant-numeric: lining-nums;
+
+        transition: 0.3s ease-in-out;
+
+        &.Timer-Display--Active {
+            color: #000;
+
+            @keyframes blink {
+                10% {
+                    scale: 1;
+                }
+                50% {
+                    scale: 1.1;
+                }
+                90% {
+                    scale: 1;
+                }
+            }
+
+            animation: blink 1s ease-in-out infinite;
+
+        }
+
+        &.Timer-Display--Paused {
+            color: red;
+        }
+
+        &.Timer-Display--Break {
+            color: grey;
+        }
+
+        &.Timer-Display--Ready {
+            color: green;
+        }
     }
     #Plus-Green {
         grid-column: 3 / 4;
@@ -178,29 +211,60 @@ body {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: 1fr 1fr;
-    row-gap: 1.5rem;
+    row-gap: 0.5rem;
     column-gap: 0.5rem;
-    justify-items: center;
+    justify-items: stretch;
     align-items: center;
 
     .Card {
         // grid-row: 1 / 2;
         font-size: 1.5rem;
+        background-color: #eee;
+        border-radius: 5px;
+        padding: 0.5rem 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: 0.3s ease-in-out;
     }
 
     #Card-Green-Yellow,
     #Card-Red-Yellow {
-        color: yellow;
+        &.Card--Inactive {
+                color: orange;
+                background-color: #eee;
+            }
+
+        &.Card--Active {
+            color: #fff;
+            background-color: orange;
+        }
     }
 
     #Card-Green-Red,
     #Card-Red-Red {
-        color: red;
+        &.Card--Inactive {
+                color: red;
+                background-color: #eee;
+            }
+
+        &.Card--Active {
+            color: #fff;
+            background-color: red;
+        }
     }
 
     #Card-Green-Black,
     #Card-Red-Black {
-        color: black;
+        &.Card--Inactive {
+            color: #000;
+            background-color: #eee;
+        }
+
+        &.Card--Active {
+            color: #fff;
+            background-color: black;
+        }
     }
 
     .Names {
@@ -253,12 +317,22 @@ body {
     .Options-Item {
         grid-row: 1 / 2;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         padding: 0.5rem;
-        font-size: 1.5rem;
         background-color: #eee;
         border-radius: 5px;
+
+        div {
+            margin: 0.5rem 0rem 0rem 0rem;
+            font-size: 0.8rem;
+
+        }
+        i {
+            margin: 0.5rem 0rem;
+            font-size: 1.5rem;
+        }
     }
 }
 

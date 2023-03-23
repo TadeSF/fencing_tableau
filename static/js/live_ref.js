@@ -1,3 +1,12 @@
+// let lastTouchEnd = 0;
+// document.addEventListener('touchend', function (event) {
+//     let now = (new Date()).getTime();
+//     if (now - lastTouchEnd <= 3000) {
+//         event.preventDefault();
+//     }
+//     lastTouchEnd = now;
+// }, false);
+
 const tournament_id = document.body.dataset.tournament_id;
 const match_id = document.body.dataset.match_id;
 
@@ -6,6 +15,8 @@ let setsRemaining = 3;
 let timeLeft = 180;
 let passivTimer = 60;
 let isBreak = false;
+let matchStarted = false;
+let passivTimerOn = true;
 const timerDisplay = document.getElementById("Timer-Display");
 const passivTimerDisplay = document.getElementById("Passiv-Timer");
 const setsDisplay = document.getElementById("Sets");
@@ -43,13 +54,41 @@ function update_score(element) {
     } else {
         passivTimer = 60;
         passivTimerDisplay.textContent = "01:00";
-    };
+    }
 
     score_element.innerHTML = score.toString();
 }
 
 
 function startTimer() {
+    if (!matchStarted) {
+        matchStarted = true;
+        // send match start to server
+        fetch(`/api/matches/set-active?tournament_id=${tournament_id}&match_id=${match_id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "override_flag": false,
+                "live_ref": true,
+            }),
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+        });
+    }
+
+    if (!isBreak) {
+        timerDisplay.classList.add("Timer-Display--Active");
+        timerDisplay.classList.remove("Timer-Display--Paused");
+        timerDisplay.classList.remove("Timer-Display--Break");
+        timerDisplay.classList.remove("Timer-Display--Ready");
+    }
+
     countdownTimer = setInterval(() => {
         if (timeLeft <= 0) {
             clearInterval(countdownTimer);
@@ -61,6 +100,10 @@ function startTimer() {
                 
                 button_icon.classList.remove("fa-coffee");
                 button_icon.classList.add("fa-play");
+                timerDisplay.classList.remove("Timer-Display--Active");
+                timerDisplay.classList.remove("Timer-Display--Paused");
+                timerDisplay.classList.remove("Timer-Display--Break");
+                timerDisplay.classList.add("Timer-Display--Ready");
                 // Play sound
                 buzzer_sound.play();
                 isBreak = false;
@@ -76,6 +119,10 @@ function startTimer() {
                     button_icon.classList.remove("fa-play");
                     button_icon.classList.remove("fa-pause");
                     button_icon.classList.add("fa-coffee");
+                    timerDisplay.classList.remove("Timer-Display--Active");
+                    timerDisplay.classList.remove("Timer-Display--Paused");
+                    timerDisplay.classList.add("Timer-Display--Break");
+                    timerDisplay.classList.remove("Timer-Display--Ready");
                     startTimer();
                 } else {
                     clearInterval(countdownTimer);
@@ -84,7 +131,7 @@ function startTimer() {
                 buzzer_sound.play();
             }
         } else {
-            if (passivTimer <= 0) {
+            if (passivTimer <= 0 && passivTimerOn) {
                 clearInterval(countdownTimer);
                 passivTimer = 60;
                 buzzer_sound.play();
@@ -93,6 +140,10 @@ function startTimer() {
                 alert("Passiv time is over!");
                 button_icon.classList.remove("fa-pause");
                 button_icon.classList.add("fa-play");
+                timerDisplay.classList.remove("Timer-Display--Active");
+                timerDisplay.classList.add("Timer-Display--Paused");
+                timerDisplay.classList.remove("Timer-Display--Break");
+                timerDisplay.classList.remove("Timer-Display--Ready");
             }
 
             const minutes = Math.floor(timeLeft / 60);
@@ -101,7 +152,7 @@ function startTimer() {
 
             const passiv_minutes = Math.floor(passivTimer / 60);
             const passiv_seconds = passivTimer % 60;
-            passivTimerDisplay.textContent = `${passiv_minutes.toString().padStart(2, "0")}:${passiv_seconds.toString().padStart(2, "0")}`;
+            passivTimerDisplay.textContent = `${passiv_minutes.toString().padStart(2, "0")}:${(Math.abs(passiv_seconds)).toString().padStart(2, "0")}`;
 
             timeLeft--;
             if (!isBreak) {
@@ -114,6 +165,10 @@ function startTimer() {
 
 function stopTimer() {
     clearInterval(countdownTimer);
+    timerDisplay.classList.remove("Timer-Display--Active");
+    timerDisplay.classList.add("Timer-Display--Paused");
+    timerDisplay.classList.remove("Timer-Display--Break");
+    timerDisplay.classList.remove("Timer-Display--Ready");
 }
 
 startStopBtn.addEventListener("click", () => {
@@ -164,13 +219,23 @@ function resetAll() {
 }
 
 function pushScore() {
+    let score_red = document.getElementById("Score-Red").innerHTML;
+    let score_green = document.getElementById("Score-Green").innerHTML;
+
+    if (score_red == 0 && score_green == 0) {
+        alert("The score is 0:0. Please finish the match before pushing the score to the database.");
+        return;
+    } else if (score_red == score_green) {
+        alert("The score is tied. Please finish the match before pushing the score to the database.");
+        return;
+    }
+
     if (confirm("Are you sure you want to push the score to the database?")) {
-        let score_red = document.getElementById("Score-Red").innerHTML;
-        let score_green = document.getElementById("Score-Green").innerHTML;
 
         let data = {
             'green_score': score_green,
-            'red_score': score_red
+            'red_score': score_red,
+            "live_ref": true,
         }
 
         fetch('/api/matches/push-score?tournament_id=' + tournament_id + '&match_id=' + match_id, {
@@ -184,7 +249,7 @@ function pushScore() {
             .then(data => {
                 if (Object.keys(data).includes("error")) {
                     console.log(data["error"]);
-                    alert_string = "Error: " + data["error"]["code"];
+                    let alert_string = "Error: " + data["error"]["code"];
                     if (data["error"]["message"]) {
                         alert_string += "\n\n" + data["error"]["message"];
                     }
@@ -192,13 +257,36 @@ function pushScore() {
                     if (data["error"]["exception"]) {
                         alert_string += "\n\n" + data["error"]["exception"];
                     }
-                    var result = window.confirm(alert_string);
-                    if (result == true) {
+                    let result = window.confirm(alert_string);
+                    if (result === true) {
                         window.open("/logs", "_blank");
                     }
                 } else {
                     alert("Score pushed successfully");
                 }
             })
+    }
+}
+
+function togglePassivTimer() {
+    const toggle_button = document.getElementById("Toggle-Passiv-Timer").children[1];
+    if (passivTimerOn) {
+        passivTimerOn = false;
+        toggle_button.classList.remove("fa-toggle-on");
+        toggle_button.classList.add("fa-toggle-off");
+    } else {
+        passivTimerOn = true;
+        toggle_button.classList.remove("fa-toggle-off");
+        toggle_button.classList.add("fa-toggle-on");
+    }
+}
+
+function toggleCard(element) {
+    if (element.classList.contains("Card--Active")) {
+        element.classList.remove("Card--Active");
+        element.classList.add("Card--Inactive");
+    } else {
+        element.classList.remove("Card--Inactive");
+        element.classList.add("Card--Active");
     }
 }

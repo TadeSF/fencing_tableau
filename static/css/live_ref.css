@@ -9,7 +9,7 @@ body {
 
 .Wrapper {
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   background-color: #fff;
   color: #000;
   margin: 0;
@@ -54,6 +54,31 @@ body {
   justify-content: center;
   align-items: center;
   font-variant-numeric: lining-nums;
+  transition: 0.3s ease-in-out;
+}
+.Game-Controls #Timer-Display.Timer-Display--Active {
+  color: #000;
+  animation: blink 1s ease-in-out infinite;
+}
+@keyframes blink {
+  10% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.1;
+  }
+  90% {
+    scale: 1;
+  }
+}
+.Game-Controls #Timer-Display.Timer-Display--Paused {
+  color: red;
+}
+.Game-Controls #Timer-Display.Timer-Display--Break {
+  color: grey;
+}
+.Game-Controls #Timer-Display.Timer-Display--Ready {
+  color: green;
 }
 .Game-Controls #Plus-Green {
   grid-column: 3/4;
@@ -163,26 +188,51 @@ body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: 1fr 1fr;
-  row-gap: 1.5rem;
+  row-gap: 0.5rem;
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem;
-  justify-items: center;
+  justify-items: stretch;
   align-items: center;
 }
 .Info-Block .Card {
   font-size: 1.5rem;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease-in-out;
 }
-.Info-Block #Card-Green-Yellow,
-.Info-Block #Card-Red-Yellow {
-  color: yellow;
+.Info-Block #Card-Green-Yellow.Card--Inactive,
+.Info-Block #Card-Red-Yellow.Card--Inactive {
+  color: orange;
+  background-color: #eee;
 }
-.Info-Block #Card-Green-Red,
-.Info-Block #Card-Red-Red {
+.Info-Block #Card-Green-Yellow.Card--Active,
+.Info-Block #Card-Red-Yellow.Card--Active {
+  color: #fff;
+  background-color: orange;
+}
+.Info-Block #Card-Green-Red.Card--Inactive,
+.Info-Block #Card-Red-Red.Card--Inactive {
   color: red;
+  background-color: #eee;
 }
-.Info-Block #Card-Green-Black,
-.Info-Block #Card-Red-Black {
-  color: black;
+.Info-Block #Card-Green-Red.Card--Active,
+.Info-Block #Card-Red-Red.Card--Active {
+  color: #fff;
+  background-color: red;
+}
+.Info-Block #Card-Green-Black.Card--Inactive,
+.Info-Block #Card-Red-Black.Card--Inactive {
+  color: #000;
+  background-color: #eee;
+}
+.Info-Block #Card-Green-Black.Card--Active,
+.Info-Block #Card-Red-Black.Card--Active {
+  color: #fff;
+  background-color: black;
 }
 .Info-Block .Names {
   grid-row: 2/3;
@@ -228,12 +278,20 @@ body {
 .Options .Options-Item {
   grid-row: 1/2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
-  font-size: 1.5rem;
   background-color: #eee;
   border-radius: 5px;
+}
+.Options .Options-Item div {
+  margin: 0.5rem 0rem 0rem 0rem;
+  font-size: 0.8rem;
+}
+.Options .Options-Item i {
+  margin: 0.5rem 0rem;
+  font-size: 1.5rem;
 }
 
 .Timer {

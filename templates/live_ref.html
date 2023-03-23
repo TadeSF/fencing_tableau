@@ -38,7 +38,7 @@
                 <div class="Score-Number" id="Score-Red">
                     0
                 </div>
-                <div id="Timer-Display">
+                <div id="Timer-Display" class="Timer-Display--Ready">
                     03:00
                 </div>
                 <div class="Score-Number" id="Score-Green">
@@ -64,23 +64,23 @@
 
             </div>
             <div class="Section Info-Block">
-                <div class="Card" id="Card-Red-Yellow">
+                <div class="Card Card--Inactive" id="Card-Red-Yellow" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
-                <div class="Card" id="Card-Red-Red">
+                <div class="Card Card--Inactive" id="Card-Red-Red" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
-                <div class="Card" id="Card-Red-Black">
+                <div class="Card Card--Inactive" id="Card-Red-Black" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
                 <div class="Gap"></div>
-                <div class="Card" id="Card-Green-Yellow">
+                <div class="Card Card--Inactive" id="Card-Green-Yellow" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
-                <div class="Card" id="Card-Green-Red">
+                <div class="Card Card--Inactive" id="Card-Green-Red" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
-                <div class="Card" id="Card-Green-Black">
+                <div class="Card Card--Inactive" id="Card-Green-Black" onclick="toggleCard(this)">
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
                 <div class="Names" id="Name-Red" data-id="{{ fencer_red_id }}">
@@ -91,13 +91,16 @@
                 </div>
             </div>
             <div class="Section Options">
-                <div class="Options-Item" onclick="alert('This button has no functionality yet.')">
-                    <i class="fa-solid fa-home"></i>
+                <div class="Options-Item" id="Toggle-Passiv-Timer" onclick="togglePassivTimer()">
+                    <div>Passive Timer</div>
+                    <i class="fa-solid fa-toggle-on"></i>
                 </div>
                 <div class="Options-Item" onclick="resetAll()">
+                    <div>Reset All</div>
                     <i class="fa-solid fa-rotate-right"></i>
                 </div>
                 <div class="Options-Item" id="Send-Score" onclick="pushScore()">
+                    <div>Submit Score</div>
                     <i class="fa-solid fa-paper-plane"></i>
                 </div>
             </div>
