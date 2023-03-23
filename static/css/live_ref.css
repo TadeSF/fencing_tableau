@@ -1,0 +1,251 @@
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: margin-mvb, sans-serif;
+  margin: 0;
+}
+
+.Wrapper {
+  width: 100vw;
+  height: 100vh;
+  background-color: #fff;
+  color: #000;
+  margin: 0;
+}
+
+.Container {
+  width: calc(100% - 4rem);
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 4fr 1fr 1fr 3fr auto;
+  justify-items: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 0 2rem;
+}
+
+.Game-Controls {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 5rem 1fr 5rem;
+  grid-template-rows: 1fr 1fr 3fr 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+.Game-Controls #Plus-Red {
+  grid-column: 1/2;
+  grid-row: 1/3;
+}
+.Game-Controls #Timer-Display {
+  grid-column: 2/3;
+  grid-row: 3/4;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  color: #000;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-variant-numeric: lining-nums;
+}
+.Game-Controls #Plus-Green {
+  grid-column: 3/4;
+  grid-row: 1/3;
+}
+.Game-Controls #Score-Red {
+  grid-column: 1/2;
+  grid-row: 3/4;
+}
+.Game-Controls #Score-Green {
+  grid-column: 3/4;
+  grid-row: 3/4;
+}
+.Game-Controls #Minus-Red {
+  grid-column: 1/2;
+  grid-row: 4/6;
+}
+.Game-Controls #Minus-Green {
+  grid-column: 3/4;
+  grid-row: 4/6;
+}
+.Game-Controls #Manipulator-Plus {
+  grid-column: 2/3;
+  grid-row: 2/3;
+}
+.Game-Controls #Manipulator-Minus {
+  grid-column: 2/3;
+  grid-row: 4/5;
+}
+.Game-Controls #Sets {
+  grid-column: 2/3;
+  grid-row: 1/2;
+}
+.Game-Controls .Manipulator {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.Game-Controls .Manipulator > *:first-child {
+  justify-self: right;
+}
+.Game-Controls .Manipulator > *:last-child {
+  justify-self: left;
+}
+.Game-Controls .Manipulator .Manipulator-Button {
+  min-width: 1.4rem;
+  border-radius: 5px;
+  background-color: #eee;
+  width: -moz-fit-content;
+  width: fit-content;
+  cursor: pointer;
+  padding: 0.3rem 1rem;
+  transition: all 0.2s ease-in-out;
+}
+.Game-Controls .Manipulator .Manipulator-Button:hover {
+  background-color: #eee;
+  color: #000;
+}
+.Game-Controls .Score-Button {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #000;
+  border-radius: 1rem;
+  background-color: #000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.Game-Controls .Score-Button:hover {
+  background-color: #000;
+  color: #fff;
+}
+.Game-Controls .Score-Button--Plus {
+  color: green;
+}
+.Game-Controls .Score-Button--Minus {
+  color: red;
+}
+.Game-Controls .Score-Number {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  color: #000;
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Header, .Footer {
+  min-height: 1rem;
+}
+
+.Info-Block {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr 1fr;
+  row-gap: 1.5rem;
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
+  justify-items: center;
+  align-items: center;
+}
+.Info-Block .Card {
+  font-size: 1.5rem;
+}
+.Info-Block #Card-Green-Yellow,
+.Info-Block #Card-Red-Yellow {
+  color: yellow;
+}
+.Info-Block #Card-Green-Red,
+.Info-Block #Card-Red-Red {
+  color: red;
+}
+.Info-Block #Card-Green-Black,
+.Info-Block #Card-Red-Black {
+  color: black;
+}
+.Info-Block .Names {
+  grid-row: 2/3;
+  grid-column: span 3;
+  justify-self: stretch;
+}
+.Info-Block .Names .Name-Box {
+  color: #fff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  padding: 0.5rem 0rem;
+  white-space: nowrap;
+  overflow: scroll;
+}
+.Info-Block #Name-Red {
+  text-align: left;
+  background-color: red;
+  border-radius: 5px;
+}
+.Info-Block #Name-Green {
+  text-align: right;
+  background-color: green;
+  border-radius: 5px;
+}
+.Info-Block .Gap {
+  grid-column: 4/5;
+  grid-row: 1/3;
+}
+
+.Options {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr;
+  justify-items: stretch;
+  align-items: stretch;
+  gap: 1rem;
+}
+.Options .Options-Item {
+  grid-row: 1/2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  background-color: #eee;
+  border-radius: 5px;
+}
+
+.Timer {
+  width: 100%;
+  height: 100%;
+  background-color: #eee;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+}
+.Timer #Start-Stop {
+  margin: auto;
+}/*# sourceMappingURL=live_ref.css.map */

@@ -321,6 +321,7 @@ def check_csv(file) -> list:
     CSVError
         if the csv file is not valid and provides a description of the error
     """
+
     headers = next(file)
     body = []
     if headers != ['Name', 'Club', 'Nationality', 'Gender', 'Handedness', 'Age']:
@@ -748,12 +749,12 @@ def dashboard(tournament_id):
         On tournament not found
     """
     if not check_tournament_exists(tournament_id):
-        abort(500)
+        abort(404)
     else:
         return render_template('dashboard.html', tournament_id=tournament_id)
 
-@app.route('/qr')
-def qr():
+@app.route('/qr/fencer')
+def fencer_qr():
     """
     Flask serves on GET request /qr the qr.html file from the templates folder.
     This is the page where the QR code is displayed.
@@ -763,8 +764,16 @@ def qr():
     qr.html 200
         On success
     """
-    tournament_id = request.args.get('tournament')
+    tournament_id = request.args.get('tournament_id')
     return render_template('qr.html', tournament_id=tournament_id)
+
+@app.route('/qr/match')
+def match_qr():
+    """
+    """
+    tournament_id = request.args.get('tournament_id')
+    match_id = request.args.get('match_id')
+    return render_template('qr_match.html', tournament_id=tournament_id, match_id=match_id)
 
 @app.route('/<tournament_id>/matches')
 def matches(tournament_id):
@@ -918,6 +927,35 @@ def brackets(tournament_id):
         abort(404)
     else:
         return render_template('/brackets.html', tournament_id=tournament_id, highlighted_fencer_id=highlighted_fencer_id if highlighted_fencer_id is not None else 0)
+
+@app.route('/<tournament_id>/<match_id>/live')
+@app.route('/live-app')
+def live_ref(tournament_id = None, match_id = None):
+    if tournament_id:
+        try:
+            tournament = get_tournament(tournament_id)
+            if tournament is None:
+                abort(404)
+
+            match = tournament.get_match_by_id(match_id)
+            if match is None:
+                abort(404)
+
+            fencer_red = match.red.short_str
+            fencer_green = match.green.short_str
+            fencer_red_id = match.red.id
+            fencer_green_id = match.green.id
+        except Exception as e:
+            logger.error(e)
+            abort(404)
+    
+    else:
+        fencer_red = "Red"
+        fencer_green = "Green"
+        fencer_red_id = ""
+        fencer_green_id = ""
+
+    return render_template('/live_ref.html', tournament_id=tournament_id, match_id=match_id, fencer_red=fencer_red, fencer_green=fencer_green, fencer_red_id=fencer_red_id, fencer_green_id=fencer_green_id)
 
 
 # --- Login-Methods ---

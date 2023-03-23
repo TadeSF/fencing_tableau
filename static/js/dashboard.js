@@ -224,7 +224,7 @@ function openBrackets() {
 
 function openQR() {
     // open a new window (width 500px, heigth 800px) with a QR Code for the path /fencer-login?tournament=<tournament_id>
-    window.open("/qr?tournament=" + tournament_id, "_blank", "width=400,height=480");
+    window.open("/qr/fencer?tournament_id=" + tournament_id, "_blank", "width=400,height=480");
 }
 
 function copyID() {

@@ -477,7 +477,10 @@ function openMatchOptions(siblingElement, parentElement, match_id) {
         button2.innerHTML = '<i class="fa-solid fa-question"></i>'
 
         let button3 = document.createElement('div')
-        button3.innerHTML = '<i class="fa-solid fa-question"></i>'
+        button3.innerHTML = '<i class="fa-solid fa-qrcode"></i>'
+        button3.onclick = function () {
+            whistle_match(match_id)
+        }
 
         match_options.appendChild(button1)  
         match_options.appendChild(button2)
@@ -818,3 +821,7 @@ window.onerror = function(error, url, line) {
 //     event.stopPropagation();
 //     event.preventDefault();
 // });
+
+function whistle_match(match_id) {
+    window.open("/qr/match?tournament_id=" + tournament_id + "&match_id=" + match_id, "_blank", "width=400,height=480");
+}

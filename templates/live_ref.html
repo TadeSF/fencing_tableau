@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Live Match</title>
+    <link rel="stylesheet" href="https://use.typekit.net/wex7leu.css">
+    <link href="/static/assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/static/assets/fontawesome/css/solid.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/live_ref.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="height=device-height, initial-scale=1.0">
+</head>
+<body data-tournament_id="{{ tournament_id }}" data-match_id="{{ match_id }}">
+    <div class="Wrapper">
+        <div class="Container">
+            <div class="Section Header">
+                
+            </div>
+            <div class="Section Game-Controls">
+                <div class="Score-Button Score-Button--Plus" id="Plus-Red" onclick="update_score(this)">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div class="Sets" id="Sets">
+                    1 / 3
+                </div>
+                <div class="Manipulator" id="Manipulator-Plus">
+                    <div class="Manipulator-Button Manipulator-Button--Plus" onclick="changeTimer(60)">
+                        <i class="fa-solid fa-caret-up"></i>
+                    </div>
+                    <div class="Manipulator-Button Manipulator-Button--Plus" onclick="changeTimer(5)">
+                        <i class="fa-solid fa-caret-up"></i>
+                    </div>
+                </div>
+                <div class="Score-Button Score-Button--Plus" id="Plus-Green" onclick="update_score(this)">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div class="Score-Number" id="Score-Red">
+                    0
+                </div>
+                <div id="Timer-Display">
+                    03:00
+                </div>
+                <div class="Score-Number" id="Score-Green">
+                    0
+                </div>
+                <div class="Score-Button Score-Button--Minus" id="Minus-Red" onclick="update_score(this)">
+                    <i class="fa-solid fa-minus"></i>
+                </div>
+                <div class="Score-Button Score-Button--Minus" id="Minus-Green" onclick="update_score(this)">
+                    <i class="fa-solid fa-minus"></i>
+                </div>
+                <div class="Passiv-Timer" id="Passiv-Timer">
+                    01:00
+                </div>
+                <div class="Manipulator" id="Manipulator-Minus">
+                    <div class="Manipulator-Button Manipulator-Button--Minus" onclick="changeTimer(-60)">
+                        <i class="fa-solid fa-caret-down"></i>
+                    </div>
+                    <div class="Manipulator-Button Manipulator-Button--Minus" onclick="changeTimer(-5)">
+                        <i class="fa-solid fa-caret-down"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="Section Info-Block">
+                <div class="Card" id="Card-Red-Yellow">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Card" id="Card-Red-Red">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Card" id="Card-Red-Black">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Gap"></div>
+                <div class="Card" id="Card-Green-Yellow">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Card" id="Card-Green-Red">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Card" id="Card-Green-Black">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                <div class="Names" id="Name-Red" data-id="{{ fencer_red_id }}">
+                    <div class="Name-Box">{{ fencer_red }}</div>
+                </div>
+                <div class="Names" id="Name-Green" data-id="{{ fencer_green_id }}">
+                    <div class="Name-Box">{{ fencer_green }}</div>
+                </div>
+            </div>
+            <div class="Section Options">
+                <div class="Options-Item" onclick="alert('This button has no functionality yet.')">
+                    <i class="fa-solid fa-home"></i>
+                </div>
+                <div class="Options-Item" onclick="resetAll()">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </div>
+                <div class="Options-Item" id="Send-Score" onclick="pushScore()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+            </div>
+            <div class="Section Timer" id="Start-Stop-Button">
+                <div id="Start-Stop">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+            </div>
+            <div class="Section Footer">
+                
+            </div>
+            
+        </div>
+    </div>
+    <script src="/static/js/live_ref.js"></script>
+</body>
+</html>
