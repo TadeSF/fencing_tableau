@@ -78,6 +78,8 @@ function update(update_iframes=true) {
                 // if Simulation is disabled, hide the "Simulate" button
                 if (response["simulation_active"] === false) {
                     document.getElementById("Simulate").style.display = "none";
+                } else {
+                    document.getElementById("Simulate").style.display = "block";
                 }
             }
     })
