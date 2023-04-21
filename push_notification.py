@@ -118,7 +118,7 @@ def get_ready_notification(fencer: Fencer, against: Fencer, piste):
     }
     send_fencer_push_message(fencer, message, extra)
 
-def start_match_notification(fencer: Fencer, against: Fencer, piste: str | int):
+def start_match_notification(fencer: Fencer, against: Fencer, piste):
     message = f"Match against {against.name} on piste {piste} is starting"
     extra = {
         "type": "start_match",
