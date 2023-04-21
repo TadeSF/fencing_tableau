@@ -272,6 +272,8 @@ class Fencer:
 
         self.age: int = age
 
+        self.push_notification_tokens = [] # This is used for push notifications
+
         self.disqualified = False
         self.disq_save_nationality = None # This stores the nationality of the fencer in case he/she is disqualified
         self.disq_reason = None # This stores the reason for disqualification
@@ -412,6 +414,12 @@ class Fencer:
         self.disqualified = False
         self.nationality = self.disq_save_nationality
         self.disq_save_nationality = None
+
+    def subscribe_to_push_notifications(self, token: str):
+        self.push_notification_tokens.append(token)
+
+    def unsubscribe_from_push_notifications(self, token: str):
+        self.push_notification_tokens.remove(token)
 
 
     # statistics

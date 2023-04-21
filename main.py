@@ -17,9 +17,21 @@ try:
     import logging.handlers
 
     import bcrypt
-    from flask import (Flask, Request, Response, abort, jsonify, make_response,
-                       redirect, render_template, request, send_file,
-                       send_from_directory, url_for, Markup)
+    from flask import (
+        Flask,
+        Request,
+        Response,
+        abort,
+        jsonify,
+        make_response,
+        redirect,
+        render_template,
+        request,
+        send_file,
+        send_from_directory,
+        url_for,
+        Markup)
+    
     from flask_mail import Mail, Message
 
     import _version
@@ -31,6 +43,7 @@ try:
     from piste import Piste
     from tournament import *
     import log_parser
+    import push_notification
 
 except ModuleNotFoundError:
     raise RequiredLibraryError("Please install all required libraries by running 'pip install -r requirements.txt'")
@@ -1642,6 +1655,49 @@ def get_brackets():
     except Exception as e:
         logger.error(e, exc_info=True)
         return default_error(e, traceback.format_exc())
+    
+
+# --- Push Notifications ---
+@app.route('/api/push/subscribe', methods=['POST'])
+def subscribe_push():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        fencer_id = request.args.get('fencer_id')
+
+        data = request.get_json()
+        tournament.get_fencer_by_id(fencer_id).subscribe_to_push_notifications(data['token'])
+        save_tournament(tournament)
+        return {}, 200
+    
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
+
+@app.route('/api/push/unsubscribe', methods=['POST'])
+def unsubscribe_push():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        fencer_id = request.args.get('fencer_id')
+
+        tournament.get_fencer_by_id(fencer_id).unsubscribe_from_push_notifications()
+        save_tournament(tournament)
+        return {}, 200
+    
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
 
 
 # --- Helpers ---
@@ -1728,6 +1784,27 @@ def handle_webhook():
     #     return 'Error: {}'.format(e), 500
 
     return 'Webhook received', 200
+
+@app.route('/webhook/notification_test', methods=['POST'])
+def webhook_notification_test():
+    """
+    """
+    try:
+        tournament_id = request.args.get('tournament_id')
+        tournament = get_tournament(tournament_id)
+        if tournament is None:
+            return tournament_not_found_error()
+        
+        fencer_id = request.args.get('fencer_id')
+
+        fencer = tournament.get_fencer_by_id(fencer_id)
+        push_notification.send_fencer_push_message(fencer, 'This is a test notification.')
+        return {}, 200
+    
+    except Exception as e:
+        logger.error(e, exc_info=True)
+        return default_error(e, traceback.format_exc()), 500
+
 
 @app.route('/logs')
 def logs():
