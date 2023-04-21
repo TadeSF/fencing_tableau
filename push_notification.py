@@ -108,7 +108,7 @@ def send_fencer_push_message(fencer: Fencer, message: str, extra=None):
 
 
 # ------- Custom Fencer Notifications -------
-def get_ready_notification(fencer: Fencer, against: Fencer, piste: str | int):
+def get_ready_notification(fencer: Fencer, against: Fencer, piste):
     message = f"Get ready to fence {against.name} on piste {piste}"
     extra = {
         "type": "get_ready",
