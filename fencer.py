@@ -416,10 +416,14 @@ class Fencer:
         self.disq_save_nationality = None
 
     def subscribe_to_push_notifications(self, token: str):
-        self.push_notification_tokens.append(token)
+        if token not in self.push_notification_tokens:
+            self.push_notification_tokens.append(token)
 
     def unsubscribe_from_push_notifications(self, token: str):
-        self.push_notification_tokens.remove(token)
+        try:
+            self.push_notification_tokens.remove(token)
+        except ValueError:
+            pass
 
 
     # statistics

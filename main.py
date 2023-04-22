@@ -1691,7 +1691,10 @@ def unsubscribe_push():
         
         fencer_id = request.args.get('fencer_id')
 
-        tournament.get_fencer_by_id(fencer_id).unsubscribe_from_push_notifications()
+        data = request.get_json()
+        token = data['token']
+
+        tournament.get_fencer_by_id(fencer_id).unsubscribe_from_push_notifications(token)
         save_tournament(tournament)
         return {}, 200
     
