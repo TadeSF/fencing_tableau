@@ -268,27 +268,21 @@ def next_tree_node(fencers_list: List[List[Fencer]], stage, mode: Literal["ko", 
     
 
 def save_final_ranking(fencers_list: List[List[Fencer]], mode: Literal["ko", "placement", "repechage"]) -> list:
-    if mode == "placement":
-        i = 1
-        for group in fencers_list:
-            for fencer in group: 
-                fencer.final_rank = i
-                i += 1
+    num_fencers = len(fencers_list)
 
-    elif mode == "ko":
-        if fencers_list[0][0].last_match_won:
-            fencers_list[0][0].final_rank = 1
-            fencers_list[0][1].final_rank = 2
+    for i in range(num_fencers):
+        fencer_1 = fencers_list[i][0]
+        fencer_2 = fencers_list[i][1]
+
+        if fencer_1.last_match_won:
+            fencer_1.final_rank = i * 2 + 1
+            fencer_2.final_rank = i * 2 + 2
         else:
-            fencers_list[0][1].final_rank = 1
-            fencers_list[0][0].final_rank = 2
-        
-        if fencers_list[1][0].last_match_won:
-            fencers_list[1][0].final_rank = 3
-            fencers_list[1][1].final_rank = 4
-        else:
-            fencers_list[1][1].final_rank = 3
-            fencers_list[1][0].final_rank = 4
+            fencer_1.final_rank = i * 2 + 2
+            fencer_2.final_rank = i * 2 + 1
+
+        if mode == "ko" and i == 1:
+            break
 
 
 # -------| Approval procedure and logging |-------
