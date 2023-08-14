@@ -1,5 +1,6 @@
 import zipfile
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 
 try:
@@ -411,6 +412,7 @@ def check_password(password: str, hashed_password: str) -> bool:
 
 # ------- Flask / Flask Mail -------
 app = Flask(__name__, static_folder='static', template_folder='templates')
+CORS(app, origins="http://localhost:5173")
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')

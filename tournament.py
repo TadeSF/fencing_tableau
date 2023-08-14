@@ -349,7 +349,7 @@ class Tournament:
         self.num_preliminary_groups = int(num_preliminary_groups) if num_preliminary_groups != "0" else None
         self.first_elimination_round = int(first_elimination_round) if first_elimination_round != "0" else None
         self.elimination_mode = elimination_mode
-        self.only_elimination = True if self.num_preliminary_rounds == 0 else False
+        self.only_elimination = True if self.num_preliminary_rounds == None else False
 
         # Permissions / Rights of the fencers
         self.allow_fencers_to_start_matches = allow_fencers_to_start_matches
@@ -373,7 +373,10 @@ class Tournament:
 
         # List of fencers in the preliminary round
         self.preliminary_fencers = []
-        self.preliminary_matches = [list() for _ in range(self.num_preliminary_rounds)] # 2D list of Preliminary Rounds -> Matches
+        if self.num_preliminary_rounds != None:
+            self.preliminary_matches = [list() for _ in range(self.num_preliminary_rounds)] # 2D list of Preliminary Rounds -> Matches
+        else:
+            self.preliminary_matches = [[]]
 
         # List of fencers in the elimination round
         self.elimination_fencers = [[]] # 2D list of Advanded Fencers / Eliminated Fencers for KO and Placement

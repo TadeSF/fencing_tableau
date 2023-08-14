@@ -4,6 +4,10 @@
     "chart.js": "^4.2.1"
   },
   "devDependencies": {
+    "attractions": "^3.7.0",
+    "postcss": "^8.4.27",
+    "sass": "^1.64.2",
+    "svelte-preprocess": "^4.10.7",
     "webpack-cli": "^5.0.1"
   }
 }
