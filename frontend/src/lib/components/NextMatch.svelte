@@ -15,7 +15,7 @@
 		else if ($userData.next_matches[0].ongoing == true)
 			return {
 				color: '',
-				icon: 'fa-spin fa-circle-notch',
+				icon: 'fa-spin fa-spinner-third',
 				shake: false
 			};
 		else if (
@@ -33,13 +33,13 @@
 		)
 			return {
 				color: 'text-warning',
-				icon: 'fa-bell',
+				icon: 'fa-bell-exclamation',
 				shake: false
 			};
 		else if ($userData.next_matches[0].piste == 'TBA')
 			return {
 				color: '',
-				icon: 'fa-clock',
+				icon: 'fa-user-clock',
 				shake: false
 			};
 		else {
@@ -95,17 +95,29 @@
 					</div>
 					<div class="stat place-items-center">
 						<div class="stat-title">Piste</div>
-						<div class="stat-value">{$userData.next_matches[0].piste}</div>
+						{#if $userData.next_matches[0].piste == 'TBA'}
+							<div class="stat-value">
+								<i class="fas fa-location-dot-slash text-3xl text-slate-400" />
+							</div>
+						{:else}
+							<div class="stat-value">{$userData.next_matches[0].piste}</div>
+						{/if}
 					</div>
 					<div class="stat place-items-center">
 						<div class="stat-title">Side</div>
 						<div class="stat-value">
-							<div
-								class={`${$userData.next_matches[0].color == 'green' && 'bg-green-600'} ${
-									$userData.next_matches[0].color == 'red' && 'bg-red-600'
-								} ${
-									$userData.next_matches[0].color == '' && 'bg-slate-200'
-								} w-10 h-10 rounded-full`}
+							<i
+								class={`fa-solid ${
+									$userData.next_matches[0].color != null
+										? $userData.next_matches[0].color == 'green'
+											? 'fa-square-arrow-right'
+											: 'fa-square-arrow-left'
+										: 'fa-bug'
+								} ${$userData.next_matches[0].color}
+								${$userData.next_matches[0].color == 'green' && 'text-green-600'} ${
+									$userData.next_matches[0].color == 'red' && 'text-red-600'
+								} ${$userData.next_matches[0].color == '' && 'text-slate-400'}
+								text-3xl`}
 							/>
 						</div>
 					</div>
@@ -143,7 +155,7 @@
 											$userData.next_matches[0].piste_occupied ||
 											$userData.next_matches[0].piste == 'TBA'}
 									>
-										<i class="fa-solid fa-play" />
+										<i class="fa-solid fa-circle-play" />
 										<span class="ml-2">Start Match</span>
 									</button>
 								</div>

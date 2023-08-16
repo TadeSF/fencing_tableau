@@ -24,21 +24,18 @@
 
 <div class="navbar bg-white rounded-xl shadow-lg">
 	<div class="flex-none">
-		<button
-			class="btn btn-ghost btn-square"
-			disabled={!isSubpage}
-			on:click={() => {
-				if (isSubpage) {
-					history.back();
-				}
-			}}
-		>
-			{#if !isSubpage}
-				<i class="fas fa-home text-lg"></i>
-				{:else}
-				<i class="fas fa-arrow-left text-lg"></i>
-			{/if}
-		</button>
+		{#if !isSubpage}
+			<button class="btn btn-square btn-ghost" disabled>
+				<i class="fas fa-swords text-lg" />
+			</button>
+		{:else}
+			<a
+				class="btn btn-square btn-ghost"
+				href={$page.url.pathname.split('/').slice(0, -1).join('/')}
+			>
+				<i class="fas fa-arrow-left text-lg" />
+			</a>
+		{/if}
 	</div>
 	<div class="flex-1">
 		<a class="ml-1 btn btn-ghost normal-case text-xl">{$pageTitle}</a>
