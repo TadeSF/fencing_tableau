@@ -412,7 +412,7 @@ def check_password(password: str, hashed_password: str) -> bool:
 
 # ------- Flask / Flask Mail -------
 app = Flask(__name__, static_folder='static', template_folder='templates')
-CORS(app, origins="http://localhost:5173")
+CORS(app, origins=["http://localhost:5173", "https://fencer.fencewithfriends.online"])
 
 if __name__ != '__main__':
     gunicorn_logger = logging.getLogger('gunicorn.error')

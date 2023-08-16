@@ -2,7 +2,7 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "chart.js": "^4.2.1",
-    "chartjs": "^0.3.24",
+    "chartjs": "^0.3.24"
   },
   "devDependencies": {
     "attractions": "^3.7.0",
